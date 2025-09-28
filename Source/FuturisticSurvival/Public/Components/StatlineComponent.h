@@ -9,7 +9,7 @@
 #include "StatlineComponent.generated.h"
 
 
-
+class UCharacterMovementComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FUTURISTICSURVIVAL_API UStatlineComponent : public UActorComponent
@@ -17,30 +17,56 @@ class FUTURISTICSURVIVAL_API UStatlineComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UStatlineComponent();
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetMovementCompReference(UCharacterMovementComponent* Comp);
 
 	UFUNCTION(BlueprintCallable)
 	float GetStatPercentile(const EStat Stat) const;
 
+	UFUNCTION(BlueprintCallable)
+	bool CanSprint()const;
+	UFUNCTION(BlueprintCallable)
+	void SetSprinting(const bool IsSprinting);
+	UFUNCTION(BlueprintCallable)
+	bool CanJump();
+	UFUNCTION(BlueprintCallable)
+	void HasJumped();
+
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+
+	UCharacterMovementComponent* OwningCharMovementComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Health;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Stamina;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Energy;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Thirst = FStat(100,100,-0.25);
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Hunger = FStat(100,100,-0.125);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
+	bool bIsSprinting = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Settings")
+	float JumpCost = 10;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Settings")
+	float SprintCostMultiplier = 2;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Settings")
+	float WalkSpeed = 125;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Settings")
+	float SprintSpeed = 450;
 		
 	void TickStats(const float& DeltaTime);
+	void TickStamina(const float& DeltaTime);
+	bool IsValidSprinting();
 		
 };

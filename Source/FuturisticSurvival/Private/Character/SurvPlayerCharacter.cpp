@@ -15,7 +15,6 @@
 
 ASurvPlayerCharacter::ASurvPlayerCharacter()
 {
-	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
@@ -26,9 +25,6 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
-
-	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
-	// instead of recompiling to adjust them
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
@@ -46,26 +42,24 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
 void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::PlayerJump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Move);
-		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
-
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::SprintOn);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvPlayerCharacter::SprintOff);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::SprintOff);
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
+		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
 	}
 }
 
@@ -73,17 +67,12 @@ void ASurvPlayerCharacter::DoMove(float Right, float Forward)
 {
 	if (GetController() != nullptr)
 	{
-		// find out which way is forward
 		const FRotator Rotation = GetController()->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
-		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
 		AddMovementInput(ForwardDirection, Forward);
 		AddMovementInput(RightDirection, Right);
 	}
@@ -93,40 +82,39 @@ void ASurvPlayerCharacter::DoLook(float Yaw, float Pitch)
 {
 	if (GetController() != nullptr)
 	{
-		// add yaw and pitch input to controller
 		AddControllerYawInput(Yaw);
 		AddControllerPitchInput(Pitch);
 	}
 }
 
-void ASurvPlayerCharacter::DoJumpStart()
-{
-	// signal the character to jump
-	Jump();
-}
-
-void ASurvPlayerCharacter::DoJumpEnd()
-{
-	// signal the character to stop jumping
-	StopJumping();
-}
-
-
-
 void ASurvPlayerCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
-
-	// route the input
+	
 	DoMove(MovementVector.X, MovementVector.Y);
 }
 
 void ASurvPlayerCharacter::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	// route the input
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
+}
+
+void ASurvPlayerCharacter::PlayerJump()
+{
+	if (CanJump())
+	{
+		HasJumped();
+	}
+}
+
+void ASurvPlayerCharacter::SprintOn()
+{
+	SetSprinting(true);
+}
+
+void ASurvPlayerCharacter::SprintOff()
+{
+	SetSprinting(false);
 }

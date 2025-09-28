@@ -51,4 +51,14 @@ public:
 	{
 		PerSecondTick = NewTick;
 	}
+
+	float GetCurrent() const
+	{
+		return Current;
+	}
+
+	bool HasEnough(const float& Amount = 0) const
+	{
+		return Current >= Amount;
+	}
 };

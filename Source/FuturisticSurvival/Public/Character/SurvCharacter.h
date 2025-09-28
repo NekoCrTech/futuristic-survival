@@ -19,6 +19,12 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	bool CanJump() const;
+	void HasJumped();
+
+	bool CanSprint() const;
+	void SetSprinting(const bool& IsSprinting);
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
 	 TObjectPtr<class UStatlineComponent> Statline;
