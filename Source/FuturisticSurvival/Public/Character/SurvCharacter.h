@@ -1,4 +1,4 @@
-// developed by Neko
+// Developed by Neko
 
 #pragma once
 
@@ -12,18 +12,22 @@ class FUTURISTICSURVIVAL_API ASurvCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
+	
 	ASurvCharacter();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+protected:
+	virtual void BeginPlay() override;
+
+	bool CanJump() const;
+	void HasJumped();
+
+	bool CanSprint() const;
+	void SetSprinting(const bool& IsSprinting);
+	void SetSneaking(const bool& IsSneaking);
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	 TObjectPtr<class UStatlineComponent> Statline;
 
 };

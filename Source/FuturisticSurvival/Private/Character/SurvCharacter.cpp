@@ -1,34 +1,57 @@
-// developed by Neko
+// Developed by Neko
 
 
 #include "Public/Character/SurvCharacter.h"
 
-// Sets default values
+#include "Components/StatlineComponent.h"
+
+
 ASurvCharacter::ASurvCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	
 	PrimaryActorTick.bCanEverTick = true;
 
+	Statline = CreateDefaultSubobject<UStatlineComponent>(TEXT("Statline"));
+	Statline->SetMovementCompReference(GetCharacterMovement());
 }
 
-// Called when the game starts or when spawned
 void ASurvCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
+bool ASurvCharacter::CanJump() const
+{
+	return Statline->CanJump();
+}
+
+void ASurvCharacter::HasJumped()
+{
+	Statline->HasJumped();
+	ACharacter::Jump();
+}
+
+bool ASurvCharacter::CanSprint() const
+{
+	return Statline->CanSprint();
+}
+
+void ASurvCharacter::SetSprinting(const bool& IsSprinting)
+{
+	Statline->SetSprinting(IsSprinting);
+}
+
+void ASurvCharacter::SetSneaking(const bool& IsSneaking)
+{
+	Statline->SetSneaking(IsSneaking);
+}
+
+
 void ASurvCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
-void ASurvCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
 
