@@ -57,6 +57,9 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::SprintOn);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvPlayerCharacter::SprintOff);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::SprintOff);
+		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::SneakOn);
+		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Completed, this, &ASurvPlayerCharacter::SneakOff);
+		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::SneakOff);
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
@@ -117,4 +120,16 @@ void ASurvPlayerCharacter::SprintOn()
 void ASurvPlayerCharacter::SprintOff()
 {
 	SetSprinting(false);
+}
+
+void ASurvPlayerCharacter::SneakOn()
+{
+	SetSneaking(true);
+	Crouch();
+}
+
+void ASurvPlayerCharacter::SneakOff()
+{
+	SetSneaking(false);
+	UnCrouch();
 }

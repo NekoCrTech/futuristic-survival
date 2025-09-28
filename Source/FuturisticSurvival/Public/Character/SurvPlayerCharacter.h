@@ -34,22 +34,25 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 #pragma region Input
-	UPROPERTY(EditAnywhere, Category="Input")
-	UInputAction* JumpAction;
-
-	UPROPERTY(EditAnywhere, Category="Input")
-	UInputAction* MoveAction;
-
-	UPROPERTY(EditAnywhere, Category="Input")
-	UInputAction* LookAction;
-	
-	UPROPERTY(EditAnywhere, Category="Input")
-	UInputAction* MouseLookAction;
-
-	UPROPERTY(EditAnywhere, Category="Input")
-	UInputAction* SprintAction;
-
-#pragma endregion
+                 	UPROPERTY(EditAnywhere, Category="Input")
+                 	UInputAction* JumpAction;
+                 
+                 	UPROPERTY(EditAnywhere, Category="Input")
+                 	UInputAction* MoveAction;
+                 
+                 	UPROPERTY(EditAnywhere, Category="Input")
+                 	UInputAction* LookAction;
+                 	
+                 	UPROPERTY(EditAnywhere, Category="Input")
+                 	UInputAction* MouseLookAction;
+                 
+                 	UPROPERTY(EditAnywhere, Category="Input")
+                 	UInputAction* SprintAction;
+                 
+                 	UPROPERTY(EditAnywhere, Category="Input")
+                 	UInputAction* SneakAction;
+                 
+                 #pragma endregion
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -58,6 +61,8 @@ protected:
 
 	void SprintOn();
 	void SprintOff();
+	void SneakOn();
+	void SneakOff();
 
 private:
 	

@@ -42,6 +42,11 @@ void ASurvCharacter::SetSprinting(const bool& IsSprinting)
 	Statline->SetSprinting(IsSprinting);
 }
 
+void ASurvCharacter::SetSneaking(const bool& IsSneaking)
+{
+	Statline->SetSneaking(IsSneaking);
+}
+
 
 void ASurvCharacter::Tick(float DeltaTime)
 {
