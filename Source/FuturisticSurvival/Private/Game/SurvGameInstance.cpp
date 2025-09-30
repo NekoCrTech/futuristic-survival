@@ -43,6 +43,27 @@ void USurvGameInstance::GatherActorData()
 		Ar.ArIsSaveGame = true;
 		Actor->Serialize(Ar);
 
+		for ( auto ActorComp : Actor->GetComponents())
+		{
+			if (!ActorComp->Implements<USaveActorInterface>())
+			{
+				continue;
+			}
+			ISaveActorInterface* InterComp = Cast<ISaveActorInterface>(ActorComp);
+			if (InterComp == nullptr)
+			{
+				continue;
+			}
+			FSaveComponentData SCD = InterComp->GetSaveComponentData_Implementation();
+			FMemoryWriter CompNemWriter(SCD.ByteData);
+			FObjectAndNameAsStringProxyArchive CAr(CompNemWriter, true);
+			CAr.ArIsSaveGame = true;
+			ActorComp->Serialize(CAr);
+			SCD.ComponentClass = ActorComp->GetClass();
+
+			SAD.ComponentData.Add(SCD);
+		}
+
 		SaveableActorData.Add(SAI, SAD);
 	}
 }
@@ -98,9 +119,43 @@ void USurvGameInstance::LoadGame()
 		Ar.ArIsSaveGame = true;
 		Actor->Serialize(Ar);
 
-		/*
-		 *	Add in additional logic here for custom data
-		 */
+		for (auto ActorComp : Actor->GetComponents())
+		{
+			if (!ActorComp->Implements<USaveActorInterface>())
+			{
+				continue;
+			}
+			ISaveActorInterface* InterComp = Cast<ISaveActorInterface>(ActorComp);
+			if (InterComp == nullptr)
+			{
+				continue;
+			}
+			for (auto SCD : SAD.ComponentData)
+			{
+				/***************************************************************************
+				 *This is not safe is an actor has 2 of the same components, that are saved*
+				 *as the 1st component returned by Actor->GetComponents() will get all data*
+				 *
+				 *		One Possible option is a GUID on the Component
+				 **************************************************************************/
+				
+				if (SCD.ComponentClass != ActorComp->GetClass())
+				{
+					continue;
+				}
+
+				FMemoryReader CompNemReader(SCD.ByteData);
+				FObjectAndNameAsStringProxyArchive CAr(CompNemReader, true);
+				CAr.ArIsSaveGame = true;
+				ActorComp->Serialize(CAr);
+				if (SCD.RawData.IsEmpty())
+				{
+					break;
+				}
+				InterComp->SetSaveComponentData_Implementation(SCD);
+				break;
+			}
+		}
 	}
 }
 

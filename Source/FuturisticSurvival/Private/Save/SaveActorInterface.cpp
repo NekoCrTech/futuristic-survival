@@ -13,6 +13,14 @@ FGuid ISaveActorInterface::GetActorSaveID_Implementation()
 
 FSaveActorData ISaveActorInterface::GetSaveData_Implementation()
 {
-	FSaveActorData Ret = FSaveActorData();
-	return Ret;
+	return FSaveActorData();
+}
+
+FSaveComponentData ISaveActorInterface::GetSaveComponentData_Implementation()
+{
+	return FSaveComponentData();
+}
+
+void ISaveActorInterface::SetSaveComponentData_Implementation(FSaveComponentData Data)
+{
 }

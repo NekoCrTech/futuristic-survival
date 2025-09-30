@@ -6,6 +6,18 @@
 #include "UObject/Interface.h"
 #include "SaveActorInterface.generated.h"
 
+USTRUCT(BlueprintType)
+struct FSaveComponentData
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	TArray<uint8> ByteData;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UClass* ComponentClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<FString> RawData;
+};
 
 USTRUCT(BlueprintType)
 struct FSaveActorData
@@ -16,6 +28,8 @@ public:
 	FTransform ActorTransform;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	TArray<uint8> ByteData;
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	TArray<FSaveComponentData> ComponentData;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	bool bWasSpawned = false;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
@@ -43,4 +57,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	FSaveActorData GetSaveData();
 	virtual FSaveActorData GetSaveData_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent)
+	FSaveComponentData GetSaveComponentData();
+	virtual FSaveComponentData GetSaveComponentData_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SetSaveComponentData(FSaveComponentData Data);
+	virtual void SetSaveComponentData_Implementation(FSaveComponentData Data);
 };

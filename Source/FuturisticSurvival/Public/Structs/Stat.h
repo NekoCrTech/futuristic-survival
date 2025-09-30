@@ -61,4 +61,26 @@ public:
 	{
 		return Current >= Amount;
 	}
+
+	FString GetSaveString()
+	{
+		FString Ret = FString::SanitizeFloat(Current);
+		Ret += "|";
+		Ret += FString::SanitizeFloat(Max);
+		Ret += "|";
+		Ret += FString::SanitizeFloat(PerSecondTick);
+		return Ret;
+	}
+
+	void UpdateFromSaveString(TArray<FString> Parts)
+	{
+		if (Parts.Num() != 3)
+		{
+			//TODO: Log Error
+			return;
+		}
+		Current = FCString::Atof(*Parts[0]);
+		Max = FCString::Atof(*Parts[1]);
+		PerSecondTick = FCString::Atof(*Parts[2]);
+	}
 };

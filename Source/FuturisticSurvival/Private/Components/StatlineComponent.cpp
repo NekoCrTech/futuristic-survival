@@ -2,6 +2,8 @@
 
 
 #include "Components/StatlineComponent.h"
+
+#include "SurvUtils.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values for this component's properties
@@ -146,5 +148,52 @@ bool UStatlineComponent::CanJump()
 void UStatlineComponent::HasJumped()
 {
 	Stamina.Adjust(0-JumpCost);
+}
+
+FSaveComponentData UStatlineComponent::GetSaveComponentData_Implementation()
+{
+	FSaveComponentData Ret;
+
+	Ret.ComponentClass = this->GetClass();
+	Ret.RawData.Add(Health.GetSaveString()); // index: 0
+	Ret.RawData.Add(Stamina.GetSaveString()); // index: 1
+	Ret.RawData.Add(Energy.GetSaveString()); // index: 2
+	Ret.RawData.Add(Thirst.GetSaveString()); // index: 3
+	Ret.RawData.Add(Hunger.GetSaveString()); // index: 4
+	// Any addition raw data adds here, need to be included in SetSaveComponentData_Implementation function
+	
+	return Ret;
+}
+
+void UStatlineComponent::SetSaveComponentData_Implementation(FSaveComponentData Data)
+{
+	TArray<FString> Parts;
+	for (int i = 0; i < Data.RawData.Num(); i++)
+	{
+		Parts.Empty();
+		Parts = ChopString(Data.RawData[i], '|');
+		switch (i)
+		{
+			case 0:
+				Health.UpdateFromSaveString(Parts);
+				break;
+			case 1:
+				Stamina.UpdateFromSaveString(Parts);
+				break;
+			case 2:
+				Energy.UpdateFromSaveString(Parts);
+				break;
+			case 3:
+				Thirst.UpdateFromSaveString(Parts);
+				break;
+			case 4:
+				Hunger.UpdateFromSaveString(Parts);
+				break;
+		default:
+				// TODO:Log Error
+				break;
+			
+		}
+	}
 }
 
