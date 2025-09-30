@@ -4,7 +4,7 @@
 #include "Save/SaveActorInterface.h"
 
 // Add default functionality here for any ISaveActorInterface functions that are not pure virtual.
-FGuid ISaveActorInterface::GetActorID_Implementation()
+FGuid ISaveActorInterface::GetActorSaveID_Implementation()
 {
 	FGuid Ret;
 	Ret.Invalidate();

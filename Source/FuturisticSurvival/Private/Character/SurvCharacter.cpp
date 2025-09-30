@@ -13,15 +13,22 @@ ASurvCharacter::ASurvCharacter()
 
 	Statline = CreateDefaultSubobject<UStatlineComponent>(TEXT("Statline"));
 	Statline->SetMovementCompReference(GetCharacterMovement());
+
+	SaveActorID = FGuid::NewGuid();
 }
 
 void ASurvCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (!SaveActorID.IsValid())
+	{
+		SaveActorID = FGuid::NewGuid();
+	}
 	
 }
 
-bool ASurvCharacter::CanJump() const
+bool ASurvCharacter::CanCharJump() const
 {
 	return Statline->CanJump();
 }
@@ -52,6 +59,23 @@ void ASurvCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+FGuid ASurvCharacter::GetActorSaveID_Implementation()
+{
+	
+	return SaveActorID;
+}
+
+FSaveActorData ASurvCharacter::GetSaveData_Implementation()
+{
+	FSaveActorData Ret;
+
+	Ret.ActorClass = this->GetClass();
+	Ret.ActorTransform = this->GetTransform();
+	Ret.bWasSpawned = this->bWasSpawned;
+	
+	return Ret;
 }
 
 

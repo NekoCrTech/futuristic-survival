@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Save/SaveActorInterface.h"
 #include "SurvCharacter.generated.h"
 
 UCLASS()
-class FUTURISTICSURVIVAL_API ASurvCharacter : public ACharacter
+class FUTURISTICSURVIVAL_API ASurvCharacter : public ACharacter, public ISaveActorInterface
 {
 	GENERATED_BODY()
 
@@ -16,10 +17,13 @@ public:
 	ASurvCharacter();
 	virtual void Tick(float DeltaTime) override;
 
+	virtual FGuid          GetActorSaveID_Implementation() override;
+	virtual FSaveActorData GetSaveData_Implementation() override;
+
 protected:
 	virtual void BeginPlay() override;
 
-	bool CanJump() const;
+	bool CanCharJump() const;
 	void HasJumped();
 
 	bool CanSprint() const;
@@ -27,7 +31,13 @@ protected:
 	void SetSneaking(const bool& IsSneaking);
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
 	 TObjectPtr<class UStatlineComponent> Statline;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
+	FGuid SaveActorID;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
+	bool bWasSpawned = false;
 
 };

@@ -37,8 +37,8 @@ class FUTURISTICSURVIVAL_API ISaveActorInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent)
-	FGuid GetActorID();
-	virtual FGuid GetActorID_Implementation();
+	FGuid GetActorSaveID();
+	virtual FGuid GetActorSaveID_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent)
 	FSaveActorData GetSaveData();

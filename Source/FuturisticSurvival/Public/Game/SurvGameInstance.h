@@ -27,6 +27,7 @@ private:
 
 	void CreateSaveSlot();
 	void GatherActorData();
+	void LoadGame();
 
 public:
 
@@ -34,4 +35,9 @@ public:
 	void AddActorData(const FGuid& ActorID, FSaveActorData ActorData);
 	UFUNCTION(BlueprintCallable)
 	FSaveActorData GetActorData(const FGuid& ActorID);
+
+	UFUNCTION(BlueprintCallable)
+	void DEV_SaveGame();
+	UFUNCTION(BlueprintCallable)
+	void DEV_LoadGame();
 };
