@@ -22,3 +22,7 @@ bool ADoorBase::IsInteractable_Implementation() const
 {
 	return true;
 }
+
+
+
+

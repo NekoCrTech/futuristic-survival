@@ -13,9 +13,13 @@ class FUTURISTICSURVIVAL_API ASurvActor : public AActor, public ISaveActorInterf
 	GENERATED_BODY()
 	
 private:
-	FGuid SaveID;
+	
 
 protected:
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	FGuid SaveID;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	bool bWasSpawned = false;
 	
 	virtual void BeginPlay() override;
 
@@ -28,4 +32,5 @@ public:
 	virtual FGuid GetActorSaveID_Implementation();
 	void SetActorGUID_Implementation(const FGuid& NewGiud);
 	virtual FSaveActorData GetSaveData_Implementation();
+	void UpdateFromSave_Implementation();
 };

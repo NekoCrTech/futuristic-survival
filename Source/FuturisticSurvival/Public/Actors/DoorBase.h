@@ -31,5 +31,5 @@ public:
 	FText GetInteractionText_Implementation();
 	void Interact_Implementation(class ASurvCharacter* Caller);
 	bool IsInteractable_Implementation() const;
-	
+		
 };
