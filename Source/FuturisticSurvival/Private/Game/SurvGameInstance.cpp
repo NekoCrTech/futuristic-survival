@@ -163,7 +163,7 @@ void USurvGameInstance::LoadGame()
 		FObjectAndNameAsStringProxyArchive Ar(NemReader,true);
 		Ar.ArIsSaveGame = true;
 		Actor->Serialize(Ar);
-
+		Inter->Execute_UpdateFromSave(Actor);
 		for (auto ActorComp : Actor->GetComponents())
 		{
 			if (!ActorComp->Implements<USaveActorInterface>())

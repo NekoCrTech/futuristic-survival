@@ -12,9 +12,15 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "FuturisticSurvival.h"
+#include "Interaction/InteractionInterface.h"
+#include "Components/SphereComponent.h"
+#include "Logger.h"
 
 ASurvPlayerCharacter::ASurvPlayerCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bTickEvenWhenPaused = false;
+	
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
@@ -42,6 +48,21 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	// Create Interaction Trigger
+	InteractionTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("Interaction Trigger Volume"));
+	InteractionTrigger->SetupAttachment(RootComponent);
+	InteractionTrigger->SetRelativeScale3D(FVector(10.f));
+	InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin);
+	InteractionTrigger->OnComponentEndOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd);
+}
+
+void ASurvPlayerCharacter::Tick(float DeltaTime)
+{
+	if(bEnableRayTrace)
+	{
+		TraceForInteraction();
+	}
 }
 
 void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -63,6 +84,8 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
+		// Interacting
+		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::OnInteract);
 	}
 }
 
@@ -71,6 +94,66 @@ void ASurvPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	SaveActorID.Invalidate();
 }
+
+//-------------------
+// Interaction System
+//-------------------
+
+void ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                                                            int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!OtherActor->Implements<UInteractionInterface>())
+	{
+		return;
+	}
+	InteractableActors.Add(OtherActor);
+	bEnableRayTrace = true;
+}
+
+void ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex)
+{
+	if (!OtherActor->Implements<UInteractionInterface>())
+	{
+		return;
+	}
+	InteractableActors.Remove(OtherActor);
+	bEnableRayTrace = InteractableActors.Num() > 0;
+}
+
+void ASurvPlayerCharacter::UpdateInteractionText_Implementation()
+{
+	UpdateInteractionText();
+}
+
+void ASurvPlayerCharacter::TraceForInteraction()
+{
+	FCollisionQueryParams LTParams = FCollisionQueryParams(FName(TEXT("InteractionTrace")), true, this);
+	LTParams.bReturnPhysicalMaterial = false;
+	LTParams.bReturnFaceIndex = false;
+	
+	GetWorld()->DebugDrawTraceTag = DEBUG_INTERACTION_TRACE ? TEXT("InteractionTrace") : TEXT("NONE");
+	
+	FHitResult LTHit(ForceInit);
+	FVector LTStart = FollowCamera->GetComponentLocation();
+	float SearchLength = (FollowCamera->GetComponentLocation() - CameraBoom->GetComponentLocation()).Length();
+	SearchLength += InteractionTraceLength;
+	FVector LTEnd = (FollowCamera->GetForwardVector() * SearchLength)+LTStart;
+	
+	GetWorld()->LineTraceSingleByChannel(LTHit, LTStart, LTEnd, ECC_Visibility, LTParams);
+
+	UpdateInteractionText_Implementation();
+	if(!LTHit.bBlockingHit || !LTHit.GetActor()->Implements<UInteractionInterface>())
+	{
+		InteractionActor = nullptr;
+		return;
+	}
+	InteractionActor = LTHit.GetActor();
+}
+
+//------------------
+// Actions on Inputs
+//------------------
 
 void ASurvPlayerCharacter::DoMove(float Right, float Forward)
 {
@@ -138,6 +221,22 @@ void ASurvPlayerCharacter::SneakOff()
 {
 	SetSneaking(false);
 	UnCrouch();
+}
+
+void ASurvPlayerCharacter::OnInteract()
+{
+	if(InteractionActor == nullptr)
+	{
+		return;
+	}
+	IInteractionInterface* Inter = Cast<IInteractionInterface>(InteractionActor);
+	if(Inter == nullptr)
+	{
+		Logger::GetInstance()->AddMessage("ASurvPlayerCharacter::OnInteract - Failed to cast to InteractionInterface", EL_ERROR);
+		return;
+	}
+	//Inter->Interact_Implementation(this);
+	Inter->Execute_Interact(InteractionActor, this);
 }
 
 
