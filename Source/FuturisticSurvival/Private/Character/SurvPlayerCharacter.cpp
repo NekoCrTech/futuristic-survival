@@ -66,6 +66,12 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	}
 }
 
+void ASurvPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	SaveActorID.Invalidate();
+}
+
 void ASurvPlayerCharacter::DoMove(float Right, float Forward)
 {
 	if (GetController() != nullptr)
@@ -106,7 +112,7 @@ void ASurvPlayerCharacter::Look(const FInputActionValue& Value)
 
 void ASurvPlayerCharacter::PlayerJump()
 {
-	if (CanJump())
+	if (CanCharJump())
 	{
 		HasJumped();
 	}
@@ -133,3 +139,5 @@ void ASurvPlayerCharacter::SneakOff()
 	SetSneaking(false);
 	UnCrouch();
 }
+
+

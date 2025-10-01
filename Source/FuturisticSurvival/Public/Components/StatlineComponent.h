@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Enums/StatEnum.h"
+#include "Save/SaveActorInterface.h"
 #include "Structs/Stat.h"
 #include "StatlineComponent.generated.h"
 
@@ -12,7 +13,7 @@
 class UCharacterMovementComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class FUTURISTICSURVIVAL_API UStatlineComponent : public UActorComponent
+class FUTURISTICSURVIVAL_API UStatlineComponent : public UActorComponent, public ISaveActorInterface
 {
 	GENERATED_BODY()
 
@@ -37,22 +38,27 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HasJumped();
 
+	virtual FSaveComponentData GetSaveComponentData_Implementation();
+	virtual void SetSaveComponentData_Implementation(FSaveComponentData Data);
+	
+
 protected:
 	virtual void BeginPlay() override;
 
 private:
 
+	UPROPERTY()
 	UCharacterMovementComponent* OwningCharMovementComponent;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Stats")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Health;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Stats")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Stamina;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Stats")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Energy;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Stats")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Thirst = FStat(100,100,-0.25);
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Stats")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Hunger = FStat(100,100,-0.125);
 	
 
