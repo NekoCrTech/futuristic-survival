@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Logger.h"
 #include "Stat.generated.h"
 
 USTRUCT(BlueprintType)
@@ -76,7 +77,7 @@ public:
 	{
 		if (Parts.Num() != 3)
 		{
-			//TODO: Log Error
+			Logger::GetInstance()->AddMessage("FStat::UpdateFromSaveString called with other than 3 parts", ERRORLEVEL::EL_WARNING);
 			return;
 		}
 		Current = FCString::Atof(*Parts[0]);

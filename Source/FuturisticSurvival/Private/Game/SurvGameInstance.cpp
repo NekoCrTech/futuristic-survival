@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Save/SurvSaveGame.h"
 #include "EngineUtils.h"
+#include "Logger.h"
 #include <Serialization/ObjectAndNameAsStringProxyArchive.h>
 
 #include "GameFramework/Character.h"
@@ -114,6 +115,7 @@ void USurvGameInstance::LoadGame()
 {
 	if (!UGameplayStatics::DoesSaveGameExist(SaveGameName, 0))
 	{
+		Logger::GetInstance()->AddMessage("Load game called with invalid save name", ERRORLEVEL::EL_WARNING);
 		//TODO: Add logging and error message about missing save game
 		return;
 	}

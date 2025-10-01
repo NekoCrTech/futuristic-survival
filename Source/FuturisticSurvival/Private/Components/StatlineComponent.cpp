@@ -4,6 +4,7 @@
 #include "Components/StatlineComponent.h"
 
 #include "SurvUtils.h"
+#include "Logger.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values for this component's properties
@@ -107,7 +108,7 @@ float UStatlineComponent::GetStatPercentile(const EStat Stat) const
 	case EStat::Hunger:
 		return Hunger.Percentile();
 	default:
-		//TODO: Log invalid stat;
+		Logger::GetInstance()->AddMessage("GetStatPerctile called with invalid stat type", ERRORLEVEL::EL_WARNING);
 		break;
 	}
 	return -1.f;
