@@ -22,3 +22,13 @@ FName USurvSaveGame::GetCurrentLevel()
 {
 	return CurrentlyLoadedLevel;
 }
+
+void USurvSaveGame::SetPlayerData(FSaveActorData Data)
+{
+	PlayerData = Data;
+}
+
+FSaveActorData USurvSaveGame::GetPlayerData()
+{
+	return PlayerData;
+}

@@ -7,6 +7,8 @@
 #include "EngineUtils.h"
 #include <Serialization/ObjectAndNameAsStringProxyArchive.h>
 
+#include "GameFramework/Character.h"
+
 
 USurvGameInstance::USurvGameInstance()
 {
@@ -66,6 +68,46 @@ void USurvGameInstance::GatherActorData()
 
 		SaveableActorData.Add(SAI, SAD);
 	}
+
+	GatherPlayerData();
+}
+
+void USurvGameInstance::GatherPlayerData()
+{
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	ISaveActorInterface* Inter = Cast<ISaveActorInterface>(PlayerCharacter);
+	if (Inter == nullptr)
+	{
+		// log error
+		return;
+	}
+	FSaveActorData SAD = Inter->GetSaveData_Implementation();
+	FMemoryWriter NemWriter(SAD.ByteData);
+	FObjectAndNameAsStringProxyArchive Ar(NemWriter,true);
+	Ar.ArIsSaveGame = true;
+	PlayerCharacter->Serialize(Ar);
+
+	for ( auto ActorComp : PlayerCharacter->GetComponents())
+	{
+		if (!ActorComp->Implements<USaveActorInterface>())
+		{
+			continue;
+		}
+		ISaveActorInterface* InterComp = Cast<ISaveActorInterface>(ActorComp);
+		if (InterComp == nullptr)
+		{
+			continue;
+		}
+		FSaveComponentData SCD = InterComp->GetSaveComponentData_Implementation();
+		FMemoryWriter CompNemWriter(SCD.ByteData);
+		FObjectAndNameAsStringProxyArchive CAr(CompNemWriter, true);
+		CAr.ArIsSaveGame = true;
+		ActorComp->Serialize(CAr);
+		SCD.ComponentClass = ActorComp->GetClass();
+
+		SAD.ComponentData.Add(SCD);
+	}
+	PlayerData = SAD;
 }
 
 void USurvGameInstance::LoadGame()
@@ -79,6 +121,7 @@ void USurvGameInstance::LoadGame()
 	SaveableActorData.Empty();
 	SaveGameObject = Cast<USurvSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveGameName, 0));
 	SaveableActorData = SaveGameObject->GetSaveActorData();
+	PlayerData = SaveGameObject->GetPlayerData();
 
 	for (TTuple<FGuid,FSaveActorData> SAD : SaveableActorData)
 	{
@@ -90,7 +133,7 @@ void USurvGameInstance::LoadGame()
 			{
 				continue;
 			}
-			//Set Actor Guid
+			Inter->SetActorGUID_Implementation(SAD.Key);
 		}
 	}
 
@@ -157,6 +200,63 @@ void USurvGameInstance::LoadGame()
 			}
 		}
 	}
+
+	SetPlayerData();
+}
+
+void USurvGameInstance::SetPlayerData()
+{
+	ACharacter* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	ISaveActorInterface* Inter = Cast<ISaveActorInterface>(PlayerCharacter);
+	if (Inter == nullptr)
+	{
+		// log error
+		return;
+	}
+
+	PlayerCharacter->SetActorTransform(PlayerData.ActorTransform);
+	FMemoryReader NemReader(PlayerData.ByteData);
+	FObjectAndNameAsStringProxyArchive Ar(NemReader,true);
+	Ar.ArIsSaveGame = true;
+	PlayerCharacter->Serialize(Ar);
+
+	for (auto ActorComp : PlayerCharacter->GetComponents())
+	{
+		if (!ActorComp->Implements<USaveActorInterface>())
+		{
+			continue;
+		}
+		ISaveActorInterface* InterComp = Cast<ISaveActorInterface>(ActorComp);
+		if (InterComp == nullptr)
+		{
+			continue;
+		}
+		for (auto SCD : PlayerData.ComponentData)
+		{
+			/***************************************************************************
+			 *This is not safe is an actor has 2 of the same components, that are saved*
+			 *as the 1st component returned by Actor->GetComponents() will get all data*
+			 *
+			 *		One Possible option is a GUID on the Component
+			 **************************************************************************/
+				
+			if (SCD.ComponentClass != ActorComp->GetClass())
+			{
+				continue;
+			}
+
+			FMemoryReader CompNemReader(SCD.ByteData);
+			FObjectAndNameAsStringProxyArchive CAr(CompNemReader, true);
+			CAr.ArIsSaveGame = true;
+			ActorComp->Serialize(CAr);
+			if (SCD.RawData.IsEmpty())
+			{
+				break;
+			}
+			InterComp->SetSaveComponentData_Implementation(SCD);
+			break;
+		}
+	}
 }
 
 void USurvGameInstance::AddActorData(const FGuid& ActorID, FSaveActorData ActorData)
@@ -177,6 +277,7 @@ void USurvGameInstance::DEV_SaveGame()
 	}
 	GatherActorData();
 	SaveGameObject->SetSaveActorData(SaveableActorData);
+	SaveGameObject->SetPlayerData(PlayerData);
 	UGameplayStatics::SaveGameToSlot(SaveGameObject, SaveGameName, 0);
 }
 

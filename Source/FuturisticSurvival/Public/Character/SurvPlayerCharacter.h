@@ -59,10 +59,12 @@ protected:
 
 	void PlayerJump();
 
-	void SprintOn();
-	void SprintOff();
-	void SneakOn();
-	void SneakOff();
+	void         SprintOn();
+	void         SprintOff();
+	void         SneakOn();
+	void         SneakOff();
+	
+	virtual void BeginPlay() override;
 
 private:
 	

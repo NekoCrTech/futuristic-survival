@@ -17,17 +17,24 @@ class FUTURISTICSURVIVAL_API USurvGameInstance : public UGameInstance
 
 private:
 
+	UPROPERTY()
 	TMap<FGuid, FSaveActorData> SaveableActorData;
 	UPROPERTY()
 	class USurvSaveGame* SaveGameObject = nullptr;
+	UPROPERTY()
 	FString SaveGameName = TEXT("DEFAULT");
+	UPROPERTY()
 	FName CurrentlyLoadedLevel = "NONE";
+	UPROPERTY()
+	FSaveActorData PlayerData;
 
 	USurvGameInstance();
 
 	void CreateSaveSlot();
 	void GatherActorData();
+	void GatherPlayerData();
 	void LoadGame();
+	void SetPlayerData();
 
 public:
 

@@ -78,4 +78,14 @@ FSaveActorData ASurvCharacter::GetSaveData_Implementation()
 	return Ret;
 }
 
+void ASurvCharacter::SetActorGUID_Implementation(const FGuid& NewGiud)
+{
+	if (SaveActorID.IsValid())
+	{
+		SaveActorID.Invalidate();
+	}
+
+	SaveActorID = NewGiud;
+}
+
 

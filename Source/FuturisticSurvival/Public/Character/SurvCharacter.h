@@ -17,10 +17,18 @@ public:
 	ASurvCharacter();
 	virtual void Tick(float DeltaTime) override;
 
-	virtual FGuid          GetActorSaveID_Implementation() override;
+	virtual FGuid GetActorSaveID_Implementation() override;
 	virtual FSaveActorData GetSaveData_Implementation() override;
+	virtual void SetActorGUID_Implementation(const FGuid& NewGiud);
 
 protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
+	FGuid SaveActorID;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
+	bool bWasSpawned = false;
+	
 	virtual void BeginPlay() override;
 
 	bool CanCharJump() const;
@@ -34,10 +42,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
 	 TObjectPtr<class UStatlineComponent> Statline;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
-	FGuid SaveActorID;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
-	bool bWasSpawned = false;
+	
 
 };

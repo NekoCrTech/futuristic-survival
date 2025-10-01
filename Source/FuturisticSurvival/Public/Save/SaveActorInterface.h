@@ -49,10 +49,14 @@ class FUTURISTICSURVIVAL_API ISaveActorInterface
 	GENERATED_BODY()
 
 public:
-
+	
 	UFUNCTION(BlueprintNativeEvent)
 	FGuid GetActorSaveID();
 	virtual FGuid GetActorSaveID_Implementation();
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void SetActorGUID(const FGuid& NewGiud);
+	virtual void SetActorGUID_Implementation(const FGuid& NewGiud);
 
 	UFUNCTION(BlueprintNativeEvent)
 	FSaveActorData GetSaveData();
