@@ -36,41 +36,49 @@ public:
 	void OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnInteractionTriggerOverlapEnd(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void UpdateInteractionText();
+	void UpdateInteractionText_Implementation();
 	
 protected:
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 #pragma region Input
-                 	UPROPERTY(EditAnywhere, Category="Input")
-                 	UInputAction* JumpAction;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* JumpAction;
                  
-                 	UPROPERTY(EditAnywhere, Category="Input")
-                 	UInputAction* MoveAction;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* MoveAction;
                  
-                 	UPROPERTY(EditAnywhere, Category="Input")
-                 	UInputAction* LookAction;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* LookAction;
                  	
-                 	UPROPERTY(EditAnywhere, Category="Input")
-                 	UInputAction* MouseLookAction;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* MouseLookAction;
                  
-                 	UPROPERTY(EditAnywhere, Category="Input")
-                 	UInputAction* SprintAction;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* SprintAction;
                  
-                 	UPROPERTY(EditAnywhere, Category="Input")
-                 	UInputAction* SneakAction;
-                 
-                 #pragma endregion
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* SneakAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* InteractAction;
+#pragma endregion
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 
 	void PlayerJump();
 
-	void         SprintOn();
-	void         SprintOff();
-	void         SneakOn();
-	void         SneakOff();
+	void SprintOn();
+	void SprintOff();
+	void SneakOn();
+	void SneakOff();
+	
+	void OnInteract();
 	
 	virtual void BeginPlay() override;
 
@@ -89,6 +97,8 @@ private:
 	bool bEnableRayTrace = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta = (AllowPrivateAccess = "true"))
 	TArray<AActor*> InteractableActors;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta = (AllowPrivateAccess = "true"))
+	AActor* InteractionActor = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings", meta = (AllowPrivateAccess = "true"))
 	float InteractionTraceLength = 200.f;
 

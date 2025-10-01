@@ -14,6 +14,7 @@
 #include "FuturisticSurvival.h"
 #include "Interaction/InteractionInterface.h"
 #include "Components/SphereComponent.h"
+#include "Logger.h"
 
 ASurvPlayerCharacter::ASurvPlayerCharacter()
 {
@@ -52,8 +53,8 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	InteractionTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("Interaction Trigger Volume"));
 	InteractionTrigger->SetupAttachment(RootComponent);
 	InteractionTrigger->SetRelativeScale3D(FVector(10.f));
-	InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin);
-	InteractionTrigger->OnComponentEndOverlap.AddDynamic(this, ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd);
+	InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin);
+	InteractionTrigger->OnComponentEndOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd);
 }
 
 void ASurvPlayerCharacter::Tick(float DeltaTime)
@@ -63,6 +64,40 @@ void ASurvPlayerCharacter::Tick(float DeltaTime)
 		TraceForInteraction();
 	}
 }
+
+void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+{
+	// Set up action bindings
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		// Jumping
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::PlayerJump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		// Moving
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Move);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::SprintOn);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvPlayerCharacter::SprintOff);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::SprintOff);
+		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::SneakOn);
+		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Completed, this, &ASurvPlayerCharacter::SneakOff);
+		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::SneakOff);
+		// Looking
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
+		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
+		// Interacting
+		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::OnInteract);
+	}
+}
+
+void ASurvPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	SaveActorID.Invalidate();
+}
+
+//-------------------
+// Interaction System
+//-------------------
 
 void ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                                             int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -86,32 +121,9 @@ void ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd(UPrimitiveComponent* O
 	bEnableRayTrace = InteractableActors.Num() > 0;
 }
 
-void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void ASurvPlayerCharacter::UpdateInteractionText_Implementation()
 {
-	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::PlayerJump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Move);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::SprintOn);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvPlayerCharacter::SprintOff);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::SprintOff);
-		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::SneakOn);
-		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Completed, this, &ASurvPlayerCharacter::SneakOff);
-		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::SneakOff);
-		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
-		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
-	}
-}
-
-void ASurvPlayerCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	SaveActorID.Invalidate();
+	UpdateInteractionText();
 }
 
 void ASurvPlayerCharacter::TraceForInteraction()
@@ -127,7 +139,18 @@ void ASurvPlayerCharacter::TraceForInteraction()
 	FVector LTEnd = (FollowCamera->GetForwardVector() * SearchLength)+LTStart;
 	
 	GetWorld()->LineTraceSingleByChannel(LTHit, LTStart, LTEnd, ECC_Visibility, LTParams);
+
+	if(!LTHit.bBlockingHit || !LTHit.GetActor()->Implements<UInteractionInterface>())
+	{
+		InteractionActor = nullptr;
+		return;
+	}
+	InteractionActor = LTHit.GetActor();
 }
+
+//------------------
+// Actions on Inputs
+//------------------
 
 void ASurvPlayerCharacter::DoMove(float Right, float Forward)
 {
@@ -195,6 +218,22 @@ void ASurvPlayerCharacter::SneakOff()
 {
 	SetSneaking(false);
 	UnCrouch();
+}
+
+void ASurvPlayerCharacter::OnInteract()
+{
+	if(InteractionActor == nullptr)
+	{
+		return;
+	}
+	IInteractionInterface* Inter = Cast<IInteractionInterface>(InteractionActor);
+	if(Inter == nullptr)
+	{
+		Logger::GetInstance()->AddMessage("ASurvPlayerCharacter::OnInteract - Failed to cast to InteractionInterface", EL_ERROR);
+		return;
+	}
+	//Inter->Interact_Implementation(this);
+	Inter->Execute_Interact(InteractionActor, this);
 }
 
 
