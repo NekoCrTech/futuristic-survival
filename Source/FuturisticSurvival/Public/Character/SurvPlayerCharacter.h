@@ -102,6 +102,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings", meta = (AllowPrivateAccess = "true"))
 	float InteractionTraceLength = 200.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DEBUG", meta = (AllowPrivateAccess = "true"))
+	bool DEBUG_INTERACTION_TRACE = false;
+
 	void TraceForInteraction();
 	
 };

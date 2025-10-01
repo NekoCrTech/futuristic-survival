@@ -131,7 +131,9 @@ void ASurvPlayerCharacter::TraceForInteraction()
 	FCollisionQueryParams LTParams = FCollisionQueryParams(FName(TEXT("InteractionTrace")), true, this);
 	LTParams.bReturnPhysicalMaterial = false;
 	LTParams.bReturnFaceIndex = false;
-	GetWorld()->DebugDrawTraceTag = TEXT("InteractionTrace");
+	
+	GetWorld()->DebugDrawTraceTag = DEBUG_INTERACTION_TRACE ? TEXT("InteractionTrace") : TEXT("NONE");
+	
 	FHitResult LTHit(ForceInit);
 	FVector LTStart = FollowCamera->GetComponentLocation();
 	float SearchLength = (FollowCamera->GetComponentLocation() - CameraBoom->GetComponentLocation()).Length();
@@ -140,6 +142,7 @@ void ASurvPlayerCharacter::TraceForInteraction()
 	
 	GetWorld()->LineTraceSingleByChannel(LTHit, LTStart, LTEnd, ECC_Visibility, LTParams);
 
+	UpdateInteractionText_Implementation();
 	if(!LTHit.bBlockingHit || !LTHit.GetActor()->Implements<UInteractionInterface>())
 	{
 		InteractionActor = nullptr;

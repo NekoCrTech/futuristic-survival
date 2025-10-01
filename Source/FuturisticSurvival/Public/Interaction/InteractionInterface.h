@@ -31,4 +31,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	bool IsInteractable() const;
 	bool IsInteractable_Implementation() const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetInteractionWidgetIsEnabled(bool bIsEnabled);
+	
 };
