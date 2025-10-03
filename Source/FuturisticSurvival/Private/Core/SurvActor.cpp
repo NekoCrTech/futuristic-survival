@@ -6,6 +6,8 @@
 
 ASurvActor::ASurvActor()
 {
+	Root=CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	RootComponent = Root;
  	
 	PrimaryActorTick.bCanEverTick = true;
 
