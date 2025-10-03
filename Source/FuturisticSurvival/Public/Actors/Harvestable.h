@@ -6,6 +6,7 @@
 #include "Core/SurvActor.h"
 #include "Harvestable.generated.h"
 
+class APickupActor;
 /**
  * 
  */
@@ -27,6 +28,7 @@ private:
 
 	void SetHarvestState();
 	void Harvest();
+	void SpawnPickups();
 
 	
 
@@ -37,11 +39,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings", meta=(AllowPrivateAccess = "true"))
 	float Health = 100;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings", meta=(AllowPrivateAccess = "true"))
-	AActor* PickUpActor; //TODO: Change to pickup actor when inventory is implemented
+	TSubclassOf<APickupActor> PickUpActor;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings", meta=(AllowPrivateAccess = "true"))
 	int DropSpawnQnt = 2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings", meta=(AllowPrivateAccess = "true"))
 	FString DamageCauserTag = "DamageCauser";
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Settings", meta=(AllowPrivateAccess = "true"))
+	TArray<FTransform> SpawnPickupsTransforms;
 
 public:
 	

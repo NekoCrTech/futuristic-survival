@@ -20,19 +20,19 @@ class FUTURISTICSURVIVAL_API IInteractionInterface
 
 public:
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	FText GetInteractionText();
 	FText GetInteractionText_Implementation();
 	
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	void Interact(class ASurvCharacter* Caller);
 	void Interact_Implementation(class ASurvCharacter* Caller);
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	bool IsInteractable() const;
 	bool IsInteractable_Implementation() const;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	void SetInteractionWidgetIsEnabled(bool bIsEnabled);
 	
 };

@@ -11,11 +11,11 @@ struct FSaveComponentData
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	TArray<uint8> ByteData;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Save & Load")
 	UClass* ComponentClass;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Save & Load")
 	TArray<FString> RawData;
 };
 
@@ -24,15 +24,15 @@ struct FSaveActorData
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	FTransform ActorTransform;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	TArray<uint8> ByteData;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	TArray<FSaveComponentData> ComponentData;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	bool bWasSpawned = false;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	UClass* ActorClass;	
 };
 
@@ -50,27 +50,27 @@ class FUTURISTICSURVIVAL_API ISaveActorInterface
 
 public:
 	
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save & Load")
 	FGuid GetActorSaveID();
 	virtual FGuid GetActorSaveID_Implementation();
 	
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save & Load")
 	void SetActorGUID(const FGuid& NewGiud);
 	virtual void SetActorGUID_Implementation(const FGuid& NewGiud);
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save & Load")
 	FSaveActorData GetSaveData();
 	virtual FSaveActorData GetSaveData_Implementation();
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save & Load")
 	void UpdateFromSave();
 	void UpdateFromSave_Implementation();
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save & Load")
 	FSaveComponentData GetSaveComponentData();
 	virtual FSaveComponentData GetSaveComponentData_Implementation();
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save & Load")
 	void SetSaveComponentData(FSaveComponentData Data);
 	virtual void SetSaveComponentData_Implementation(FSaveComponentData Data);
 };

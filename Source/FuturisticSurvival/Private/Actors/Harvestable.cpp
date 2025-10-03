@@ -2,6 +2,8 @@
 
 
 #include "Actors/Harvestable.h"
+#include "Actors/PickupActor.h"
+
 
 AHarvestable::AHarvestable()
 {
@@ -29,14 +31,29 @@ void AHarvestable::SetHarvestState()
 void AHarvestable::Harvest()
 {
 	bIsHarvested = true;
-	//TODO: Add in Pickup spawn logic here
 	SetHarvestState();
+	SpawnPickups();
 	OnHarvestedBP_Implementation();
+}
+
+void AHarvestable::SpawnPickups()
+{
+	if(!IsValid(PickUpActor))
+	{
+		return;
+	}
+	for( int i=0; i < DropSpawnQnt; i++ )
+	{
+		FVector HarvestableLoc = this->GetActorLocation();
+		FTransform SpawnTrans = SpawnPickupsTransforms[i];
+		SpawnTrans.SetLocation(SpawnTrans.GetLocation() + HarvestableLoc);
+		GetWorld()->SpawnActor<APickupActor>(PickUpActor, SpawnTrans);
+	}
 }
 
 float AHarvestable::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
-	if(!DamageCauser->Tags.Contains(DamageCauserTag))
+	if(bIsHarvested || !DamageCauser->Tags.Contains(DamageCauserTag))
 	{
 		return 0.0f;
 	}
