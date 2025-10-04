@@ -28,7 +28,8 @@ void APickupActor::Interact_Implementation(class ASurvCharacter* Caller)
 	// return;
 }
 
-bool APickupActor::IsInteractable_Implementation()
+bool APickupActor::IsInteractable_Implementation() const
 {
 	return true;
 }
+

@@ -76,11 +76,7 @@ void AHarvestable::OnHarvestedBP_Implementation()
 
 FSaveActorData AHarvestable::GetSaveData_Implementation()
 {
-	FSaveActorData Ret;
-	Ret.ActorTransform = this->GetActorTransform();
-	Ret.ActorClass = this->GetClass();
-	Ret.bWasSpawned = this->bWasSpawned;
-	return Ret;
+	return FSaveActorData(GetActorTransform(),bWasSpawned,this->GetClass());
 }
 
 void AHarvestable::UpdateFromSave_Implementation()

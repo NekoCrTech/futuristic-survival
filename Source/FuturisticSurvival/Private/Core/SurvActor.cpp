@@ -32,7 +32,7 @@ void ASurvActor::ChangeMeshCompVisibility(UStaticMeshComponent* MeshComp, bool V
 	
 	MeshComp->SetHiddenInGame(!Visible);
 	MeshComp->SetCollisionEnabled(NewCollision);
-	
+	MarkComponentsRenderStateDirty();
 }
 
 void ASurvActor::Tick(float DeltaTime)
@@ -57,16 +57,12 @@ void ASurvActor::SetActorGUID_Implementation(const FGuid& NewGiud)
 
 FSaveActorData ASurvActor::GetSaveData_Implementation()
 {
-	FSaveActorData Ret;
-	Ret.ActorTransform = this->GetActorTransform();
-	Ret.ActorClass = this->GetClass();
-	Ret.bWasSpawned = this->bWasSpawned;
-	return Ret;
+	return FSaveActorData(this->GetActorTransform(),this->bWasSpawned, this->GetClass());
 }
 
 void ASurvActor::UpdateFromSave_Implementation()
 {
-	Execute_UpdateFromSave(this);
+	
 }
 
 void ASurvActor::SetWasSpawned(const bool& IsSpawned)

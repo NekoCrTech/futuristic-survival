@@ -88,7 +88,7 @@ void ASurvCharacter::SetActorGUID_Implementation(const FGuid& NewGiud)
 	SaveActorID = NewGiud;
 }
 
-void ASurvCharacter::SetWasSpawned(bool IsSpawned)
+void ASurvCharacter::SetWasSpawned(const bool& IsSpawned)
 {
 	bWasSpawned = IsSpawned;
 }

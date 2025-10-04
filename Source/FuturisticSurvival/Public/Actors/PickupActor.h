@@ -33,9 +33,9 @@ protected:
 public:
 
 	UFUNCTION(BlueprintCallable)
-	FText GetInteractionText_Implementation();
-	void Interact_Implementation(class ASurvCharacter* Caller);
-	bool IsInteractable_Implementation();
+	FText GetInteractionText_Implementation() override;
+	void Interact_Implementation(class ASurvCharacter* Caller)override;
+	bool IsInteractable_Implementation() const override;
 	
 	
 };
