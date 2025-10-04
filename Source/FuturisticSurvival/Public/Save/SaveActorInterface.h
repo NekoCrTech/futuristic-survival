@@ -3,51 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Structs/SaveActorData.h"
+#include "Structs/SaveComponentData.h"
 #include "UObject/Interface.h"
 #include "SaveActorInterface.generated.h"
 
-USTRUCT(BlueprintType)
-struct FSaveComponentData
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
-	TArray<uint8> ByteData;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Save & Load")
-	UClass* ComponentClass;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Save & Load")
-	TArray<FString> RawData;
-};
-
-USTRUCT(BlueprintType)
-struct FSaveActorData
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
-	FTransform ActorTransform;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
-	TArray<uint8> ByteData;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
-	TArray<FSaveComponentData> ComponentData;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
-	bool bWasSpawned = false;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
-	UClass* ActorClass;
 
 
-	FSaveActorData()
-	{
-		
-	};
 
-	FSaveActorData(const FTransform& InActorTransform, const bool& InWasSpawned,UClass* InActorClass)
-	{
-		ActorTransform = InActorTransform;
-		bWasSpawned = InWasSpawned;
-		ActorClass = InActorClass;
-	};
-};
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
