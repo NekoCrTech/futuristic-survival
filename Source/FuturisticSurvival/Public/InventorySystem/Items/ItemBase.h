@@ -3,31 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "Enums/ItemQuality.h"
+#include "Structs/ItemUiData.h"
+#include "Structs/SalvageItem.h"
 #include "ItemBase.generated.h"
-
-UENUM(BlueprintType)
-enum class EItemQuality : uint8
-{
-	Shoddy      UMETA(DisplayName = "Shoddy"),
-	Common      UMETA(DisplayName = "Common"),
-	Quality     UMETA(DisplayName = "Quality"),
-	Masterwork  UMETA(DisplayName = "Masterwork"),
-	Grandmaster UMETA(DisplayName = "Grandmaster")
-};
-
-USTRUCT(BlueprintType)
-struct FSalvageItem
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int Quantity = 1;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FText Tag;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<class UJunkItemBase> Item;
-};
 
 UCLASS(Blueprintable)
 class FUTURISTICSURVIVAL_API UItemBase : public UObject
@@ -52,5 +31,22 @@ protected:
 	UStaticMesh* Mesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true", ClampMin = "0.0"))
 	float ItemWeight = 1.0f;
-	
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	virtual void OnUse(class ASurvCharacter* Caller) {};
+
+	UFUNCTION(BlueprintCallable)
+	float GetItemWeight() const {return ItemWeight;}
+	UFUNCTION(BlueprintCallable)
+	int GetStackSize() const {return MaxStackSize;}
+	UFUNCTION(BlueprintCallable)
+	float GetStackWeight(const int& Amount) const {return ItemWeight * Amount;}
+	UFUNCTION(BlueprintCallable)
+	FItemUIData GetItemUIData() const {return FItemUIData(ItemName, ItemDescription, ItemIcon, ItemQuality);}
+	UFUNCTION(BlueprintCallable)
+	TArray<FSalvageItem> GetSalvageData() const {return SalvageItems;}
+	UFUNCTION(BlueprintCallable)
+	UStaticMesh* GetPickupMesh() const {return Mesh;}
 };
