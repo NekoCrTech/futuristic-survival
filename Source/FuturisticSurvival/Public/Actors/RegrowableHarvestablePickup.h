@@ -7,7 +7,7 @@
 #include "RegrowableHarvestablePickup.generated.h"
 
 /**
- * 
+ * RegrowableHarvestablePickup actor is for resources than can be harvested with hand and will regrow like a bush
  */
 UCLASS()
 class FUTURISTICSURVIVAL_API ARegrowableHarvestablePickup : public AHarvestablePickup
@@ -22,8 +22,7 @@ private:
 	int DaysSinceLastHarvest = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="settings", meta = (AllowPrivateAccess = "true"))
 	int ItemRegrowthAmount = 1;
-
-	ARegrowableHarvestablePickup();
+	
 
 	void ResetHarvest();
 
@@ -33,6 +32,6 @@ protected:
 
 public:
 
-	void OnDaychanged();
+	void OnDayChanged();
 	
 };

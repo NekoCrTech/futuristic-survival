@@ -69,3 +69,8 @@ void ASurvActor::UpdateFromSave_Implementation()
 	Execute_UpdateFromSave(this);
 }
 
+void ASurvActor::SetWasSpawned(const bool& IsSpawned)
+{
+	bWasSpawned = IsSpawned;
+}
+

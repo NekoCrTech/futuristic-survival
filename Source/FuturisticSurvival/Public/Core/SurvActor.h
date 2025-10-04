@@ -23,7 +23,7 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	FGuid SaveID;
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, SaveGame)
 	bool bWasSpawned = false;
 	
 	virtual void BeginPlay() override;
@@ -40,4 +40,6 @@ public:
 	void SetActorGUID_Implementation(const FGuid& NewGiud);
 	virtual FSaveActorData GetSaveData_Implementation();
 	virtual void UpdateFromSave_Implementation();
+
+	void SetWasSpawned(const bool& IsSpawned);
 };

@@ -3,11 +3,6 @@
 
 #include "Actors/RegrowableHarvestablePickup.h"
 
-ARegrowableHarvestablePickup::ARegrowableHarvestablePickup() : AHarvestablePickup()
-{
-
-}
-
 void ARegrowableHarvestablePickup::ResetHarvest()
 {
 	bIsHarvested = false;
@@ -22,7 +17,7 @@ void ARegrowableHarvestablePickup::BeginPlay()
 	//TODO: Subscribe to DayChange Delegate
 }
 
-void ARegrowableHarvestablePickup::OnDaychanged()
+void ARegrowableHarvestablePickup::OnDayChanged()
 {
 	DaysSinceLastHarvest++;
 	if(DaysSinceLastHarvest < NO_DaysToRegrow)

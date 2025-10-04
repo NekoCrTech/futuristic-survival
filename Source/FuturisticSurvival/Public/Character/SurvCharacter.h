@@ -21,6 +21,8 @@ public:
 	virtual FSaveActorData GetSaveData_Implementation() override;
 	virtual void SetActorGUID_Implementation(const FGuid& NewGiud);
 
+	void SetWasSpawned(bool IsSpawned);
+
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))

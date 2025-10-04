@@ -7,6 +7,9 @@
 #include "Interaction/InteractionInterface.h"
 #include "HarvestablePickup.generated.h"
 
+/**
+ * HarvestablePickup actor is for resources than can be harvested with hands and will not regrow like a Mercer Sphere
+ */
 
 UCLASS()
 class FUTURISTICSURVIVAL_API AHarvestablePickup : public ASurvActor, public IInteractionInterface
@@ -15,7 +18,7 @@ class FUTURISTICSURVIVAL_API AHarvestablePickup : public ASurvActor, public IInt
 
 private:
 
-	AHarvestablePickup();
+	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AActor> InventoryItem;
@@ -42,6 +45,8 @@ protected:
 	
 
 public:
+
+	AHarvestablePickup();
 	
 	UFUNCTION(BlueprintCallable)
 	FText GetInteractionText_Implementation();

@@ -6,8 +6,10 @@
 #include "Save/SurvSaveGame.h"
 #include "EngineUtils.h"
 #include "Logger.h"
+#include "Core/SurvActor.h"
 #include <Serialization/ObjectAndNameAsStringProxyArchive.h>
 
+#include "Character/SurvCharacter.h"
 #include "GameFramework/Character.h"
 
 
@@ -116,26 +118,60 @@ void USurvGameInstance::LoadGame()
 	if (!UGameplayStatics::DoesSaveGameExist(SaveGameName, 0))
 	{
 		Logger::GetInstance()->AddMessage("Load game called with invalid save name", ERRORLEVEL::EL_WARNING);
-		//TODO: Add logging and error message about missing save game
 		return;
 	}
-
+	
 	SaveableActorData.Empty();
 	SaveGameObject = Cast<USurvSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveGameName, 0));
 	SaveableActorData = SaveGameObject->GetSaveActorData();
 	PlayerData = SaveGameObject->GetPlayerData();
 
+	for (FActorIterator It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+		if(!IsValid(Actor) || !Actor->Implements<USaveActorInterface>())
+		{
+			continue;
+		}
+		ISaveActorInterface* Inter = Cast<ISaveActorInterface>(Actor);
+		if (Inter == nullptr)
+		{
+			continue;
+		}
+		if (Inter->Execute_GetSaveData(Actor).bWasSpawned)
+		{
+			Actor->Destroy();
+		}
+	}
+
 	for (TTuple<FGuid,FSaveActorData> SAD : SaveableActorData)
 	{
 		if (SAD.Value.bWasSpawned)
 		{
-			AActor* SpawnedActor = GetWorld()->SpawnActor(SAD.Value.ActorClass->StaticClass(), &SAD.Value.ActorTransform);
-			ISaveActorInterface* Inter = Cast<ISaveActorInterface>(SpawnedActor);
-			if (Inter == nullptr)
+			UClass* ToSpawnClass = SAD.Value.ActorClass;
+			bool bActorclass = false;
+			if (ToSpawnClass->IsChildOf(ASurvCharacter::StaticClass()))
 			{
+				ASurvCharacter* CSpawned = GetWorld()->SpawnActor<ASurvCharacter>(ToSpawnClass, SAD.Value.ActorTransform);
+				ISaveActorInterface* Inter = Cast<ISaveActorInterface>(CSpawned);
+				if (Inter == nullptr)
+				{
+					CSpawned->Destroy();
+					continue;
+				}
+				Inter->Execute_SetActorGUID(CSpawned, SAD.Key);
+				CSpawned->SetWasSpawned(true);
 				continue;
 			}
-			Inter->SetActorGUID_Implementation(SAD.Key);
+			ASurvActor* Spawned = GetWorld()->SpawnActor<ASurvActor>(ToSpawnClass, SAD.Value.ActorTransform);
+			ISaveActorInterface* Inter = Cast<ISaveActorInterface>(Spawned);
+			if (Inter == nullptr)
+			{
+				Spawned->Destroy();
+				continue;
+			}
+			Inter->Execute_SetActorGUID(Spawned, SAD.Key);
+			Spawned->SetWasSpawned(true);
 		}
 	}
 

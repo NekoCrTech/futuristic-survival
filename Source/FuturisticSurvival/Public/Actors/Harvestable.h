@@ -6,11 +6,12 @@
 #include "Core/SurvActor.h"
 #include "Harvestable.generated.h"
 
-class APickupActor;
+
 /**
- * 
+ * Harvestable actor is for resources than can be harvested with a tool and will not regrow like a tree
  */
 class UStaticMeshComponent;
+class APickupActor;
 
 UCLASS()
 class FUTURISTICSURVIVAL_API AHarvestable : public ASurvActor
@@ -26,6 +27,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> RemainingHarvestableMesh;
 
+	UFUNCTION(BlueprintCallable)
 	void SetHarvestState();
 	void Harvest();
 	void SpawnPickups();
@@ -50,7 +52,7 @@ protected:
 public:
 	
 	virtual FSaveActorData GetSaveData_Implementation() override;
-	void UpdateFromSave_Implementation() override;
+	virtual void UpdateFromSave_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnHarvestedBP();

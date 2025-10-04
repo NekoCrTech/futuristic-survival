@@ -45,7 +45,12 @@ void AHarvestable::SpawnPickups()
 		FVector HarvestableLoc = this->GetActorLocation();
 		FTransform SpawnTrans = SpawnPickupsTransforms[i];
 		SpawnTrans.SetLocation(SpawnTrans.GetLocation() + HarvestableLoc);
-		GetWorld()->SpawnActor<APickupActor>(PickUpActor, SpawnTrans);
+		APickupActor* Pickup = GetWorld()->SpawnActor<APickupActor>(PickUpActor, SpawnTrans);
+		if (IsValid(Pickup))
+		{
+			Pickup->SetActorTransform(SpawnTrans);
+			Pickup->SetWasSpawned(true);
+		}
 	}
 }
 
