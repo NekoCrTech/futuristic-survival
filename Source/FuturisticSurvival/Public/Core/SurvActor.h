@@ -28,6 +28,8 @@ protected:
 	
 	virtual void BeginPlay() override;
 
+	void ChangeMeshCompVisibility(UStaticMeshComponent* MeshComp, bool Visible=false, ECollisionEnabled::Type NewCollision = ECollisionEnabled::NoCollision);
+
 public:
 
 	ASurvActor();

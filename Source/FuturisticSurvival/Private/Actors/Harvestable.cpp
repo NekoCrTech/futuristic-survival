@@ -12,8 +12,7 @@ AHarvestable::AHarvestable()
 	
 	RemainingHarvestableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Remaining Mesh"));
 	RemainingHarvestableMesh->SetupAttachment(RootComponent);
-	RemainingHarvestableMesh->bHiddenInGame = true;
-	RemainingHarvestableMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ChangeMeshCompVisibility(RemainingHarvestableMesh);
 }
 
 void AHarvestable::SetHarvestState()
@@ -23,8 +22,7 @@ void AHarvestable::SetHarvestState()
 		return;
 	}
 	HarvestableMesh->DestroyComponent();
-	RemainingHarvestableMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	RemainingHarvestableMesh->SetHiddenInGame(false);
+	ChangeMeshCompVisibility(RemainingHarvestableMesh,true, ECollisionEnabled::QueryAndPhysics);
 	MarkComponentsRenderStateDirty();
 }
 

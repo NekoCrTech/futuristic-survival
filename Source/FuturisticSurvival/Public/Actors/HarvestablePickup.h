@@ -1,0 +1,52 @@
+// developed by Neko
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Core/SurvActor.h"
+#include "Interaction/InteractionInterface.h"
+#include "HarvestablePickup.generated.h"
+
+
+UCLASS()
+class FUTURISTICSURVIVAL_API AHarvestablePickup : public ASurvActor, public IInteractionInterface
+{
+	GENERATED_BODY()
+
+private:
+
+	AHarvestablePickup();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AActor> InventoryItem;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
+	FText InteractionText = FText::FromString("DEFAULT");
+
+protected:
+
+	// Permanent Mesh should be empty for one time harvestables
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UStaticMeshComponent> PermanentMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UStaticMeshComponent> HarvestMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category="State", meta = (AllowPrivateAccess = "true"))
+	bool bIsHarvested;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
+	int ItemCount = 1;
+
+	//TODO: Need to implement logic for different kind of meshes.
+	// eg. if the harvest mesh for a bush is only the leaves then bRetainPermanentMesh should be true and not set hidden
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
+	bool bRetainPermanentMesh = false;
+	
+	
+
+public:
+	
+	UFUNCTION(BlueprintCallable)
+	FText GetInteractionText_Implementation();
+	void Interact_Implementation(class ASurvCharacter* Caller);
+	bool IsInteractable_Implementation();
+	
+	
+};

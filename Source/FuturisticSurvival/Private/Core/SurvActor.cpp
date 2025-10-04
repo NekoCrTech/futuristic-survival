@@ -26,6 +26,15 @@ void ASurvActor::BeginPlay()
 	
 }
 
+void ASurvActor::ChangeMeshCompVisibility(UStaticMeshComponent* MeshComp, bool Visible, ECollisionEnabled::Type NewCollision)
+{
+	if (!MeshComp){return;}
+	
+	MeshComp->SetHiddenInGame(!Visible);
+	MeshComp->SetCollisionEnabled(NewCollision);
+	
+}
+
 void ASurvActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
