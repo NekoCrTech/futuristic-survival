@@ -149,7 +149,6 @@ void USurvGameInstance::LoadGame()
 		if (SAD.Value.bWasSpawned)
 		{
 			UClass* ToSpawnClass = SAD.Value.ActorClass;
-			bool bActorclass = false;
 			if (ToSpawnClass->IsChildOf(ASurvCharacter::StaticClass()))
 			{
 				ASurvCharacter* CSpawned = GetWorld()->SpawnActor<ASurvCharacter>(ToSpawnClass, SAD.Value.ActorTransform);

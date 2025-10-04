@@ -119,6 +119,11 @@ void ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd(UPrimitiveComponent* O
 	}
 	InteractableActors.Remove(OtherActor);
 	bEnableRayTrace = InteractableActors.Num() > 0;
+	if (!bEnableRayTrace)
+	{
+		TraceForInteraction();
+		UpdateInteractionText_Implementation(); 
+	}
 }
 
 void ASurvPlayerCharacter::UpdateInteractionText_Implementation()
@@ -142,13 +147,15 @@ void ASurvPlayerCharacter::TraceForInteraction()
 	
 	GetWorld()->LineTraceSingleByChannel(LTHit, LTStart, LTEnd, ECC_Visibility, LTParams);
 
-	UpdateInteractionText_Implementation();
+	
 	if(!LTHit.bBlockingHit || !LTHit.GetActor()->Implements<UInteractionInterface>())
 	{
+		UpdateInteractionText_Implementation();
 		InteractionActor = nullptr;
 		return;
 	}
 	InteractionActor = LTHit.GetActor();
+	UpdateInteractionText_Implementation();
 }
 
 //------------------

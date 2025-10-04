@@ -36,22 +36,21 @@ protected:
 	bool bIsHarvested;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
 	int ItemCount = 1;
+	
+	
+	AHarvestablePickup();
 
-	//TODO: Need to implement logic for different kind of meshes.
-	// eg. if the harvest mesh for a bush is only the leaves then bRetainPermanentMesh should be true and not set hidden
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
-	bool bRetainPermanentMesh = false;
-	
-	
+	void UpdateHarvestState();
 
 public:
-
-	AHarvestablePickup();
 	
 	UFUNCTION(BlueprintCallable)
-	FText GetInteractionText_Implementation();
-	void Interact_Implementation(class ASurvCharacter* Caller);
-	bool IsInteractable_Implementation();
+	virtual FText GetInteractionText_Implementation() override;
+	virtual void Interact_Implementation(class ASurvCharacter* Caller) override;
+	virtual bool IsInteractable_Implementation() const override;
+
+	virtual FSaveActorData GetSaveData_Implementation() override;
+	virtual void UpdateFromSave_Implementation() override;
 	
 	
 };

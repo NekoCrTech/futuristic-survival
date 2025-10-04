@@ -33,7 +33,20 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	bool bWasSpawned = false;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
-	UClass* ActorClass;	
+	UClass* ActorClass;
+
+
+	FSaveActorData()
+	{
+		
+	};
+
+	FSaveActorData(const FTransform& InActorTransform, const bool& InWasSpawned,UClass* InActorClass)
+	{
+		ActorTransform = InActorTransform;
+		bWasSpawned = InWasSpawned;
+		ActorClass = InActorClass;
+	};
 };
 
 // This class does not need to be modified.
@@ -64,7 +77,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save & Load")
 	void UpdateFromSave();
-	void UpdateFromSave_Implementation();
+	virtual void UpdateFromSave_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save & Load")
 	FSaveComponentData GetSaveComponentData();

@@ -19,9 +19,9 @@ public:
 
 	virtual FGuid GetActorSaveID_Implementation() override;
 	virtual FSaveActorData GetSaveData_Implementation() override;
-	virtual void SetActorGUID_Implementation(const FGuid& NewGiud);
+	virtual void SetActorGUID_Implementation(const FGuid& NewGiud) override;
 
-	void SetWasSpawned(bool IsSpawned);
+	void SetWasSpawned(const bool& IsSpawned);
 
 protected:
 

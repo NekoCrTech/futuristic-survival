@@ -36,10 +36,10 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 
-	virtual FGuid GetActorSaveID_Implementation();
-	void SetActorGUID_Implementation(const FGuid& NewGiud);
-	virtual FSaveActorData GetSaveData_Implementation();
-	virtual void UpdateFromSave_Implementation();
+	virtual FGuid GetActorSaveID_Implementation() override;
+	virtual void SetActorGUID_Implementation(const FGuid& NewGiud) override;
+	virtual FSaveActorData GetSaveData_Implementation() override;
+	virtual void UpdateFromSave_Implementation() override;
 
 	void SetWasSpawned(const bool& IsSpawned);
 };

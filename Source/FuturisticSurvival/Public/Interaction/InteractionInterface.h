@@ -22,17 +22,18 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	FText GetInteractionText();
-	FText GetInteractionText_Implementation();
+	virtual FText GetInteractionText_Implementation();
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	void Interact(class ASurvCharacter* Caller);
-	void Interact_Implementation(class ASurvCharacter* Caller);
+	virtual void Interact_Implementation(class ASurvCharacter* Caller);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	bool IsInteractable() const;
-	bool IsInteractable_Implementation() const;
+	virtual bool IsInteractable_Implementation() const;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	void SetInteractionWidgetIsEnabled(bool bIsEnabled);
+	virtual void SetInteractionWidgetIsEnabled_Implementation(bool bIsEnabled);
 	
 };

@@ -8,6 +8,9 @@
 
 /**
  * RegrowableHarvestablePickup actor is for resources than can be harvested with hand and will regrow like a bush
+ *
+ * CAUTION! PermanentMesh Should not be empty because it will be considered as one time harvestable and will be destroyed after harvest
+ * TODO: Find a better way for this check in AHarvestablePickup
  */
 UCLASS()
 class FUTURISTICSURVIVAL_API ARegrowableHarvestablePickup : public AHarvestablePickup
@@ -33,5 +36,4 @@ protected:
 public:
 
 	void OnDayChanged();
-	
 };

@@ -28,8 +28,8 @@ public:
 
 	ADoorBase();
 
-	FText GetInteractionText_Implementation();
-	void Interact_Implementation(class ASurvCharacter* Caller);
-	bool IsInteractable_Implementation() const;
+	virtual FText GetInteractionText_Implementation() override;
+	virtual void Interact_Implementation(class ASurvCharacter* Caller) override;
+	virtual bool IsInteractable_Implementation() const override;
 		
 };

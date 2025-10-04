@@ -11,10 +11,13 @@ FText IInteractionInterface::GetInteractionText_Implementation()
 // Add default functionality here for any IInteractionInterface functions that are not pure virtual.
 void IInteractionInterface::Interact_Implementation(class ASurvCharacter* Caller)
 {
-	Interact(Caller);
 }
 
 bool IInteractionInterface::IsInteractable_Implementation() const
 {
 	return true;
+}
+
+void IInteractionInterface::SetInteractionWidgetIsEnabled_Implementation(bool bIsEnabled)
+{
 }
