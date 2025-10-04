@@ -7,6 +7,8 @@
 #include "Save/SaveActorInterface.h"
 #include "SurvCharacter.generated.h"
 
+class UStatlineComponent;
+
 UCLASS()
 class FUTURISTICSURVIVAL_API ASurvCharacter : public ACharacter, public ISaveActorInterface
 {
@@ -22,6 +24,9 @@ public:
 	virtual void SetActorGUID_Implementation(const FGuid& NewGiud) override;
 
 	void SetWasSpawned(const bool& IsSpawned);
+
+	UFUNCTION(BlueprintCallable)
+	UStatlineComponent* GetStatline() const {return Statline;}
 
 protected:
 
@@ -42,7 +47,9 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
-	 TObjectPtr<class UStatlineComponent> Statline;
+	TObjectPtr<UStatlineComponent> Statline;
+
+	
 
 	
 

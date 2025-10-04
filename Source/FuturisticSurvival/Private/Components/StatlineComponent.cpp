@@ -114,6 +114,10 @@ float UStatlineComponent::GetStatPercentile(const EStat Stat) const
 	return -1.f;
 }
 
+void UStatlineComponent::AdjustStat(const EStat& Stat, const float& Amount)
+{
+}
+
 bool UStatlineComponent::CanSprint() const
 {
 	return Stamina.HasEnough();

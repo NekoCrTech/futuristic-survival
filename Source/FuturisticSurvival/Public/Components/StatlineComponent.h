@@ -28,6 +28,9 @@ public:
 	float GetStatPercentile(const EStat Stat) const;
 
 	UFUNCTION(BlueprintCallable)
+	void AdjustStat(const EStat& Stat, const float& Amount);
+
+	UFUNCTION(BlueprintCallable)
 	bool CanSprint()const;
 	UFUNCTION(BlueprintCallable)
 	void SetSprinting(const bool IsSprinting);
