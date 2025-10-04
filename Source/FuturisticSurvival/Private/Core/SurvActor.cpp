@@ -6,6 +6,8 @@
 
 ASurvActor::ASurvActor()
 {
+	Root=CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	RootComponent = Root;
  	
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -21,6 +23,15 @@ void ASurvActor::BeginPlay()
 	{
 		SaveID = FGuid::NewGuid();
 	}
+	
+}
+
+void ASurvActor::ChangeMeshCompVisibility(UStaticMeshComponent* MeshComp, bool Visible, ECollisionEnabled::Type NewCollision)
+{
+	if (!MeshComp){return;}
+	
+	MeshComp->SetHiddenInGame(!Visible);
+	MeshComp->SetCollisionEnabled(NewCollision);
 	
 }
 
