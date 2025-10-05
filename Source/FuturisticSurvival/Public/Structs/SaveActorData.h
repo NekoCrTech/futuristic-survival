@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "SaveComponentData.h"
 #include "SaveActorData.generated.h"
 
+struct FSaveComponentData;
 
 USTRUCT(BlueprintType)
 struct FSaveActorData

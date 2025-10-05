@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Structs/SaveActorData.h"
-#include "Structs/SaveComponentData.h"
 #include "UObject/Interface.h"
 #include "SaveActorInterface.generated.h"
 
 
-
+struct FSaveActorData;
+struct FSaveComponentData;
 
 
 // This class does not need to be modified.
@@ -18,6 +17,7 @@ class USaveActorInterface : public UInterface
 {
 	GENERATED_BODY()
 };
+
 
 
 class FUTURISTICSURVIVAL_API ISaveActorInterface
