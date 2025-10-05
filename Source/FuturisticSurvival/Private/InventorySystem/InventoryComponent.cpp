@@ -25,6 +25,11 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 bool UInventoryComponent::AddItemToTop(const TSubclassOf<UItemBase> Item)
 {
+	if (!IsValid(Item))
+	{
+		//TODO: add error logging for invalid item; 
+		return false;
+	}
 	float ItemWeight = Item.GetDefaultObject()->GetStackWeight();
 	if (IsOverCarryWeight(ItemWeight))
 	{
@@ -79,7 +84,7 @@ bool UInventoryComponent::IsOverCarryWeight(const float& ItemWeight) const
 {
 	if(CurrentWeight + ItemWeight > MaxWeight)
 	{
-		return false;
+		return true;
 	}
-	return true;
+	return false;
 }
