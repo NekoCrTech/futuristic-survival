@@ -7,6 +7,7 @@
 #include "Save/SaveActorInterface.h"
 #include "SurvCharacter.generated.h"
 
+class UInventoryComponent;
 class UStatlineComponent;
 
 UCLASS()
@@ -27,6 +28,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UStatlineComponent* GetStatline() const {return Statline;}
+	UFUNCTION(BlueprintCallable)
+	UInventoryComponent* GetInventory() const {return Inventory;}
 
 protected:
 
@@ -48,6 +51,9 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UStatlineComponent> Statline;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UInventoryComponent> Inventory;
 
 	
 

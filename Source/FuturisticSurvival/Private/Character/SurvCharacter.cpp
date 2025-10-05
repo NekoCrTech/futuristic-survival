@@ -2,8 +2,9 @@
 
 
 #include "Public/Character/SurvCharacter.h"
-
+#include "Structs/SaveActorData.h"
 #include "Components/StatlineComponent.h"
+#include "InventorySystem/InventoryComponent.h"
 
 
 ASurvCharacter::ASurvCharacter()
@@ -13,6 +14,8 @@ ASurvCharacter::ASurvCharacter()
 
 	Statline = CreateDefaultSubobject<UStatlineComponent>(TEXT("Statline"));
 	Statline->SetMovementCompReference(GetCharacterMovement());
+
+	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
 
 	SaveActorID = FGuid::NewGuid();
 }
@@ -69,13 +72,7 @@ FGuid ASurvCharacter::GetActorSaveID_Implementation()
 
 FSaveActorData ASurvCharacter::GetSaveData_Implementation()
 {
-	FSaveActorData Ret;
-
-	Ret.ActorClass = this->GetClass();
-	Ret.ActorTransform = this->GetTransform();
-	Ret.bWasSpawned = this->bWasSpawned;
-	
-	return Ret;
+	return FSaveActorData(this->GetTransform(), this->bWasSpawned, this->GetClass());
 }
 
 void ASurvCharacter::SetActorGUID_Implementation(const FGuid& NewGiud)
