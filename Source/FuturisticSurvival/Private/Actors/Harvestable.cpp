@@ -3,6 +3,7 @@
 
 #include "Actors/Harvestable.h"
 #include "Actors/PickupActor.h"
+#include "Structs/SaveActorData.h"
 
 
 AHarvestable::AHarvestable()

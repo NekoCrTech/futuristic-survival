@@ -4,22 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Save/SaveActorInterface.h"
 #include "InventoryComponent.generated.h"
 
 class UItemBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class FUTURISTICSURVIVAL_API UInventoryComponent : public UActorComponent
+class FUTURISTICSURVIVAL_API UInventoryComponent : public UActorComponent, public ISaveActorInterface
 {
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, SaveGame, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
 	float MaxWeight = 100.f;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
 	float CurrentWeight = 0.f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category = "InventoryData", Meta = (AllowPrivateAccess = "true")) //TODO: make it EditDefaultOnly
 	TArray<TSubclassOf<UItemBase>> InventoryContents;
 
 	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
