@@ -26,6 +26,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
 	int MaxStackSize = 1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
+	int CurrentStackSize = 1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
 	TArray<FSalvageItem> SalvageItems;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
 	UStaticMesh* Mesh;
@@ -42,11 +44,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int GetStackSize() const {return MaxStackSize;}
 	UFUNCTION(BlueprintCallable)
-	float GetStackWeight(const int& Amount) const {return ItemWeight * Amount;}
+	int GetCurrentStack() const {return CurrentStackSize;}
+	UFUNCTION(BlueprintCallable)
+	float GetStackWeight() const {return ItemWeight * CurrentStackSize;}
 	UFUNCTION(BlueprintCallable)
 	FItemUIData GetItemUIData() const {return FItemUIData(ItemName, ItemDescription, ItemIcon, ItemQuality);}
 	UFUNCTION(BlueprintCallable)
 	TArray<FSalvageItem> GetSalvageData() const {return SalvageItems;}
 	UFUNCTION(BlueprintCallable)
 	UStaticMesh* GetPickupMesh() const {return Mesh;}
+
+	UFUNCTION(BlueprintCallable)
+	int AddToStack(const int& Amount);
+	UFUNCTION(BlueprintCallable)
+	int RemoveFromStack(const int& Amount);
+	UFUNCTION(BlueprintCallable)
+	void SetStackSize(const int& NewStackSize) {CurrentStackSize = NewStackSize;}
 };
