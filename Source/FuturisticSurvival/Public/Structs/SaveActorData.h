@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "Structs/SaveComponentData.h"
 #include "SaveActorData.generated.h"
 
 struct FSaveComponentData;
