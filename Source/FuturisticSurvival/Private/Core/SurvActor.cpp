@@ -2,6 +2,7 @@
 
 
 #include "Core/SurvActor.h"
+#include "Structs/SaveActorData.h"
 
 
 ASurvActor::ASurvActor()
