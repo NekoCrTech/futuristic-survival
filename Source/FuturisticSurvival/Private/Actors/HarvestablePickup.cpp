@@ -33,6 +33,10 @@ FText AHarvestablePickup::GetInteractionText_Implementation()
 
 void AHarvestablePickup::Interact_Implementation(class ASurvCharacter* Caller)
 {
+	if(!IsInteractable_Implementation())
+	{
+		return;
+	}
 	UInventoryComponent* Inventory = Caller->GetInventory();
 	int Remain = ItemCount;
 	
@@ -44,7 +48,6 @@ void AHarvestablePickup::Interact_Implementation(class ASurvCharacter* Caller)
 	{
 		UpdateHarvestState();
 		bIsHarvested = true;
-		return;
 	}
 	ItemCount = Remain;
 	return;
