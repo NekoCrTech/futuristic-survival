@@ -48,7 +48,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetStackWeight() const {return ItemWeight * CurrentStackSize;}
 	UFUNCTION(BlueprintCallable)
-	FItemUIData GetItemUIData() const {return FItemUIData(ItemName, ItemDescription, ItemIcon, ItemQuality);}
+	FItemUIData GetItemUIData(const int& idx) const {return FItemUIData(idx, ItemName, ItemDescription, ItemIcon, ItemQuality, CurrentStackSize);}
 	UFUNCTION(BlueprintCallable)
 	TArray<FSalvageItem> GetSalvageData() const {return SalvageItems;}
 	UFUNCTION(BlueprintCallable)

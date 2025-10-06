@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Save/SaveActorInterface.h"
+#include "Structs/ItemUiData.h"
 #include "InventoryComponent.generated.h"
 
 class UItemBase;
@@ -42,5 +43,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
 	bool AddItemToStackAtIndex(TSubclassOf<UItemBase> Item, const int& Index);
 
-		
+	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
+	TArray<FItemUIData> GetInventoryUIData() const;
 };

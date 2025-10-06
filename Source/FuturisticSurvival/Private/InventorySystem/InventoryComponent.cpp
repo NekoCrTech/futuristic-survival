@@ -80,6 +80,18 @@ bool UInventoryComponent::AddItemToStackAtIndex(TSubclassOf<UItemBase> Item, con
 	return true;
 }
 
+TArray<FItemUIData> UInventoryComponent::GetInventoryUIData() const
+{
+	TArray<FItemUIData> Ret;
+	
+	for (int idx = 0; idx < InventoryContents.Num(); idx++)
+	{
+		Ret.Add(InventoryContents[idx].GetDefaultObject()->GetItemUIData(idx));
+	}
+
+	return Ret;
+}
+
 bool UInventoryComponent::IsOverCarryWeight(const float& ItemWeight) const
 {
 	if(CurrentWeight + ItemWeight > MaxWeight)
