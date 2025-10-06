@@ -2,11 +2,14 @@
 
 
 #include "Actors/PickupActor.h"
+#include "Character/SurvCharacter.h"
+#include "InventorySystem/Items/ItemBase.h"
+#include "InventorySystem/InventoryComponent.h"
 
 APickupActor::APickupActor()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(RootComponent);
+	RootComponent=Mesh;
 }
 
 FText APickupActor::GetInteractionText_Implementation()
@@ -16,7 +19,29 @@ FText APickupActor::GetInteractionText_Implementation()
 
 void APickupActor::Interact_Implementation(class ASurvCharacter* Caller)
 {
-	Execute_Interact(this,Caller);
+	if (!IsValid(InventoryItem))
+	{
+		//TODO: Add Logging system
+		return;
+	}
+	if(!IsInteractable_Implementation())
+	{
+		return;
+	}
+	UInventoryComponent* Inventory = Caller->GetInventory();
+	int Remain = ItemCount;
+	
+	while (Remain > 0 && Inventory->AddItemToTop(InventoryItem))
+	{
+		Remain--;
+	}
+	if (Remain == 0)
+	{
+		this->Destroy();
+		//this->SetAutoDestroyWhenFinished(true);
+	}
+	ItemCount = Remain;
+	return;
 	// class UInventoryComponent* InvComp = Caller->GetInventory();
 	// int rem = -1;
 	// if( rem = InvComp->AddItem(InventoryItem, ItemCount) == 0)
@@ -30,6 +55,6 @@ void APickupActor::Interact_Implementation(class ASurvCharacter* Caller)
 
 bool APickupActor::IsInteractable_Implementation() const
 {
-	return true;
+	return IsValid(InventoryItem);
 }
 

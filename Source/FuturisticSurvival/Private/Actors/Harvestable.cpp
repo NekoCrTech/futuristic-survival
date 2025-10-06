@@ -22,7 +22,10 @@ void AHarvestable::SetHarvestState()
 	{
 		return;
 	}
-	HarvestableMesh->DestroyComponent();
+	if (HarvestableMesh)
+	{
+		HarvestableMesh->DestroyComponent();
+	} 
 	ChangeMeshCompVisibility(RemainingHarvestableMesh,true, ECollisionEnabled::QueryAndPhysics);
 	MarkComponentsRenderStateDirty();
 }
