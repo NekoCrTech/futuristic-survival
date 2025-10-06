@@ -19,6 +19,11 @@ AHarvestablePickup::AHarvestablePickup()
 
 void AHarvestablePickup::UpdateHarvestState()
 {
+	if (!bIsHarvested)
+	{
+		ChangeMeshCompVisibility(HarvestMesh, true, ECollisionEnabled::QueryOnly);
+		return;
+	}
 	ChangeMeshCompVisibility(HarvestMesh);
 	if (!PermanentMesh->GetStaticMesh())
 	{
@@ -46,8 +51,8 @@ void AHarvestablePickup::Interact_Implementation(class ASurvCharacter* Caller)
 	}
 	if (Remain == 0)
 	{
-		UpdateHarvestState();
 		bIsHarvested = true;
+		UpdateHarvestState();
 	}
 	ItemCount = Remain;
 	return;

@@ -35,8 +35,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> HarvestMesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category="State", meta = (AllowPrivateAccess = "true"))
-	bool bIsHarvested;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
+	bool bIsHarvested = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, SaveGame, Category="Inventory", meta = (AllowPrivateAccess = "true"))
 	int ItemCount = 1;
 	
 	
