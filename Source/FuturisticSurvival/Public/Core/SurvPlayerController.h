@@ -19,10 +19,15 @@ class FUTURISTICSURVIVAL_API ASurvPlayerController : public APlayerController
 	UPROPERTY(EditAnywhere, Category ="Input|Input Mappings")
 	TArray<UInputMappingContext*> DefaultMappingContexts;
 
+	UPROPERTY(EditAnywhere, Category ="Input|Input Mappings")
+	TArray<UInputMappingContext*> UIMappingContexts;
+
 	/** Gameplay initialization */
 	virtual void BeginPlay() override;
 
 	/** Input mapping context setup */
 	virtual void SetupInputComponent() override;
+public:
+	void SetMovementMappingContextEnabled(bool bEnabled);
 	
 };

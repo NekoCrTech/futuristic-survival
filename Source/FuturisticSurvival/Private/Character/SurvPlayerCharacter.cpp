@@ -15,6 +15,9 @@
 #include "Interaction/InteractionInterface.h"
 #include "Components/SphereComponent.h"
 #include "Logger.h"
+#include "MeshPaintVisualize.h"
+#include "Core/SurvPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 ASurvPlayerCharacter::ASurvPlayerCharacter()
 {
@@ -86,6 +89,8 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
 		// Interacting
 		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::OnInteract);
+		// User Interface
+		EnhancedInputComponent->BindAction(InventoryAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::TogglePlayerInventory);
 	}
 }
 
@@ -94,6 +99,8 @@ void ASurvPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	SaveActorID.Invalidate();
 }
+
+
 
 //-------------------
 // Interaction System
@@ -244,6 +251,19 @@ void ASurvPlayerCharacter::OnInteract()
 	}
 	//Inter->Interact_Implementation(this);
 	Inter->Execute_Interact(InteractionActor, this);
+}
+
+void ASurvPlayerCharacter::TogglePlayerInventoryBP_Implementation()
+{
+	// This is used if there is no function override in blueprints 
+}
+
+void ASurvPlayerCharacter::TogglePlayerInventory()
+{
+	bInventoryIsShown = !bInventoryIsShown;
+	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	MyPC->SetMovementMappingContextEnabled(!bInventoryIsShown);
+	TogglePlayerInventoryBP();
 }
 
 
