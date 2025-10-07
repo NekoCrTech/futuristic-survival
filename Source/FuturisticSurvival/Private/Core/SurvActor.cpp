@@ -2,6 +2,7 @@
 
 
 #include "Core/SurvActor.h"
+#include "Structs/SaveActorData.h"
 
 
 ASurvActor::ASurvActor()
@@ -57,7 +58,7 @@ void ASurvActor::SetActorGUID_Implementation(const FGuid& NewGiud)
 
 FSaveActorData ASurvActor::GetSaveData_Implementation()
 {
-	return FSaveActorData(this->GetActorTransform(),this->bWasSpawned, this->GetClass());
+	return FSaveActorData(GetActorTransform(),bWasSpawned, GetClass());
 }
 
 void ASurvActor::UpdateFromSave_Implementation()

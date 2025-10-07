@@ -8,6 +8,8 @@
 #include "PickupActor.generated.h"
 
 
+class UItemBase;
+
 UCLASS()
 class FUTURISTICSURVIVAL_API APickupActor : public ASurvActor, public IInteractionInterface
 {
@@ -21,7 +23,7 @@ private:
 	TObjectPtr<UStaticMeshComponent> Mesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AActor> InventoryItem;
+	TSubclassOf<UItemBase> InventoryItem;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
 	int ItemCount = 1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))

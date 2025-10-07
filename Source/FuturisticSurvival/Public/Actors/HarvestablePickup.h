@@ -11,6 +11,8 @@
  * HarvestablePickup actor is for resources than can be harvested with hands and will not regrow like a Mercer Sphere
  */
 
+class UItemBase;
+
 UCLASS()
 class FUTURISTICSURVIVAL_API AHarvestablePickup : public ASurvActor, public IInteractionInterface
 {
@@ -21,7 +23,7 @@ private:
 	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AActor> InventoryItem;
+	TSubclassOf<UItemBase> InventoryItem;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
 	FText InteractionText = FText::FromString("DEFAULT");
 
@@ -33,8 +35,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> HarvestMesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category="State", meta = (AllowPrivateAccess = "true"))
-	bool bIsHarvested;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory", meta = (AllowPrivateAccess = "true"))
+	bool bIsHarvested = false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, SaveGame, Category="Inventory", meta = (AllowPrivateAccess = "true"))
 	int ItemCount = 1;
 	
 	

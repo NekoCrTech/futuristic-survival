@@ -24,6 +24,33 @@ void ASurvPlayerController::SetupInputComponent()
 			{
 				Subsystem->AddMappingContext(CurrentContext, 0);
 			}
+			for (UInputMappingContext* CurrentContext : UIMappingContexts)
+			{
+				Subsystem->AddMappingContext(CurrentContext, 0);
+			}
+		}
+	}
+}
+
+void ASurvPlayerController::SetMovementMappingContextEnabled(bool bEnabled)
+{
+	if (IsLocalPlayerController())
+	{
+		// Add Input Mapping Contexts
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+		{
+			if (bEnabled)
+			{
+				for (UInputMappingContext* CurrentContext : DefaultMappingContexts)
+				{
+					Subsystem->AddMappingContext(CurrentContext, 0);
+				}
+				return;
+			}
+			for (UInputMappingContext* CurrentContext : DefaultMappingContexts)
+			{
+				Subsystem->RemoveMappingContext(CurrentContext);
+			}
 		}
 	}
 }

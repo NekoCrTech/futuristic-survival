@@ -5,6 +5,7 @@
 
 #include "SurvUtils.h"
 #include "Logger.h"
+#include "Structs/SaveActorData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values for this component's properties
@@ -108,10 +109,36 @@ float UStatlineComponent::GetStatPercentile(const EStat Stat) const
 	case EStat::Hunger:
 		return Hunger.Percentile();
 	default:
-		Logger::GetInstance()->AddMessage("GetStatPerctile called with invalid stat type", ERRORLEVEL::EL_WARNING);
+		Logger::GetInstance()->AddMessage("UStatlineComponent::GetStatPercentile called with invalid stat type", ERRORLEVEL::EL_WARNING);
 		break;
 	}
 	return -1.f;
+}
+
+void UStatlineComponent::AdjustStat(const EStat& Stat, const float& Amount)
+{
+	switch (Stat)
+	{
+	case EStat::Health:
+		Health.Adjust(Amount);
+		return;
+	case EStat::Stamina:
+		Stamina.Adjust(Amount);
+		return;
+	case EStat::Energy:
+		Energy.Adjust(Amount);
+		return;
+	case EStat::Thirst:
+		Thirst.Adjust(Amount);
+		return;
+	case EStat::Hunger:
+		Hunger.Adjust(Amount);
+		return;
+	default:
+		Logger::GetInstance()->AddMessage("UStatlineComponent::AdjustStat called with invalid stat type", ERRORLEVEL::EL_WARNING);
+		break;
+	}
+	
 }
 
 bool UStatlineComponent::CanSprint() const

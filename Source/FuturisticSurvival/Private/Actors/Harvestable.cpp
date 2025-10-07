@@ -3,6 +3,7 @@
 
 #include "Actors/Harvestable.h"
 #include "Actors/PickupActor.h"
+#include "Structs/SaveActorData.h"
 
 
 AHarvestable::AHarvestable()
@@ -21,7 +22,10 @@ void AHarvestable::SetHarvestState()
 	{
 		return;
 	}
-	HarvestableMesh->DestroyComponent();
+	if (HarvestableMesh)
+	{
+		HarvestableMesh->DestroyComponent();
+	} 
 	ChangeMeshCompVisibility(RemainingHarvestableMesh,true, ECollisionEnabled::QueryAndPhysics);
 	MarkComponentsRenderStateDirty();
 }

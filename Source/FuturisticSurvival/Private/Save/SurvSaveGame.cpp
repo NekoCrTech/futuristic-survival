@@ -2,6 +2,10 @@
 
 
 #include "Save/SurvSaveGame.h"
+#include "Structs/SaveActorData.h"
+#include "Structs/SaveComponentData.h"
+
+
 
 void USurvSaveGame::SetSaveActorData(TMap<FGuid, FSaveActorData> Data)
 {

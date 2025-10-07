@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SaveActorInterface.h"
 #include "GameFramework/SaveGame.h"
+#include "Structs/SaveActorData.h"
 #include "SurvSaveGame.generated.h"
 
-/**
- * 
- */
+
+
 UCLASS()
 class FUTURISTICSURVIVAL_API USurvSaveGame : public USaveGame
 {

@@ -23,6 +23,8 @@ public:
 	ASurvPlayerCharacter();
 	virtual void Tick(float DeltaTime) override;
 
+	
+
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);
 	
@@ -31,6 +33,10 @@ public:
 	
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	UFUNCTION(BlueprintNativeEvent)
+	void TogglePlayerInventoryBP();
+	void TogglePlayerInventory();
 
 	UFUNCTION()
 	void OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -66,6 +72,9 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	UInputAction* InteractAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* InventoryAction;
 #pragma endregion
 
 	void Move(const FInputActionValue& Value);
@@ -101,6 +110,9 @@ private:
 	AActor* InteractionActor = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings", meta = (AllowPrivateAccess = "true"))
 	float InteractionTraceLength = 200.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
+	bool bInventoryIsShown = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DEBUG", meta = (AllowPrivateAccess = "true"))
 	bool DEBUG_INTERACTION_TRACE = false;

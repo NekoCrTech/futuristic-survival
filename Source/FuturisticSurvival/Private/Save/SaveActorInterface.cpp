@@ -2,6 +2,8 @@
 
 
 #include "Save/SaveActorInterface.h"
+#include "Structs/SaveActorData.h"
+#include "Structs/SaveComponentData.h"
 
 // Add default functionality here for any ISaveActorInterface functions that are not pure virtual.
 FGuid ISaveActorInterface::GetActorSaveID_Implementation()

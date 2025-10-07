@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "Save/SaveActorInterface.h"
+#include "Structs/SaveActorData.h"
 #include "SurvGameInstance.generated.h"
 
 /**
