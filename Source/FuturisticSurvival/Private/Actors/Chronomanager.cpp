@@ -2,6 +2,13 @@
 
 
 #include "Actors/Chronomanager.h"
+
+#include "Components/LightComponent.h"
+#include "Engine/DirectionalLight.h"
+#include "Engine/SkyLight.h"
+#include "Curves/CurveFloat.h"
+#include "Curves/CurveLinearColor.h"
+
 void AChronomanager::BeginPlay()
 {
 	Super::BeginPlay();
@@ -11,7 +18,16 @@ void AChronomanager::BeginPlay()
 void AChronomanager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (!bUseDayNightCycle)
+	{
+		return;
+	}
 	UpdateTime(DeltaTime);
+	UpdateTimeOfDay();
+	
+	UpdateLightRotation();
+	UpdateLighting();
+	SunLight->GetLightComponent()->UpdateColorAndBrightness();
 }
 
 void AChronomanager::CalculateDayLength()
@@ -19,6 +35,15 @@ void AChronomanager::CalculateDayLength()
 	MinuteLength = (DayLengthInMinutes*60.f) / 1440.f;
 	TimeDecay = MinuteLength;
 }
+
+void AChronomanager::UpdateTimeOfDay()
+{
+	CurrentTimeOfDay = (CurrentTime.Hour * 60) + CurrentTime.Minute;
+}
+
+//---------------
+// Advance Time
+//---------------
 
 void AChronomanager::UpdateTime(const float& DeltaTime)
 {
@@ -55,13 +80,13 @@ void AChronomanager::AdvanceHour()
 void AChronomanager::AdvanceDay()
 {
 	bTimeWasUpdated = true;
+	SetDayOfYear();
 	CurrentTime.Day++;
 	if (CurrentTime.Day >= FDateTime::DaysInMonth(CurrentTime.Year, CurrentTime.Month))
 	{
 		CurrentTime.Day = 1;
 		AdvanceMonth();
 	}
-	
 }
 
 void AChronomanager::AdvanceMonth()
@@ -80,6 +105,54 @@ void AChronomanager::AdvanceYear()
 	bTimeWasUpdated = true;
 	CurrentTime.Year++;
 }
+
+void AChronomanager::SetDayOfYear()
+{
+	CurrentTime.DayOfYear = FDateTime(CurrentTime.Year, CurrentTime.Month, CurrentTime.Day).GetDayOfYear();
+}
+
+//-----------
+// Lighting
+//-----------
+
+void AChronomanager::UpdateLighting()
+{
+	if (!IsValid(SunLight) || !IsValid(DailySunlightIntensity))
+	{
+		// TODO: Log error for missing light
+		return;
+	}
+	
+	float NewLightIntensity = DailySunlightIntensity->GetFloatValue(CurrentTimeOfDay);
+	if(IsValid(AnnualSunlightIntensity))
+	{
+		NewLightIntensity += AnnualSunlightIntensity->GetFloatValue(CurrentTime.DayOfYear);
+	}
+	NewLightIntensity = FMath::Clamp(NewLightIntensity, 0.0f, MaxSunlightIntensity);
+
+	SunLight->GetLightComponent()->Intensity = NewLightIntensity;
+	
+	//TODO: Add Skylight updates
+}
+
+void AChronomanager::UpdateLightRotation()
+{
+	if (!IsValid(SunLight) || !IsValid(DailySunlightRotation))
+	{
+		// TODO: Log error for missing light
+		return;
+	}
+	
+	FLinearColor ColorAsRotation = DailySunlightRotation->GetUnadjustedLinearColorValue(CurrentTimeOfDay);
+	if (IsValid(AnnualSunlightRotation))
+	{
+		ColorAsRotation += AnnualSunlightRotation->GetUnadjustedLinearColorValue(CurrentTime.DayOfYear);
+	}
+	FRotator NewRot(ColorAsRotation.G, ColorAsRotation.B, ColorAsRotation.R);
+
+	SunLight->SetActorRotation(NewRot);
+}
+
 
 
 
