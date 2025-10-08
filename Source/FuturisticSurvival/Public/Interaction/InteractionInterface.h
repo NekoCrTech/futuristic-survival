@@ -1,4 +1,5 @@
 // developed by Neko
+//TODO: Rework implementation functions where needed
 
 #pragma once
 
