@@ -2,6 +2,21 @@
 
 
 #include "Actors/RegrowableHarvestablePickup.h"
+#include "Logger.h"
+#include "Actors/Chronomanager.h"
+#include "Kismet/GameplayStatics.h"
+
+void ARegrowableHarvestablePickup::BeginPlay()
+{
+	Super::BeginPlay();
+	TimeManager = Cast<AChronomanager>(UGameplayStatics::GetActorOfClass(GetWorld(),AChronomanager::StaticClass()));
+	if (!IsValid(TimeManager))
+	{
+		Logger::GetInstance()->AddMessage("ARegrowableHarvestablePickup - Chronomanager is invalid", EL_ERROR);
+		return;
+	}
+	TimeManager->OnTimeChange.AddUniqueDynamic(this, &ARegrowableHarvestablePickup::OnTimeChanged);
+}
 
 void ARegrowableHarvestablePickup::ResetHarvest()
 {
@@ -9,12 +24,6 @@ void ARegrowableHarvestablePickup::ResetHarvest()
 	ItemCount=ItemRegrowthAmount;
 	ChangeMeshCompVisibility(HarvestMesh, true, ECollisionEnabled::QueryOnly);
 	MarkComponentsRenderStateDirty();
-}
-
-void ARegrowableHarvestablePickup::BeginPlay()
-{
-	Super::BeginPlay();
-	//TODO: Subscribe to DayChange Delegate
 }
 
 void ARegrowableHarvestablePickup::OnDayChanged()
@@ -25,4 +34,34 @@ void ARegrowableHarvestablePickup::OnDayChanged()
 		return;
 	}
 	ResetHarvest();	
+}
+
+void ARegrowableHarvestablePickup::OnTimeChanged(FTimeData TimeData)
+{
+	if(!bIsHarvested)
+	{
+		return;
+	}
+	if(TimeData.Day == HarvestTracking.Day)
+	{
+		return;
+	}
+	OnDayChanged();
+	HarvestTracking = TimeData;
+}
+
+void ARegrowableHarvestablePickup::Interact_Implementation(class ASurvCharacter* Caller)
+{
+	Super::Interact_Implementation(Caller);
+	if (!IsValid(TimeManager))
+	{
+		Logger::GetInstance()->AddMessage("ARegrowableHarvestablePickup - Chronomanager is invalid", EL_ERROR);
+		return;
+	}
+	if (!bIsHarvested)
+	{
+		return;
+	}
+	HarvestTracking = TimeManager->GetCurrentGameTime();
+	DaysSinceLastHarvest = 0;
 }
