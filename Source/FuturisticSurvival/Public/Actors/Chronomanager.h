@@ -8,9 +8,8 @@
 #include "Enums/DayLength.h"
 #include "Chronomanager.generated.h"
 
-/**
- * 
- */
+
+
 UCLASS()
 class FUTURISTICSURVIVAL_API AChronomanager : public ASurvActor
 {
@@ -27,28 +26,31 @@ private:
 	float DayLengthInMinutes = 10.f;
 
 #pragma region Lightning
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = "Reference to the directional light in map"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = "Reference to the directional light in map"))
 	class ADirectionalLight* SunLight;
 		
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
 	UCurveFloat* DailySunlightIntensity;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
 	UCurveFloat* AnnualSunlightIntensity;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
 	UCurveLinearColor* DailySunlightRotation;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
 	UCurveLinearColor* AnnualSunlightRotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
 	class ASkyLight* SkyLight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
 	UCurveFloat* SkylightIntensity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
+	UCurveLinearColor* SkylightHourlyColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
 	float MaxSunlightIntensity = 10.f;
 	
 #pragma endregion
@@ -81,4 +83,6 @@ protected:
 	
 public:
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void UpdateFromSave_Implementation() override;
 };

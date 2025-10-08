@@ -37,7 +37,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual FGuid GetActorSaveID_Implementation() override;
-	virtual void SetActorGUID_Implementation(const FGuid& NewGiud) override;
+	void SetActorGUID_Implementation(const FGuid& NewGiud) override;
 	virtual FSaveActorData GetSaveData_Implementation() override;
 	virtual void UpdateFromSave_Implementation() override;
 

@@ -3,7 +3,9 @@
 
 #include "Actors/Chronomanager.h"
 
+#include "Logger.h"
 #include "Components/LightComponent.h"
+#include "Components/SkyLightComponent.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/SkyLight.h"
 #include "Curves/CurveFloat.h"
@@ -24,7 +26,15 @@ void AChronomanager::Tick(float DeltaTime)
 	}
 	UpdateTime(DeltaTime);
 	UpdateTimeOfDay();
-	
+	UpdateLightRotation();
+	UpdateLighting();
+	SunLight->GetLightComponent()->UpdateColorAndBrightness();
+}
+
+void AChronomanager::UpdateFromSave_Implementation()
+{
+	CalculateDayLength();
+	UpdateTimeOfDay();
 	UpdateLightRotation();
 	UpdateLighting();
 	SunLight->GetLightComponent()->UpdateColorAndBrightness();
@@ -119,7 +129,7 @@ void AChronomanager::UpdateLighting()
 {
 	if (!IsValid(SunLight) || !IsValid(DailySunlightIntensity))
 	{
-		// TODO: Log error for missing light
+		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLighting - Directional light or Daily Sun Intensity is invalid", EL_ERROR);
 		return;
 	}
 	
@@ -132,14 +142,26 @@ void AChronomanager::UpdateLighting()
 
 	SunLight->GetLightComponent()->Intensity = NewLightIntensity;
 	
-	//TODO: Add Skylight updates
+	if (!IsValid(SkyLight) || !IsValid(SkylightIntensity))
+	{
+		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLighting - Skylight or Skylight Intensity is invalid", EL_ERROR);
+		return;
+	}
+
+	float NewSkylightIntensity = SkylightIntensity->GetFloatValue(CurrentTimeOfDay);
+	SkyLight->GetLightComponent()->SetIntensity(NewSkylightIntensity);
+	if (IsValid(SkylightHourlyColor))
+	{
+		FLinearColor NewSkylightColor = SkylightHourlyColor->GetLinearColorValue(CurrentTimeOfDay);
+		SkyLight->GetLightComponent()->SetLightColor(NewSkylightColor);
+	}
 }
 
 void AChronomanager::UpdateLightRotation()
 {
 	if (!IsValid(SunLight) || !IsValid(DailySunlightRotation))
 	{
-		// TODO: Log error for missing light
+		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLightRotation - Directional light or Daily Sun Rotation is invalid", EL_ERROR);
 		return;
 	}
 	
