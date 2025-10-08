@@ -53,6 +53,9 @@ public:
 
 	virtual FSaveActorData GetSaveData_Implementation() override;
 	virtual void UpdateFromSave_Implementation() override;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="State")
+	bool GetMustShowWidget() const;
 	
 	
 };

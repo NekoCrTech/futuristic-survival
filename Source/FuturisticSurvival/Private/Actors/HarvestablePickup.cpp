@@ -83,3 +83,8 @@ void AHarvestablePickup::UpdateFromSave_Implementation()
 	UpdateHarvestState();
 	
 }
+
+bool AHarvestablePickup::GetMustShowWidget() const
+{
+	return (IsInteractable_Implementation() && !bIsHarvested);
+}
