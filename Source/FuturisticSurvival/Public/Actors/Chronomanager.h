@@ -86,6 +86,8 @@ public:
 
 	virtual void UpdateFromSave_Implementation() override;
 
+	FTimeData GetCurrentGameTime() const { return CurrentTime; }
+
 	UPROPERTY(BlueprintAssignable, Category="Chrono|Time")
 	FTimeChangeDelegate OnTimeChange;
 };
