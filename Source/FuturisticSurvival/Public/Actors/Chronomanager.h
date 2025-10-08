@@ -8,7 +8,7 @@
 #include "Enums/DayLength.h"
 #include "Chronomanager.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTimeChangeDelegate, FTimeData, TimeData);
 
 UCLASS()
 class FUTURISTICSURVIVAL_API AChronomanager : public ASurvActor
@@ -85,4 +85,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void UpdateFromSave_Implementation() override;
+
+	UPROPERTY(BlueprintAssignable, Category="Chrono|Time")
+	FTimeChangeDelegate OnTimeChange;
 };

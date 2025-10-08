@@ -29,6 +29,11 @@ void AChronomanager::Tick(float DeltaTime)
 	UpdateLightRotation();
 	UpdateLighting();
 	SunLight->GetLightComponent()->UpdateColorAndBrightness();
+	if(bTimeWasUpdated)
+	{
+		OnTimeChange.Broadcast(CurrentTime);
+	}
+	
 }
 
 void AChronomanager::UpdateFromSave_Implementation()
@@ -118,7 +123,7 @@ void AChronomanager::AdvanceYear()
 
 void AChronomanager::SetDayOfYear()
 {
-	CurrentTime.DayOfYear = FDateTime(CurrentTime.Year, CurrentTime.Month, CurrentTime.Day).GetDayOfYear();
+	CurrentTime.DayOfYear = FDateTime(CurrentTime.Year, CurrentTime.Month, CurrentTime.Day).GetDayOfYear() + 1;
 }
 
 //-----------
