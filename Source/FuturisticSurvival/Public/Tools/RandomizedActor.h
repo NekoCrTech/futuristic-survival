@@ -29,13 +29,13 @@ private:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> Mesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category = "Assets", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,Category = "Settings", meta = (AllowPrivateAccess = "true"))
 	TArray<UStaticMesh*> ActorOptions;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "Settings", meta = (AllowPrivateAccess = "true"))
 	ERandomizedVector RandomizationVector;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "settings", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "Settings", meta = (AllowPrivateAccess = "true"))
 	bool bOverrideRandomization = false;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "Assets", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "Settings", meta = (AllowPrivateAccess = "true"))
 	int32 OverrideIndex = 0;
 };

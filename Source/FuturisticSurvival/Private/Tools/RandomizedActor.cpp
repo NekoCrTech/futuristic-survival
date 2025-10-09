@@ -4,6 +4,7 @@
 #include "Tools/RandomizedActor.h"
 
 #include "Logger.h"
+#include "SurvUtils.h"
 
 
 ARandomizedActor::ARandomizedActor()
@@ -35,34 +36,7 @@ void ARandomizedActor::OnConstruction(const FTransform& Transform)
 		return;
 	}
 	
-	int32 RandSeed = 0;
-	switch (RandomizationVector)
-	{
-	case ERandomizedVector::X:
-		RandSeed = floor(Transform.GetLocation().X);
-		break;
-	case ERandomizedVector::Y:
-		RandSeed = floor(Transform.GetLocation().Y);
-		break;
-	case ERandomizedVector::Z:
-		RandSeed = floor(Transform.GetLocation().Z);
-		break;
-	case ERandomizedVector::XY:
-		RandSeed = floor(Transform.GetLocation().X + Transform.GetLocation().Y);
-		break;
-	case ERandomizedVector::XZ:
-		RandSeed = floor(Transform.GetLocation().X + Transform.GetLocation().Z);
-		break;
-	case ERandomizedVector::YZ:
-		RandSeed = floor(Transform.GetLocation().Y + Transform.GetLocation().Z);
-		break;
-	case ERandomizedVector::XYZ:
-		RandSeed = floor(Transform.GetLocation().X + Transform.GetLocation().Y + Transform.GetLocation().Z);
-		break;
-	default:
-		
-		break;
-	}
+	int32 RandSeed = RandomIntFromVector(RandomizationVector, Transform.GetLocation());
 	
 	FRandomStream RandStream;
 	RandStream.Initialize(RandSeed);
