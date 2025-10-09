@@ -37,3 +37,7 @@ void ISaveActorInterface::SetSaveComponentData_Implementation(FSaveComponentData
 {
 	SetSaveComponentData(Data);
 }
+
+void ISaveActorInterface::SetActorRawSaveData_Implementation(const TArray<FString>& RawData)
+{
+}

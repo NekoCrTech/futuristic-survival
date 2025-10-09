@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Save/SaveActorInterface.h"
+#include "Structs/SaveActorData.h"
 #include "SurvActor.generated.h"
 
 UCLASS()

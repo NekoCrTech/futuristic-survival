@@ -21,6 +21,8 @@ public:
 	bool bWasSpawned = false;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	UClass* ActorClass;
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
+	TArray<FString> RawData;
 
 
 	FSaveActorData()
@@ -33,5 +35,14 @@ public:
 		ActorTransform = InActorTransform;
 		bWasSpawned = InWasSpawned;
 		ActorClass = InActorClass;
+	};
+
+	FSaveActorData(const FTransform& InActorTransform, const bool& InWasSpawned,UClass* InActorClass, const TArray<FString>& InRawData)
+	{
+		ActorTransform = InActorTransform;
+		bWasSpawned = InWasSpawned;
+		ActorClass = InActorClass;
+		RawData = InRawData;
+		
 	};
 };

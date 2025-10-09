@@ -50,4 +50,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save & Load")
 	void SetSaveComponentData(FSaveComponentData Data);
 	virtual void SetSaveComponentData_Implementation(FSaveComponentData Data);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Save & Load")
+	void SetActorRawSaveData(const TArray<FString>& RawData);
+	virtual void SetActorRawSaveData_Implementation(const TArray<FString>& RawData);
 };

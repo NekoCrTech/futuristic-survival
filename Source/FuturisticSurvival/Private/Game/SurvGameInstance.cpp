@@ -199,6 +199,7 @@ void USurvGameInstance::LoadGame()
 		Ar.ArIsSaveGame = true;
 		Actor->Serialize(Ar);
 		Inter->Execute_UpdateFromSave(Actor);
+		Inter->Execute_SetActorRawSaveData(Actor, SAD.RawData);
 		for (auto ActorComp : Actor->GetComponents())
 		{
 			if (!ActorComp->Implements<USaveActorInterface>())

@@ -90,4 +90,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="Chrono|Time")
 	FTimeChangeDelegate OnTimeChange;
+
+	FSaveActorData GetSaveData_Implementation() override;
+	void SetActorRawSaveData_Implementation(const TArray<FString>& RawData) override;
 };

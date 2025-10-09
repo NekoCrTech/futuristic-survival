@@ -3,6 +3,7 @@
 
 #include "Actors/RegrowableHarvestablePickup.h"
 #include "Logger.h"
+#include "SurvUtils.h"
 #include "Actors/Chronomanager.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -64,4 +65,36 @@ void ARegrowableHarvestablePickup::Interact_Implementation(class ASurvCharacter*
 	}
 	HarvestTracking = TimeManager->GetCurrentGameTime();
 	DaysSinceLastHarvest = 0;
+}
+
+FSaveActorData ARegrowableHarvestablePickup::GetSaveData_Implementation()
+{
+	TArray<FString> RawData;
+	RawData.Add(HarvestTracking.GetSaveString());
+	return FSaveActorData(GetActorTransform(),bWasSpawned,GetClass()->StaticClass(),RawData);
+}
+
+void ARegrowableHarvestablePickup::UpdateFromSave_Implementation()
+{
+	Super::UpdateFromSave_Implementation();
+}
+
+void ARegrowableHarvestablePickup::SetActorRawSaveData_Implementation(const TArray<FString>& RawData)
+{
+	int i=0;
+	TArray<FString> chunks;
+	for (auto d : RawData)
+	{
+		chunks.Empty();
+		switch(i)
+		{
+		case 0:
+			chunks = ChopString(d,'|');
+			HarvestTracking.UpdateFromSaveString(chunks);
+			break;
+		default:
+			Logger::GetInstance()->AddMessage("ARegrowableHarvestablePickup::SetActorRawSaveData_Implementation - Out of expected index", EL_ERROR);
+			break;
+		}
+	}
 }

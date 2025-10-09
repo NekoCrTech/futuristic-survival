@@ -4,6 +4,7 @@
 #include "Actors/Chronomanager.h"
 
 #include "Logger.h"
+#include "SurvUtils.h"
 #include "Components/LightComponent.h"
 #include "Components/SkyLightComponent.h"
 #include "Engine/DirectionalLight.h"
@@ -47,6 +48,8 @@ void AChronomanager::UpdateFromSave_Implementation()
 	UpdateLighting();
 	SunLight->GetLightComponent()->UpdateColorAndBrightness();
 }
+
+
 
 void AChronomanager::CalculateDayLength()
 {
@@ -181,6 +184,36 @@ void AChronomanager::UpdateLightRotation()
 	FRotator NewRot(ColorAsRotation.G, ColorAsRotation.B, ColorAsRotation.R);
 
 	SunLight->SetActorRotation(NewRot);
+}
+
+
+// Save & Load
+
+FSaveActorData AChronomanager::GetSaveData_Implementation()
+{
+	TArray<FString> RawData;
+	RawData.Add(CurrentTime.GetSaveString());
+	return FSaveActorData(GetActorTransform(),bWasSpawned,GetClass()->StaticClass(),RawData);
+}
+
+void AChronomanager::SetActorRawSaveData_Implementation(const TArray<FString>& RawData)
+{
+	int i=0;
+	TArray<FString> chunks;
+	for (auto d : RawData)
+	{
+		chunks.Empty();
+		switch(i)
+		{
+		case 0:
+			chunks = ChopString(d,'|');
+			CurrentTime.UpdateFromSaveString(chunks);
+			break;
+		default:
+			Logger::GetInstance()->AddMessage("AChronomanager::SetActorRawSaveData_Implementation - Out of expected index", EL_ERROR);
+			break;
+		}
+	}
 }
 
 

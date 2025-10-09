@@ -6,17 +6,23 @@
 TArray<FString> ChopString(FString Source, char split)
 {
 	TArray<FString> Ret;
-	FString LSide, RSide;
+	FString push;
 
-	while (Source.Split(&split, &LSide, &RSide))
+	for (int i=0; i<Source.Len(); i++ )
 	{
-		Ret.Add(LSide);
-		Source = RSide;
-		LSide.Empty();
-	}
-	if (RSide.IsEmpty())
-	{
-		Ret.Add(RSide);
+		if (Source[i] == split)
+		{
+			Ret.Add(push);
+			push.Empty();
+		}
+		else
+		{
+			push += Source[i];
+			if (i==Source.Len()-1)
+			{
+				Ret.Add(push);
+			}
+		}
 	}
 	return Ret;
 }

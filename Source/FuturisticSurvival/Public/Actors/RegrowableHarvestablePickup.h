@@ -47,4 +47,8 @@ public:
 	void OnTimeChanged(FTimeData TimeData);
 
 	virtual void Interact_Implementation(class ASurvCharacter* Caller) override;
+	
+	virtual FSaveActorData GetSaveData_Implementation() override;
+	virtual void UpdateFromSave_Implementation() override;
+	void SetActorRawSaveData_Implementation(const TArray<FString>& RawData) override;
 };
