@@ -10,6 +10,8 @@ APickupActor::APickupActor()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent=Mesh;
+
+	Root->DestroyComponent();
 }
 
 FText APickupActor::GetInteractionText_Implementation()
