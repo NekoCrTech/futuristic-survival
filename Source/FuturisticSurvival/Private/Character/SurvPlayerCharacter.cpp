@@ -209,7 +209,7 @@ void ASurvPlayerCharacter::Look(const FInputActionValue& Value)
 
 void ASurvPlayerCharacter::PlayerJump()
 {
-	if (CanCharJump())
+	if (CanCharJump() && !GetMovementComponent()->IsFalling())
 	{
 		HasJumped();
 	}
