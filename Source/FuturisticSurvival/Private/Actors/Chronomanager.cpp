@@ -138,28 +138,27 @@ void AChronomanager::SetDayOfYear()
 
 void AChronomanager::UpdateLighting()
 {
-	if (!IsValid(SunLight) || !IsValid(DailySunlightIntensity))
+	if (!IsValid(SunLight) || !IsValid(DailySunlightRotation))
 	{
 		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLighting - Directional light or Daily Sun Intensity is invalid", EL_ERROR);
 		return;
 	}
-	
-	float NewLightIntensity = DailySunlightIntensity->GetFloatValue(CurrentTimeOfDay);
-	if(IsValid(AnnualSunlightIntensity))
+	float NewLightIntensity = DailySunlightRotation->GetUnadjustedLinearColorValue(CurrentTimeOfDay).A;
+	if(IsValid(AnnualSunlightRotation))
 	{
-		NewLightIntensity += AnnualSunlightIntensity->GetFloatValue(CurrentTime.DayOfYear);
+		NewLightIntensity += AnnualSunlightRotation->GetUnadjustedLinearColorValue(CurrentTimeOfDay).A;
 	}
 	NewLightIntensity = FMath::Clamp(NewLightIntensity, 0.0f, MaxSunlightIntensity);
 
 	SunLight->GetLightComponent()->Intensity = NewLightIntensity;
 	
-	if (!IsValid(SkyLight) || !IsValid(SkylightIntensity))
+	if (!IsValid(SkyLight) || !IsValid(SkylightHourlyColor))
 	{
 		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLighting - Skylight or Skylight Intensity is invalid", EL_ERROR);
 		return;
 	}
 
-	float NewSkylightIntensity = SkylightIntensity->GetFloatValue(CurrentTimeOfDay);
+	float NewSkylightIntensity = SkylightHourlyColor->GetUnadjustedLinearColorValue(CurrentTimeOfDay).A;
 	SkyLight->GetLightComponent()->SetIntensity(NewSkylightIntensity);
 	if (IsValid(SkylightHourlyColor))
 	{

@@ -28,12 +28,6 @@ private:
 #pragma region Lightning
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = "Reference to the directional light in map"))
 	class ADirectionalLight* SunLight;
-		
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
-	UCurveFloat* DailySunlightIntensity;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
-	UCurveFloat* AnnualSunlightIntensity;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
 	UCurveLinearColor* DailySunlightRotation;
@@ -43,10 +37,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
 	class ASkyLight* SkyLight;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
-	UCurveFloat* SkylightIntensity;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Chrono|Lighting", meta = (AllowPrivateAccess = "true", Tooltip = ""))
 	UCurveLinearColor* SkylightHourlyColor;
 
