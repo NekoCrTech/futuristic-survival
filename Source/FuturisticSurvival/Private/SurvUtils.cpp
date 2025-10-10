@@ -51,3 +51,26 @@ FLinearColor GetItemQualityColor(const EItemQuality& ItemQuality)
 	}
 }
 
+int32 RandomIntFromVector(const ERandomizedVector& DirectionalRandomization, const FVector& Location)
+{
+	switch (DirectionalRandomization)
+	{
+	case ERandomizedVector::X:
+		return floor(Location.X);
+	case ERandomizedVector::Y:
+		return floor(Location.Y);
+	case ERandomizedVector::Z:
+		return floor(Location.Z);
+	case ERandomizedVector::XY:
+		return floor(Location.X + Location.Y);
+	case ERandomizedVector::XZ:
+		return floor(Location.X +Location.Z);
+	case ERandomizedVector::YZ:
+		return floor(Location.Y + Location.Z);
+	case ERandomizedVector::XYZ:
+		return floor(Location.X + Location.Y + Location.Z);
+	default:
+		return 0;
+	}
+}
+

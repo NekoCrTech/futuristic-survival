@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Save/SaveActorInterface.h"
 #include "Structs/SaveActorData.h"
+#include "Logger.h"
 #include "SurvActor.generated.h"
 
 UCLASS()
