@@ -75,6 +75,9 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	UInputAction* InventoryAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* TogglePerspectiveAction;
 #pragma endregion
 
 	void Move(const FInputActionValue& Value);
@@ -88,6 +91,8 @@ protected:
 	void SneakOff();
 	
 	void OnInteract();
+
+	void TogglePerspective();
 	
 	virtual void BeginPlay() override;
 
@@ -98,6 +103,9 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCameraComponent> FirstPersonCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USphereComponent> InteractionTrigger;
@@ -113,6 +121,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
 	bool bInventoryIsShown = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
+	bool bInFirstPerson = false;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="State", meta=(AllowPrivateAccess="true"))
+	bool bUseHeadBob = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DEBUG", meta = (AllowPrivateAccess = "true"))
 	bool DEBUG_INTERACTION_TRACE = false;
