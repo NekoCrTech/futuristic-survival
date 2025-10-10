@@ -15,7 +15,6 @@
 #include "Interaction/InteractionInterface.h"
 #include "Components/SphereComponent.h"
 #include "Logger.h"
-#include "MeshPaintVisualize.h"
 #include "Core/SurvPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -52,6 +51,14 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	// Create first person camera
+	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+	FirstPersonCamera->SetupAttachment(GetMesh(), "head");
+	FirstPersonCamera->SetRelativeRotation(FRotator(0,-90,90));
+	FirstPersonCamera->SetRelativeLocation(FVector(15,20,2.5));
+	FirstPersonCamera->bUsePawnControlRotation = true;
+	FirstPersonCamera->Deactivate();
+
 	// Create Interaction Trigger
 	InteractionTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("Interaction Trigger Volume"));
 	InteractionTrigger->SetupAttachment(RootComponent);
@@ -59,6 +66,18 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin);
 	InteractionTrigger->OnComponentEndOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd);
 }
+
+void ASurvPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	SaveActorID.Invalidate();
+
+	if (!bUseHeadBob)
+	{
+		// TODO: Implement logic for HeadBob
+	}
+}
+
 
 void ASurvPlayerCharacter::Tick(float DeltaTime)
 {
@@ -89,18 +108,12 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
 		// Interacting
 		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::OnInteract);
+		// Camera
+		EnhancedInputComponent->BindAction(TogglePerspectiveAction,ETriggerEvent::Started,this, &ASurvPlayerCharacter::TogglePerspective);
 		// User Interface
 		EnhancedInputComponent->BindAction(InventoryAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::TogglePlayerInventory);
 	}
 }
-
-void ASurvPlayerCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	SaveActorID.Invalidate();
-}
-
-
 
 //-------------------
 // Interaction System
@@ -147,8 +160,10 @@ void ASurvPlayerCharacter::TraceForInteraction()
 	GetWorld()->DebugDrawTraceTag = DEBUG_INTERACTION_TRACE ? TEXT("InteractionTrace") : TEXT("NONE");
 	
 	FHitResult LTHit(ForceInit);
-	FVector LTStart = FollowCamera->GetComponentLocation();
-	float SearchLength = (FollowCamera->GetComponentLocation() - CameraBoom->GetComponentLocation()).Length();
+
+	FVector LTStart = bInFirstPerson ? FirstPersonCamera->GetComponentLocation() : FollowCamera->GetComponentLocation();
+	float SearchLength = bInFirstPerson ? FirstPersonCamera->GetComponentLocation().Length() :
+		(FollowCamera->GetComponentLocation() - CameraBoom->GetComponentLocation()).Length();
 	SearchLength += InteractionTraceLength;
 	FVector LTEnd = (FollowCamera->GetForwardVector() * SearchLength)+LTStart;
 	
@@ -251,6 +266,28 @@ void ASurvPlayerCharacter::OnInteract()
 	}
 	//Inter->Interact_Implementation(this);
 	Inter->Execute_Interact(InteractionActor, this);
+}
+
+void ASurvPlayerCharacter::TogglePerspective()
+{
+	bInFirstPerson = !bInFirstPerson;
+	if(!bInFirstPerson)
+	{
+		
+		FirstPersonCamera->Deactivate();
+		FollowCamera->Activate();
+		bUseControllerRotationPitch = false;
+		bUseControllerRotationYaw = false;
+		bUseControllerRotationRoll = false;
+		return;
+
+	}
+	FollowCamera->Deactivate();
+	FirstPersonCamera->Activate();
+	bUseControllerRotationPitch = true;
+	bUseControllerRotationYaw = true;
+	bUseControllerRotationRoll = true;
+	return;
 }
 
 void ASurvPlayerCharacter::TogglePlayerInventoryBP_Implementation()
