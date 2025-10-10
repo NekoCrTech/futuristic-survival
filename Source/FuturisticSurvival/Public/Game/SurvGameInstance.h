@@ -23,7 +23,7 @@ private:
 	class USurvSaveGame* SaveGameObject = nullptr;
 	UPROPERTY()
 	FString SaveGameName = TEXT("DEFAULT");
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category = "level", meta = (AllowPrivateAccess = "true"))
 	FName CurrentlyLoadedLevel = "NONE";
 	UPROPERTY()
 	FSaveActorData PlayerData;
@@ -47,4 +47,13 @@ public:
 	void DEV_SaveGame();
 	UFUNCTION(BlueprintCallable)
 	void DEV_LoadGame();
+
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void LoadGameLevelBP(const FName& LevelToLoad);
+	UFUNCTION(BlueprintCallable)
+	void LoadGameLevel(const FName& LevelToLoad);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool NoLevelLoaded() const {return CurrentlyLoadedLevel == FName("NONE");}
 };
