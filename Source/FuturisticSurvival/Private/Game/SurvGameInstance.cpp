@@ -323,3 +323,13 @@ void USurvGameInstance::DEV_LoadGame()
 {
 	LoadGame();
 }
+
+
+void USurvGameInstance::LoadGameLevel(const FName& LevelToLoad)
+{
+	LoadGameLevelBP(LevelToLoad);
+}
+
+void USurvGameInstance::LoadGameLevelBP_Implementation(const FName& LevelToLoad)
+{
+}
