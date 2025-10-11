@@ -156,8 +156,9 @@ void ASurvPlayerCharacter::TraceForInteraction()
 	FCollisionQueryParams LTParams = FCollisionQueryParams(FName(TEXT("InteractionTrace")), true, this);
 	LTParams.bReturnPhysicalMaterial = false;
 	LTParams.bReturnFaceIndex = false;
-	
-	GetWorld()->DebugDrawTraceTag = DEBUG_INTERACTION_TRACE ? TEXT("InteractionTrace") : TEXT("NONE");
+
+	//GetWorld()->DebugDrawTraceTag = DEBUG_INTERACTION_TRACE ? TEXT("InteractionTrace") : TEXT("NONE");
+
 	
 	FHitResult LTHit(ForceInit);
 
