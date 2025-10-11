@@ -8,14 +8,14 @@
 #include "Logger.h"
 #include "Core/SurvActor.h"
 #include <Serialization/ObjectAndNameAsStringProxyArchive.h>
-
-#include "Character/SurvCharacter.h"
 #include "GameFramework/Character.h"
+#include "SaveGameSystem.h"
+#include "Character/SurvCharacter.h"
 
 
 USurvGameInstance::USurvGameInstance()
 {
-	
+	SaveNames = GetAllSaveGameNames();
 }
 
 void USurvGameInstance::CreateSaveSlot()
@@ -125,6 +125,8 @@ void USurvGameInstance::LoadGame()
 	SaveGameObject = Cast<USurvSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveGameName, 0));
 	SaveableActorData = SaveGameObject->GetSaveActorData();
 	PlayerData = SaveGameObject->GetPlayerData();
+	CurrentlyLoadedLevel = SaveGameObject->GetCurrentLevel();
+	LoadGameLevel(CurrentlyLoadedLevel);
 
 	for (FActorIterator It(GetWorld()); It; ++It)
 	{
@@ -297,6 +299,38 @@ void USurvGameInstance::SetPlayerData()
 	}
 }
 
+TArray<FString> USurvGameInstance::GetAllSaveGameNames()
+{
+	TArray<FString> Ret;
+	FString SavePath = FPaths::ProjectSavedDir();
+	SavePath += "SaveGames/*";
+	//Logger::GetInstance()->AddMessage("USurvGameInstance::GetAllSaveGameNames found the following save path", EL_DEBUG);
+	WIN32_FIND_DATA FindData;
+	HANDLE hFindData = ::FindFirstFile(*SavePath, &FindData);
+	if (hFindData == INVALID_HANDLE_VALUE)
+	{
+		return Ret;
+	}
+
+	while (::FindNextFile(hFindData, &FindData))
+	{
+		if(FindData.cFileName[0] == '\0' ||
+			FindData.cFileName[0] == '.' && FindData.cFileName[1] == '\0' ||
+			FindData.cFileName[0] == '.' && FindData.cFileName[1] == '\0' && FindData.cFileName[2] == '\0')
+		{
+			continue;
+		}
+		FString FileName(FindData.cFileName);
+		if (FileName.EndsWith(".sav"))
+		{
+			Ret.Add(FileName.Mid(0,FileName.Len() - 4));
+		}
+		
+	}
+	::FindClose(hFindData);	
+	return Ret;
+}
+
 void USurvGameInstance::AddActorData(const FGuid& ActorID, FSaveActorData ActorData)
 {
 	SaveableActorData.Add(ActorID, ActorData);
@@ -316,7 +350,9 @@ void USurvGameInstance::DEV_SaveGame()
 	GatherActorData();
 	SaveGameObject->SetSaveActorData(SaveableActorData);
 	SaveGameObject->SetPlayerData(PlayerData);
+	SaveGameObject->SetCurrentLevel(CurrentlyLoadedLevel);
 	UGameplayStatics::SaveGameToSlot(SaveGameObject, SaveGameName, 0);
+	SaveNames = GetAllSaveGameNames();
 }
 
 void USurvGameInstance::DEV_LoadGame()
@@ -328,6 +364,21 @@ void USurvGameInstance::DEV_LoadGame()
 void USurvGameInstance::LoadGameLevel(const FName& LevelToLoad)
 {
 	LoadGameLevelBP(LevelToLoad);
+}
+
+TArray<FString> USurvGameInstance::GetSaveGameNames() const
+{
+	return SaveNames;
+}
+
+void USurvGameInstance::SetSaveGameName(const FString& SaveName)
+{
+	SaveGameName = SaveName;
+}
+
+void USurvGameInstance::SetCurrentLevel(const FName& Level)
+{
+	CurrentlyLoadedLevel = Level;
 }
 
 void USurvGameInstance::LoadGameLevelBP_Implementation(const FName& LevelToLoad)

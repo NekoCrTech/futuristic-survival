@@ -27,6 +27,8 @@ private:
 	FName CurrentlyLoadedLevel = "NONE";
 	UPROPERTY()
 	FSaveActorData PlayerData;
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category = "level", meta = (AllowPrivateAccess = "true"))
+	TArray<FString> SaveNames;
 
 	USurvGameInstance();
 
@@ -35,6 +37,8 @@ private:
 	void GatherPlayerData();
 	void LoadGame();
 	void SetPlayerData();
+
+	TArray<FString> GetAllSaveGameNames();
 
 public:
 
@@ -56,4 +60,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool NoLevelLoaded() const {return CurrentlyLoadedLevel == FName("NONE");}
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	TArray<FString> GetSaveGameNames() const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetSaveGameName(const FString& SaveName);
+
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentLevel(const FName& Level);
 };
