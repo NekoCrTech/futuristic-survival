@@ -118,10 +118,10 @@ public:
 	void AddMessage(std::string Msg, EErrorLevel level)
 	{
 		std::string LogLine;
-		LogLine += ErrorLevelAsString(level);
-		LogLine += "- ";
 		LogLine += TodayDateAsString();
 		LogLine += " ";
+		LogLine += ErrorLevelAsString(level);
+		LogLine += "- ";
 		LogLine += GetCurrentTimeStamp();
 		LogLine += ": ";
 		LogLine += Msg;
