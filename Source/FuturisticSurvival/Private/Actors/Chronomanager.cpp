@@ -151,7 +151,7 @@ void AChronomanager::UpdateLighting()
 {
 	if (!IsValid(SunLight) || !IsValid(DailySunlightRotation))
 	{
-		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLighting - Directional light or Daily Sun Intensity is invalid", EL_ERROR);
+		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLighting - Directional light or Daily Sun Intensity is invalid", EErrorLevel::EL_ERROR);
 		return;
 	}
 	float NewLightIntensity = DailySunlightRotation->GetUnadjustedLinearColorValue(CurrentTimeOfDay).A;
@@ -165,7 +165,7 @@ void AChronomanager::UpdateLighting()
 	
 	if (!IsValid(SkyLight) || !IsValid(SkylightHourlyColor))
 	{
-		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLighting - Skylight or Skylight Intensity is invalid", EL_ERROR);
+		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLighting - Skylight or Skylight Intensity is invalid", EErrorLevel::EL_ERROR);
 		return;
 	}
 
@@ -182,7 +182,7 @@ void AChronomanager::UpdateLightRotation()
 {
 	if (!IsValid(SunLight) || !IsValid(DailySunlightRotation))
 	{
-		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLightRotation - Directional light or Daily Sun Rotation is invalid", EL_ERROR);
+		Logger::GetInstance()->AddMessage("AChronomanager::UpdateLightRotation - Directional light or Daily Sun Rotation is invalid", EErrorLevel::EL_ERROR);
 		return;
 	}
 	
@@ -205,7 +205,7 @@ void AChronomanager::UpdateTemperature()
 	if(!IsValid(DailyTemperatureRange) || !IsValid(AnnualTemperatureRange))
 	{
 		GetWorld()->GetTimerManager().ClearTimer(WorldTemperatureHandle);
-		Logger::GetInstance()->AddMessage("AChronomanager::UpdateTemperature - Daily or Annual temperature range is invalid", EL_WARNING);
+		Logger::GetInstance()->AddMessage("AChronomanager::UpdateTemperature - Daily or Annual temperature range is invalid", EErrorLevel::EL_WARNING);
 		return;
 	}
 
@@ -250,7 +250,7 @@ void AChronomanager::SetActorRawSaveData_Implementation(const TArray<FString>& R
 			CurrentTime.UpdateFromSaveString(chunks);
 			break;
 		default:
-			Logger::GetInstance()->AddMessage("AChronomanager::SetActorRawSaveData_Implementation - Out of expected index", EL_ERROR);
+			Logger::GetInstance()->AddMessage("AChronomanager::SetActorRawSaveData_Implementation - Out of expected index", EErrorLevel::EL_ERROR);
 			break;
 		}
 	}

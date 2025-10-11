@@ -13,7 +13,7 @@ void ARegrowableHarvestablePickup::BeginPlay()
 	TimeManager = Cast<AChronomanager>(UGameplayStatics::GetActorOfClass(GetWorld(),AChronomanager::StaticClass()));
 	if (!IsValid(TimeManager))
 	{
-		Logger::GetInstance()->AddMessage("ARegrowableHarvestablePickup - Chronomanager is invalid", EL_ERROR);
+		Logger::GetInstance()->AddMessage("ARegrowableHarvestablePickup - Chronomanager is invalid", EErrorLevel::EL_ERROR);
 		return;
 	}
 	TimeManager->OnTimeChange.AddUniqueDynamic(this, &ARegrowableHarvestablePickup::OnTimeChanged);
@@ -56,7 +56,7 @@ void ARegrowableHarvestablePickup::Interact_Implementation(class ASurvCharacter*
 	Super::Interact_Implementation(Caller);
 	if (!IsValid(TimeManager))
 	{
-		Logger::GetInstance()->AddMessage("ARegrowableHarvestablePickup - Chronomanager is invalid", EL_ERROR);
+		Logger::GetInstance()->AddMessage("ARegrowableHarvestablePickup - Chronomanager is invalid", EErrorLevel::EL_ERROR);
 		return;
 	}
 	if (!bIsHarvested)
@@ -93,7 +93,7 @@ void ARegrowableHarvestablePickup::SetActorRawSaveData_Implementation(const TArr
 			HarvestTracking.UpdateFromSaveString(chunks);
 			break;
 		default:
-			Logger::GetInstance()->AddMessage("ARegrowableHarvestablePickup::SetActorRawSaveData_Implementation - Out of expected index", EL_ERROR);
+			Logger::GetInstance()->AddMessage("ARegrowableHarvestablePickup::SetActorRawSaveData_Implementation - Out of expected index", EErrorLevel::EL_ERROR);
 			break;
 		}
 	}

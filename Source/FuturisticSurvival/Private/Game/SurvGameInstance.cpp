@@ -117,7 +117,7 @@ void USurvGameInstance::LoadGame()
 {
 	if (!UGameplayStatics::DoesSaveGameExist(SaveGameName, 0))
 	{
-		Logger::GetInstance()->AddMessage("Load game called with invalid save name", ERRORLEVEL::EL_WARNING);
+		Logger::GetInstance()->AddMessage("Load game called with invalid save name", EErrorLevel::EL_WARNING);
 		return;
 	}
 	

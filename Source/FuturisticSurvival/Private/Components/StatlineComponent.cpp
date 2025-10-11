@@ -109,7 +109,7 @@ float UStatlineComponent::GetStatPercentile(const EStat Stat) const
 	case EStat::Hunger:
 		return Hunger.Percentile();
 	default:
-		Logger::GetInstance()->AddMessage("UStatlineComponent::GetStatPercentile called with invalid stat type", ERRORLEVEL::EL_WARNING);
+		Logger::GetInstance()->AddMessage("UStatlineComponent::GetStatPercentile called with invalid stat type", EErrorLevel::EL_WARNING);
 		break;
 	}
 	return -1.f;
@@ -135,7 +135,7 @@ void UStatlineComponent::AdjustStat(const EStat& Stat, const float& Amount)
 		Hunger.Adjust(Amount);
 		return;
 	default:
-		Logger::GetInstance()->AddMessage("UStatlineComponent::AdjustStat called with invalid stat type", ERRORLEVEL::EL_WARNING);
+		Logger::GetInstance()->AddMessage("UStatlineComponent::AdjustStat called with invalid stat type", EErrorLevel::EL_WARNING);
 		break;
 	}
 	

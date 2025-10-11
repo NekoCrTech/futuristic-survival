@@ -262,7 +262,7 @@ void ASurvPlayerCharacter::OnInteract()
 	IInteractionInterface* Inter = Cast<IInteractionInterface>(InteractionActor);
 	if(Inter == nullptr)
 	{
-		Logger::GetInstance()->AddMessage("ASurvPlayerCharacter::OnInteract - Failed to cast to InteractionInterface", EL_ERROR);
+		Logger::GetInstance()->AddMessage("ASurvPlayerCharacter::OnInteract - Failed to cast to InteractionInterface", EErrorLevel::EL_ERROR);
 		return;
 	}
 	//Inter->Interact_Implementation(this);

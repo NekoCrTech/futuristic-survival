@@ -2,20 +2,23 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include <string>
 #include <Windows.h>
 #include <fstream>
 #include <chrono>
 #include <iostream>
+#include "Logger.generated.h"
 
 #define LOGREFACE "\\SurvLog_"
 
-enum ERRORLEVEL
+UENUM(BlueprintType)
+enum class EErrorLevel : uint8
 {
-	EL_DEBUG = 0,
-	EL_WARNING = 1,
-	EL_ERROR = 2,
-	EL_CRITICAL = 3
+	EL_DEBUG = 0 UMETA(DisplayName = "Debug"),
+	EL_WARNING = 1 UMETA(DisplayName = "Warning"),
+	EL_ERROR = 2 UMETA(DisplayName = "Error"),
+	EL_CRITICAL = 3 UMETA(DisplayName = "Critical"),
 };
 
 class Logger
@@ -84,17 +87,17 @@ private:
 		return ret;
 	}
 
-	std::string ErrorLevelAsString(ERRORLEVEL level)
+	std::string ErrorLevelAsString(EErrorLevel level)
 	{
 		switch (level)
 		{
-			case ERRORLEVEL::EL_DEBUG:
+			case EErrorLevel::EL_DEBUG:
 			return "[DEBUGGING] ";
-			case ERRORLEVEL::EL_WARNING:
+			case EErrorLevel::EL_WARNING:
 			return "[WARNING] ";
-			case ERRORLEVEL::EL_ERROR:
+			case EErrorLevel::EL_ERROR:
 			return "[*ERROR*] ";
-			case ERRORLEVEL::EL_CRITICAL:
+			case EErrorLevel::EL_CRITICAL:
 			return "[!!!CRITICAL ERROR!!!] ";
 			default:
 			return "UNKNOWN ERROR LEVEL ";
@@ -112,11 +115,13 @@ public:
 		return pInstance;	
 	}
 
-	void AddMessage(std::string Msg, ERRORLEVEL level)
+	void AddMessage(std::string Msg, EErrorLevel level)
 	{
 		std::string LogLine;
 		LogLine += TodayDateAsString();
 		LogLine += " ";
+		LogLine += ErrorLevelAsString(level);
+		LogLine += "- ";
 		LogLine += GetCurrentTimeStamp();
 		LogLine += ": ";
 		LogLine += Msg;
