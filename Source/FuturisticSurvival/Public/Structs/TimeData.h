@@ -56,7 +56,7 @@ struct FTimeData
 	{
 		if (Parts.Num() != 6)
 		{
-			Logger::GetInstance()->AddMessage("FTimeData::UpdateFromSaveString called with other than 6 parts", ERRORLEVEL::EL_WARNING);
+			Logger::GetInstance()->AddMessage("FTimeData::UpdateFromSaveString called with other than 6 parts", EErrorLevel::EL_WARNING);
 			return;
 		}
 		DayOfYear = FCString::Atof(*Parts[0]);

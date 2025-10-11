@@ -26,7 +26,7 @@ void ARandomizedActor::OnConstruction(const FTransform& Transform)
 
 	if (ActorOptions.Num() <= 0)
 	{
-		Logger::GetInstance()->AddMessage("ARandomizedActor::OnConstruction - ActorOptions is empty", EL_ERROR);
+		Logger::GetInstance()->AddMessage("ARandomizedActor::OnConstruction - ActorOptions is empty", EErrorLevel::EL_ERROR);
 		return;
 	}
 
