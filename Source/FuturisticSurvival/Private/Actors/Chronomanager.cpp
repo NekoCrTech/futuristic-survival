@@ -17,8 +17,18 @@
 
 void AChronomanager::BeginPlay()
 {
+	
 	Super::BeginPlay();
 	CalculateDayLength();
+	SetStartDate();
+	SetDayOfYear();
+	GetWorld()->GetTimerManager().SetTimer(WorldTemperatureHandle, this, &AChronomanager::UpdateTemperature, WorldTempTickRate, true,0);
+}
+
+void AChronomanager::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(WorldTemperatureHandle);
+	Super::EndPlay(EndPlayReason);
 }
 
 void AChronomanager::Tick(float DeltaTime)
@@ -40,21 +50,15 @@ void AChronomanager::Tick(float DeltaTime)
 	
 }
 
-void AChronomanager::UpdateFromSave_Implementation()
-{
-	CalculateDayLength();
-	UpdateTimeOfDay();
-	UpdateLightRotation();
-	UpdateLighting();
-	SunLight->GetLightComponent()->UpdateColorAndBrightness();
-}
-
-
+//---------------
+// Time
+//---------------
 
 void AChronomanager::CalculateDayLength()
 {
 	MinuteLength = (DayLengthInMinutes*60.f) / 1440.f;
 	TimeDecay = MinuteLength;
+	WorldTempTickRate = MinuteLength * 15.f;
 }
 
 void AChronomanager::UpdateTimeOfDay()
@@ -62,9 +66,16 @@ void AChronomanager::UpdateTimeOfDay()
 	CurrentTimeOfDay = (CurrentTime.Hour * 60) + CurrentTime.Minute;
 }
 
-//---------------
-// Advance Time
-//---------------
+void AChronomanager::SetStartDate()
+{
+	if (!bUseStartDate)
+	{
+		return;
+	}
+	CurrentTime.Day = StartDay;
+	CurrentTime.Month = StartMonth;
+	CurrentTime.Year = StartYear;
+}
 
 void AChronomanager::UpdateTime(const float& DeltaTime)
 {
@@ -185,8 +196,38 @@ void AChronomanager::UpdateLightRotation()
 	SunLight->SetActorRotation(NewRot);
 }
 
+//---------------
+// Temperature
+//---------------
+
+void AChronomanager::UpdateTemperature()
+{
+	if(!IsValid(DailyTemperatureRange) || !IsValid(AnnualTemperatureRange))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(WorldTemperatureHandle);
+		Logger::GetInstance()->AddMessage("AChronomanager::UpdateTemperature - Daily or Annual temperature range is invalid", EL_WARNING);
+		return;
+	}
+
+	float CurrentDaily = DailyTemperatureRange->GetFloatValue(CurrentTimeOfDay);
+	float CurrentAnnual = AnnualTemperatureRange->GetFloatValue(CurrentTime.DayOfYear);
+
+	// Random range 5°C (-2.5 , 2.5)
+	CurrentWorldTemp = CurrentDaily + CurrentAnnual + FMath::FRandRange(-5.f, 5.f);
+	OnTemperatureChange.Broadcast(CurrentWorldTemp);
+}
+
 
 // Save & Load
+
+void AChronomanager::UpdateFromSave_Implementation()
+{
+	CalculateDayLength();
+	UpdateTimeOfDay();
+	UpdateLightRotation();
+	UpdateLighting();
+	SunLight->GetLightComponent()->UpdateColorAndBrightness();
+}
 
 FSaveActorData AChronomanager::GetSaveData_Implementation()
 {
