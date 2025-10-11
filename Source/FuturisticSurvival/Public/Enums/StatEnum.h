@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "StatEnum.generated.h"
 
-UENUM(BlueprintType)
+UENUM(BlueprintType ,meta = (ScriptName = "StatEnum"))
 enum class EStat : uint8 
 {
 	Health UMETA(DisplayName = "Health"),

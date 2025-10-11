@@ -4,7 +4,6 @@
 #include "Structs/SaveComponentData.h"
 #include "SaveActorData.generated.h"
 
-struct FSaveComponentData;
 
 USTRUCT(BlueprintType)
 struct FSaveActorData
@@ -20,15 +19,12 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	bool bWasSpawned = false;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
-	UClass* ActorClass;
+	UClass* ActorClass = nullptr;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	TArray<FString> RawData;
 
 
-	FSaveActorData()
-	{
-		
-	};
+	FSaveActorData() = default;
 
 	FSaveActorData(const FTransform& InActorTransform, const bool& InWasSpawned,UClass* InActorClass)
 	{

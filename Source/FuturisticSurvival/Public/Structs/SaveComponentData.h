@@ -11,7 +11,7 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = "Save & Load")
 	TArray<uint8> ByteData;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Save & Load")
-	UClass* ComponentClass;
+	UClass* ComponentClass = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Save & Load")
 	TArray<FString> RawData;
 };

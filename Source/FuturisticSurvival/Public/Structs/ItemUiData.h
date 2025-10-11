@@ -18,11 +18,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FText	ItemDescription;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UTexture2D* ItemIcon;
+	UTexture2D* ItemIcon = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	EItemQuality ItemQuality;
+	EItemQuality ItemQuality = EItemQuality::Common;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FLinearColor ItemQualityColor;
+	FLinearColor ItemQualityColor = FLinearColor::White;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int StackSize = 0;
 
