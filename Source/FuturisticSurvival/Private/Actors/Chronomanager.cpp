@@ -13,7 +13,7 @@
 #include "Curves/CurveLinearColor.h"
 
 
-// TODO: Move Chronomanager Logic into GameState to remove GetActorOfClass from RegrowableHarvestablePickup
+
 
 void AChronomanager::BeginPlay()
 {
