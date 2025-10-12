@@ -81,8 +81,15 @@ void AHeatSourceActor::OnHeatZoneOverlapEnd(UPrimitiveComponent* OverlapComponen
 	int32 OtherBodyIndex)
 {
 	ASurvCharacter* Character = Cast<ASurvCharacter>(OtherActor);
-	Character->GetStatline()->AdjustLocalTempOffset(0);
-	ActorsInRange.Remove(Character);
+	if(Character)
+	{
+		Character->GetStatline()->AdjustLocalTempOffset(0);
+	}
+	if (ActorsInRange.Contains(Character))
+	{
+		ActorsInRange.Remove(Character);
+	}
+	
 }
 
 FText AHeatSourceActor::GetInteractionText_Implementation()
