@@ -6,6 +6,7 @@
 #include "Character/SurvCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/StatlineComponent.h"
 
 AHeatSourceActor::AHeatSourceActor()
 {
@@ -27,12 +28,21 @@ void AHeatSourceActor::BeginPlay()
 {
 	Super::BeginPlay();
 	SphereRadius = HeatZone->GetScaledSphereRadius();
+	if(!IsValid(HeatFallOff))
+	{
+		PrimaryActorTick.SetTickFunctionEnable(false);
+	}
+	if (bIsActivated)
+	{
+		Emitter->Activate(true);
+	}
+	
 }
 
 void AHeatSourceActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (!bIsActivated)
+	if (!bIsActivated || !IsValid(HeatFallOff))
 	{
 		return;
 	}
@@ -50,9 +60,8 @@ void AHeatSourceActor::Tick(float DeltaTime)
 		float ActorDistance = (Actor->GetActorLocation() - this->GetActorLocation()).Length();
 		ActorDistance /= SphereRadius;
 		float HeatMultiplier = HeatFallOff->GetFloatValue(ActorDistance);
-		float AppliedHeat = MaxHeatValue * HeatMultiplier;
-		GEngine->AddOnScreenDebugMessage(1,1,FColor::Orange,FString::Printf(TEXT("Applied Heat: %f"), AppliedHeat));
-		//TODO: Call to Statline to add Heat offset
+		GEngine->AddOnScreenDebugMessage(1,1,FColor::Orange,FString::Printf(TEXT("Applied Heat: %f"), (MaxHeatValue * HeatMultiplier)));
+		Actor->GetStatline()->AdjustLocalTempOffset(MaxHeatValue * HeatMultiplier);
 	}
 	
 }
@@ -60,16 +69,20 @@ void AHeatSourceActor::Tick(float DeltaTime)
 void AHeatSourceActor::OnHeatZoneOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                               int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(Cast<ASurvCharacter>(OtherActor) != nullptr && Cast<UCapsuleComponent>(OtherComp) )
+	//NOTE: Possible error with multiple heat sources
+	ASurvCharacter* Character = Cast<ASurvCharacter>(OtherActor);
+	if(IsValid(Character) && Cast<UCapsuleComponent>(OtherComp) )
 	{
-		ActorsInRange.AddUnique(OtherActor);
+		ActorsInRange.AddUnique(Character);
 	}
 }
 
 void AHeatSourceActor::OnHeatZoneOverlapEnd(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
-	ActorsInRange.Remove(OtherActor);
+	ASurvCharacter* Character = Cast<ASurvCharacter>(OtherActor);
+	Character->GetStatline()->AdjustLocalTempOffset(0);
+	ActorsInRange.Remove(Character);
 }
 
 FText AHeatSourceActor::GetInteractionText_Implementation()
@@ -83,15 +96,29 @@ void AHeatSourceActor::Interact_Implementation(class ASurvCharacter* Caller)
 	if (!bIsActivated)
 	{
 		Emitter->Deactivate();
+		InteractBP();
 		return;
 	}
 	Emitter->Activate(true);
 	GEngine->AddOnScreenDebugMessage(1,1,FColor::Cyan,FString::Printf(TEXT("Interacting with %s"),*GetName()));
+	InteractBP();
 }
 
 bool AHeatSourceActor::IsInteractable_Implementation() const
 {
 	return bIsInteractableHeatSource;
+}
+
+void AHeatSourceActor::UpdateFromSave_Implementation()
+{
+	if (!bIsActivated)
+	{
+		Emitter->Activate(true);
+	}
+}
+
+void AHeatSourceActor::InteractBP_Implementation()
+{
 }
 
 

@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Enums/StatEnum.h"
 #include "Save/SaveActorInterface.h"
+#include "Structs/SaveActorData.h"
 #include "Structs/Stat.h"
 #include "StatlineComponent.generated.h"
 
@@ -16,37 +17,6 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FUTURISTICSURVIVAL_API UStatlineComponent : public UActorComponent, public ISaveActorInterface
 {
 	GENERATED_BODY()
-
-public:	
-	UStatlineComponent();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	UFUNCTION(BlueprintCallable)
-	void SetMovementCompReference(UCharacterMovementComponent* Comp);
-
-	UFUNCTION(BlueprintCallable)
-	float GetStatPercentile(const EStat Stat) const;
-
-	UFUNCTION(BlueprintCallable)
-	void AdjustStat(const EStat& Stat, const float& Amount);
-
-	UFUNCTION(BlueprintCallable)
-	bool CanSprint()const;
-	UFUNCTION(BlueprintCallable)
-	void SetSprinting(const bool IsSprinting);
-	UFUNCTION(BlueprintCallable)
-	void SetSneaking(const bool IsSneaking);
-	UFUNCTION(BlueprintCallable)
-	bool CanJump();
-	UFUNCTION(BlueprintCallable)
-	void HasJumped();
-
-	virtual FSaveComponentData GetSaveComponentData_Implementation();
-	virtual void SetSaveComponentData_Implementation(FSaveComponentData Data);
-	
-
-protected:
-	virtual void BeginPlay() override;
 
 private:
 
@@ -81,6 +51,16 @@ private:
 	float HungerDps = 5.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Settings")
 	float ThirstDps = 2.f;
+
+#pragma region Temperature
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
+	bool bUseTemperature = true;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
+	float CurrentAmbientTemperature=0.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
+	float CurrentLocalTempOffset = 0.f;
+	
+#pragma endregion
 	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
@@ -96,5 +76,41 @@ private:
 	void TickThirst(const float& DeltaTime);
 	void TickHunger(const float& DeltaTime);
 	bool IsValidSprinting();
-		
+
+protected:
+	virtual void BeginPlay() override;
+
+public:	
+	UStatlineComponent();
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetMovementCompReference(UCharacterMovementComponent* Comp);
+
+	UFUNCTION(BlueprintCallable)
+	float GetStatPercentile(const EStat Stat) const;
+
+	UFUNCTION(BlueprintCallable)
+	void AdjustStat(const EStat& Stat, const float& Amount);
+
+	UFUNCTION(BlueprintCallable)
+	bool CanSprint()const;
+	UFUNCTION(BlueprintCallable)
+	void SetSprinting(const bool IsSprinting);
+	UFUNCTION(BlueprintCallable)
+	void SetSneaking(const bool IsSneaking);
+	UFUNCTION(BlueprintCallable)
+	bool CanJump();
+	UFUNCTION(BlueprintCallable)
+	void HasJumped();
+
+	UFUNCTION()
+	void OnWorldTempChange(float Temperature);
+
+	UFUNCTION(BlueprintCallable)
+	void AdjustLocalTempOffset(const float& OffsetValue);
+
+	virtual FSaveComponentData GetSaveComponentData_Implementation();
+	virtual void SetSaveComponentData_Implementation(FSaveComponentData Data);
+	
 };

@@ -5,8 +5,10 @@
 
 #include "SurvUtils.h"
 #include "Logger.h"
-#include "Structs/SaveActorData.h"
+#include "Core/SurvGameMode.h"
+#include "Actors/Chronomanager.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UStatlineComponent::UStatlineComponent()
@@ -19,6 +21,12 @@ UStatlineComponent::UStatlineComponent()
 void UStatlineComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	ASurvGameMode* GameMode = Cast<ASurvGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	AChronomanager* Chronomanager = GameMode->GetChronomanager();
+	if (IsValid(Chronomanager))
+	{
+		Chronomanager->OnTemperatureChange.AddUniqueDynamic(this, &UStatlineComponent::OnWorldTempChange);
+	}
 	
 }
 
@@ -225,3 +233,18 @@ void UStatlineComponent::SetSaveComponentData_Implementation(FSaveComponentData 
 	}
 }
 
+//-----------------------------------------------------------------------
+//								Temperature
+//-----------------------------------------------------------------------
+
+
+void UStatlineComponent::AdjustLocalTempOffset(const float& OffsetValue)
+{
+	//NOTE: Possible error with multiple heat sources
+	CurrentLocalTempOffset = OffsetValue;
+}
+
+void UStatlineComponent::OnWorldTempChange(float Temperature)
+{
+	CurrentAmbientTemperature = Temperature;
+}

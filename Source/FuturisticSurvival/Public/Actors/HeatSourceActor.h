@@ -41,10 +41,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings", meta = (AllowPrivateAccess = "true"))
 	bool bUseFuel = false;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, SaveGame, Category = "State", meta = (AllowPrivateAccess = "true"))
 	bool bIsActivated = false;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State", meta = (AllowPrivateAccess = "true"))
-	TArray<AActor*> ActorsInRange;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category = "State", meta = (AllowPrivateAccess = "true"))
+	TArray<ASurvCharacter*> ActorsInRange;
 	
 protected:
 
@@ -61,5 +61,10 @@ public:
 	virtual FText GetInteractionText_Implementation() override;
 	virtual void  Interact_Implementation(class ASurvCharacter* Caller) override;
 	virtual bool  IsInteractable_Implementation() const override;
+
+	virtual void UpdateFromSave_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void InteractBP();
 	
 };
