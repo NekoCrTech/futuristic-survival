@@ -34,7 +34,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"), Category="Stats")
 	FStat Hunger = FStat(100,100,-0.125);
 	
-
+#pragma region StalineSettings
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Settings")
 	float JumpCost = 10.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Settings")
@@ -51,6 +51,7 @@ private:
 	float HungerDps = 5.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Settings")
 	float ThirstDps = 2.f;
+#pragma endregion
 
 #pragma region Temperature
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
@@ -59,6 +60,20 @@ private:
 	float CurrentAmbientTemperature=0.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
 	float CurrentLocalTempOffset = 0.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
+	float CurrentBodyTemperature = 98.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
+	float HeatInsulation = 0.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
+	float ColdInsulation = 0.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
+	float BodyCoverage = 0.f; // Has a value from 0 to 8
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
+	float AdjustmentFactor = 500.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="State")
+	float TempDiffToIgnore = 5.f;
+
+	void UpdateBodyTemperature(const float& DeltaTime);
 	
 #pragma endregion
 	
@@ -109,6 +124,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AdjustLocalTempOffset(const float& OffsetValue);
+	UFUNCTION(BlueprintCallable)
+	void AdjustHeatInsulation(const float& Amount);
+	UFUNCTION(BlueprintCallable)
+	void AdjustColdInsulation(const float& Amount);
+	UFUNCTION(BlueprintCallable)
+	void AdjustBodyCoverage(const float& Amount);
 
 	virtual FSaveComponentData GetSaveComponentData_Implementation();
 	virtual void SetSaveComponentData_Implementation(FSaveComponentData Data);
