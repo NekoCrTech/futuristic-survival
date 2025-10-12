@@ -40,6 +40,13 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
+	// Create first person camera
+	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+	FirstPersonCamera->SetupAttachment(GetMesh(), "head");
+	FirstPersonCamera->SetRelativeRotation(FRotator(0,-90,90));
+	FirstPersonCamera->SetRelativeLocation(FVector(15,20,2.5));
+	FirstPersonCamera->bUsePawnControlRotation = true;
+
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -50,15 +57,8 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-
-	// Create first person camera
-	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	FirstPersonCamera->SetupAttachment(GetMesh(), "head");
-	FirstPersonCamera->SetRelativeRotation(FRotator(0,-90,90));
-	FirstPersonCamera->SetRelativeLocation(FVector(15,20,2.5));
-	FirstPersonCamera->bUsePawnControlRotation = true;
-	FirstPersonCamera->Deactivate();
-
+	FollowCamera->Deactivate();
+	
 	// Create Interaction Trigger
 	InteractionTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("Interaction Trigger Volume"));
 	InteractionTrigger->SetupAttachment(RootComponent);
@@ -279,6 +279,9 @@ void ASurvPlayerCharacter::OnInteract()
 	}
 	//Inter->Interact_Implementation(this);
 	Inter->Execute_Interact(InteractionActor, this);
+	Inter->Execute_SetInteractionWidgetIsEnabled(InteractionActor, false);
+	UpdateInteractionText_Implementation();
+	
 }
 
 void ASurvPlayerCharacter::TogglePerspective()

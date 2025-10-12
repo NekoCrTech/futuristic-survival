@@ -20,6 +20,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
 	FText ItemDescription;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
+	FText PickupText;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
 	UTexture2D* ItemIcon;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
 	EItemQuality ItemQuality;
@@ -53,6 +55,8 @@ public:
 	TArray<FSalvageItem> GetSalvageData() const {return SalvageItems;}
 	UFUNCTION(BlueprintCallable)
 	UStaticMesh* GetPickupMesh() const {return Mesh;}
+	UFUNCTION(BlueprintCallable)
+	FText GetPickupText() const {return PickupText;}
 
 	UFUNCTION(BlueprintCallable)
 	int AddToStack(const int& Amount);
