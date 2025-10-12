@@ -18,6 +18,7 @@ public class FuturisticSurvival : ModuleRules
 			"StateTreeModule",
 			"GameplayStateTreeModule",
 			"UMG",
+			"Niagara",
 			"Slate"
 		});
 

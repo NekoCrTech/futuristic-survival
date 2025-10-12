@@ -5,8 +5,10 @@
 
 #include "SurvUtils.h"
 #include "Logger.h"
-#include "Structs/SaveActorData.h"
+#include "Core/SurvGameMode.h"
+#include "Actors/Chronomanager.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UStatlineComponent::UStatlineComponent()
@@ -19,6 +21,12 @@ UStatlineComponent::UStatlineComponent()
 void UStatlineComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	ASurvGameMode* GameMode = Cast<ASurvGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	AChronomanager* Chronomanager = GameMode->GetChronomanager();
+	if (IsValid(Chronomanager))
+	{
+		Chronomanager->OnTemperatureChange.AddUniqueDynamic(this, &UStatlineComponent::OnWorldTempChange);
+	}
 	
 }
 
@@ -30,6 +38,7 @@ void UStatlineComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	{
 		TickStats(DeltaTime);
 	}
+	UpdateBodyTemperature(DeltaTime);
 }
 
 void UStatlineComponent::SetMovementCompReference(UCharacterMovementComponent* Comp)
@@ -225,3 +234,55 @@ void UStatlineComponent::SetSaveComponentData_Implementation(FSaveComponentData 
 	}
 }
 
+//-----------------------------------------------------------------------
+//								Temperature
+//-----------------------------------------------------------------------
+
+
+void UStatlineComponent::AdjustLocalTempOffset(const float& OffsetValue)
+{
+	//NOTE: Possible error with multiple heat sources
+	CurrentLocalTempOffset = OffsetValue;
+}
+
+void UStatlineComponent::OnWorldTempChange(float Temperature)
+{
+	CurrentAmbientTemperature = Temperature;
+}
+
+void UStatlineComponent::UpdateBodyTemperature(const float& DeltaTime)
+{
+	float EffectiveWorldTemp = CurrentAmbientTemperature + CurrentLocalTempOffset;
+	float InsulationValue = EffectiveWorldTemp <= CurrentBodyTemperature ? ColdInsulation : HeatInsulation;
+	InsulationValue /= 100;
+	float DifferenceInTemp = CurrentBodyTemperature - EffectiveWorldTemp;
+
+	DifferenceInTemp -= (DifferenceInTemp * InsulationValue);
+	if (abs(DifferenceInTemp) <= TempDiffToIgnore)
+	{
+		return;
+	}
+	DifferenceInTemp /= AdjustmentFactor;
+	if (BodyCoverage != 0)
+	{
+		DifferenceInTemp /= BodyCoverage;
+	}
+	DifferenceInTemp *= DeltaTime;
+
+	CurrentBodyTemperature -= DifferenceInTemp;
+}
+
+void UStatlineComponent::AdjustHeatInsulation(const float& Amount)
+{
+	HeatInsulation = FMath::Clamp(HeatInsulation + Amount, 0.0f, 100.0f);
+}
+
+void UStatlineComponent::AdjustColdInsulation(const float& Amount)
+{
+	ColdInsulation = FMath::Clamp(ColdInsulation + Amount, 0.0f, 100.0f);
+}
+
+void UStatlineComponent::AdjustBodyCoverage(const float& Amount)
+{
+	BodyCoverage = FMath::Clamp(BodyCoverage + Amount, 0.0f, 8.0f);
+}
