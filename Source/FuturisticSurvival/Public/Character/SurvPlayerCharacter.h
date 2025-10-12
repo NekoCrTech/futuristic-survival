@@ -78,10 +78,15 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	UInputAction* TogglePerspectiveAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* LeanAction;
 #pragma endregion
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void Lean(const FInputActionValue& Value);
+	
 
 	void PlayerJump();
 
@@ -125,6 +130,9 @@ private:
 	bool bInFirstPerson = false;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="State", meta=(AllowPrivateAccess="true"))
 	bool bUseHeadBob = true;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
+	float LeanAmount = 0.0f;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DEBUG", meta = (AllowPrivateAccess = "true"))
 	bool DEBUG_INTERACTION_TRACE = false;

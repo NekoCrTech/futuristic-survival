@@ -78,7 +78,6 @@ void ASurvPlayerCharacter::BeginPlay()
 	}
 }
 
-
 void ASurvPlayerCharacter::Tick(float DeltaTime)
 {
 	if(bEnableRayTrace)
@@ -106,6 +105,9 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
+		EnhancedInputComponent->BindAction(LeanAction,ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Lean);
+		EnhancedInputComponent->BindAction(LeanAction,ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::Lean);
+		EnhancedInputComponent->BindAction(LeanAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::Lean);
 		// Interacting
 		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::OnInteract);
 		// Camera
@@ -222,6 +224,16 @@ void ASurvPlayerCharacter::Look(const FInputActionValue& Value)
 
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
 }
+
+void ASurvPlayerCharacter::Lean(const FInputActionValue& Value)
+{
+	if (!bInFirstPerson)
+	{
+		return;
+	}
+	LeanAmount = Value.Get<float>();
+}
+
 
 void ASurvPlayerCharacter::PlayerJump()
 {
