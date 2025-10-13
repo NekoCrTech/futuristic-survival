@@ -19,6 +19,8 @@ private:
 
 	APickupActor();
 
+	FTimerHandle PhysicsTimer;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> Mesh;
 
@@ -31,6 +33,7 @@ private:
 	
 
 protected:
+	virtual void BeginPlay() override;
 
 public:
 
@@ -44,5 +47,8 @@ public:
 	void SetPickupMesh(UStaticMesh* PickUpMesh);
 	UFUNCTION(BlueprintCallable)
 	void SetInventoryItem(TSubclassOf<UItemBase> Item);
-	
+
+	UFUNCTION()
+	void StopPhysics();
+
 };

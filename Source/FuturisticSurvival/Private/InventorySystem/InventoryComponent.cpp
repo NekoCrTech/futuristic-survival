@@ -105,7 +105,7 @@ bool UInventoryComponent::UseItemAtIndex(const int32& Index)
 
 	InventoryContents[Index].GetDefaultObject()->OnUse(Owner);
 	InventoryContents[Index].GetDefaultObject()->RemoveFromStack(1);
-	
+	CurrentWeight -= InventoryContents[Index].GetDefaultObject()->GetItemWeight();
 	if(InventoryContents[Index].GetDefaultObject()->GetCurrentStack() == 0)
 	{
 		InventoryContents.RemoveAt(Index);
@@ -122,7 +122,7 @@ bool UInventoryComponent::DropStackAtIndex(const int32& Index)
 	}
 	
 	FTransform SpawnTrans;
-	SpawnTrans.SetLocation(Owner->GetActorLocation() + (Owner->GetActorForwardVector() * 10));
+	SpawnTrans.SetLocation(Owner->GetActorLocation() + (Owner->GetActorForwardVector() * 50));
 	APickupActor* SpawnedItem = GetWorld()->SpawnActor<APickupActor>(APickupActor::StaticClass(), SpawnTrans);
 	SpawnedItem->SetActorTransform(SpawnTrans);
 
@@ -132,7 +132,7 @@ bool UInventoryComponent::DropStackAtIndex(const int32& Index)
 	TSubclassOf<UItemBase> PickupItem = InventoryContents[Index];
 	SpawnedItem->SetInventoryItem(PickupItem);
 	InventoryContents.RemoveAt(Index);
-	
+	CurrentWeight -= PickupItem.GetDefaultObject()->GetStackWeight();
 	return true;
 }
 

@@ -15,6 +15,12 @@ APickupActor::APickupActor()
 	Root->DestroyComponent();
 }
 
+void APickupActor::BeginPlay()
+{
+	Super::BeginPlay();
+	GetWorld()->GetTimerManager().SetTimer(PhysicsTimer, this, &APickupActor::StopPhysics,2.f,false);
+}
+
 FText APickupActor::GetInteractionText_Implementation()
 {
 	return InteractionText;
@@ -70,5 +76,11 @@ void APickupActor::SetInventoryItem(TSubclassOf<UItemBase> Item)
 {
 	InventoryItem = Item;
 	InteractionText = InventoryItem.GetDefaultObject()->GetPickupText();
+}
+
+void APickupActor::StopPhysics()
+{
+	Mesh->SetSimulatePhysics(false);
+	GetWorld()->GetTimerManager().ClearTimer(PhysicsTimer);
 }
 
