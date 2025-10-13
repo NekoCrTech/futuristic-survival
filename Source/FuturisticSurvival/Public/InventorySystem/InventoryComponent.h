@@ -9,6 +9,7 @@
 #include "Structs/ItemUiData.h"
 #include "InventoryComponent.generated.h"
 
+class ASurvCharacter;
 class UItemBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -24,6 +25,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category = "InventoryData", Meta = (AllowPrivateAccess = "true")) //TODO: make it EditDefaultOnly
 	TArray<TSubclassOf<UItemBase>> InventoryContents;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
+	ASurvCharacter* Owner;
+
+	
 
 	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
 	bool IsOverCarryWeight(const float& ItemWeight) const;
@@ -46,4 +52,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
 	TArray<FItemUIData> GetInventoryUIData() const;
+
+	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
+	bool UseItemAtIndex(const int32& Index);
+	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
+	bool DropStackAtIndex(const int32& Index);
 };

@@ -3,19 +3,22 @@
 
 #include "InventorySystem/InventoryComponent.h"
 #include "InventorySystem/Items/ItemBase.h"
+#include "Character/SurvCharacter.h"
+#include "Actors/PickupActor.h"
 
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-
-
-
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	ASurvCharacter* tOwner = Cast<ASurvCharacter>(GetOwner());
+	if (tOwner)
+	{
+		Owner = tOwner;
+	}
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -90,6 +93,47 @@ TArray<FItemUIData> UInventoryComponent::GetInventoryUIData() const
 	}
 
 	return Ret;
+}
+
+bool UInventoryComponent::UseItemAtIndex(const int32& Index)
+{
+	if (Owner == nullptr || Index >= InventoryContents.Num())
+	{
+		//TODO: Handle error logging
+		return false;
+	}
+
+	InventoryContents[Index].GetDefaultObject()->OnUse(Owner);
+	InventoryContents[Index].GetDefaultObject()->RemoveFromStack(1);
+	CurrentWeight -= InventoryContents[Index].GetDefaultObject()->GetItemWeight();
+	if(InventoryContents[Index].GetDefaultObject()->GetCurrentStack() == 0)
+	{
+		InventoryContents.RemoveAt(Index);
+	}
+	return true;
+}
+
+bool UInventoryComponent::DropStackAtIndex(const int32& Index)
+{
+	if (Owner == nullptr || Index >= InventoryContents.Num())
+	{
+		//TODO: Handle error logging
+		return false;
+	}
+	
+	FTransform SpawnTrans;
+	SpawnTrans.SetLocation(Owner->GetActorLocation() + (Owner->GetActorForwardVector() * 50));
+	APickupActor* SpawnedItem = GetWorld()->SpawnActor<APickupActor>(APickupActor::StaticClass(), SpawnTrans);
+	SpawnedItem->SetActorTransform(SpawnTrans);
+
+	SpawnedItem->SetPickupMesh(InventoryContents[Index].GetDefaultObject()->GetPickupMesh());
+	SpawnedItem->SetWasSpawned(true);
+
+	TSubclassOf<UItemBase> PickupItem = InventoryContents[Index];
+	SpawnedItem->SetInventoryItem(PickupItem);
+	InventoryContents.RemoveAt(Index);
+	CurrentWeight -= PickupItem.GetDefaultObject()->GetStackWeight();
+	return true;
 }
 
 bool UInventoryComponent::IsOverCarryWeight(const float& ItemWeight) const

@@ -10,8 +10,15 @@ APickupActor::APickupActor()
 {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent=Mesh;
+	Mesh->SetSimulatePhysics(true);
 
 	Root->DestroyComponent();
+}
+
+void APickupActor::BeginPlay()
+{
+	Super::BeginPlay();
+	GetWorld()->GetTimerManager().SetTimer(PhysicsTimer, this, &APickupActor::StopPhysics,2.f,false);
 }
 
 FText APickupActor::GetInteractionText_Implementation()
@@ -58,5 +65,22 @@ void APickupActor::Interact_Implementation(class ASurvCharacter* Caller)
 bool APickupActor::IsInteractable_Implementation() const
 {
 	return IsValid(InventoryItem);
+}
+
+void APickupActor::SetPickupMesh(UStaticMesh* PickUpMesh)
+{
+	Mesh->SetStaticMesh(PickUpMesh);
+}
+
+void APickupActor::SetInventoryItem(TSubclassOf<UItemBase> Item)
+{
+	InventoryItem = Item;
+	InteractionText = InventoryItem.GetDefaultObject()->GetPickupText();
+}
+
+void APickupActor::StopPhysics()
+{
+	Mesh->SetSimulatePhysics(false);
+	GetWorld()->GetTimerManager().ClearTimer(PhysicsTimer);
 }
 

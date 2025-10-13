@@ -19,6 +19,8 @@ private:
 
 	APickupActor();
 
+	FTimerHandle PhysicsTimer;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> Mesh;
 
@@ -31,6 +33,7 @@ private:
 	
 
 protected:
+	virtual void BeginPlay() override;
 
 public:
 
@@ -38,6 +41,14 @@ public:
 	FText GetInteractionText_Implementation() override;
 	void Interact_Implementation(class ASurvCharacter* Caller)override;
 	bool IsInteractable_Implementation() const override;
+
 	
-	
+	UFUNCTION(BlueprintCallable)
+	void SetPickupMesh(UStaticMesh* PickUpMesh);
+	UFUNCTION(BlueprintCallable)
+	void SetInventoryItem(TSubclassOf<UItemBase> Item);
+
+	UFUNCTION()
+	void StopPhysics();
+
 };

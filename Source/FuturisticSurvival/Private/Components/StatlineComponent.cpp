@@ -38,7 +38,11 @@ void UStatlineComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	{
 		TickStats(DeltaTime);
 	}
-	UpdateBodyTemperature(DeltaTime);
+	if(bUseTemperature)
+	{
+		UpdateBodyTemperature(DeltaTime);
+	}
+	
 }
 
 void UStatlineComponent::SetMovementCompReference(UCharacterMovementComponent* Comp)

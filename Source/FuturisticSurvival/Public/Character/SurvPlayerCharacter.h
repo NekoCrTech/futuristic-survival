@@ -22,9 +22,7 @@ class FUTURISTICSURVIVAL_API ASurvPlayerCharacter : public ASurvCharacter
 public:
 	ASurvPlayerCharacter();
 	virtual void Tick(float DeltaTime) override;
-
 	
-
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);
 	
@@ -127,7 +125,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
 	bool bInventoryIsShown = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
-	bool bInFirstPerson = false;
+	bool bInFirstPerson = true;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="State", meta=(AllowPrivateAccess="true"))
 	bool bUseHeadBob = true;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
