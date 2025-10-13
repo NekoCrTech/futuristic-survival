@@ -15,6 +15,7 @@
 #include "Interaction/InteractionInterface.h"
 #include "Components/SphereComponent.h"
 #include "Logger.h"
+#include "BuildingSystem/BuildingComponent.h"
 #include "Core/SurvPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -65,6 +66,9 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	InteractionTrigger->SetRelativeScale3D(FVector(10.f));
 	InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin);
 	InteractionTrigger->OnComponentEndOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd);
+
+	//Create Building Component
+	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));
 }
 
 void ASurvPlayerCharacter::BeginPlay()
@@ -114,12 +118,15 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(TogglePerspectiveAction,ETriggerEvent::Started,this, &ASurvPlayerCharacter::TogglePerspective);
 		// User Interface
 		EnhancedInputComponent->BindAction(InventoryAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::TogglePlayerInventory);
+		EnhancedInputComponent->BindAction(BuildingModeAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::ToggleBuildingMode);
 	}
 }
 
 //-------------------
 // Interaction System
 //-------------------
+
+
 
 void ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                                             int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -313,10 +320,29 @@ void ASurvPlayerCharacter::TogglePlayerInventoryBP_Implementation()
 
 void ASurvPlayerCharacter::TogglePlayerInventory()
 {
+	if(bInBuildingMode)
+	{
+		ToggleBuildingMode();
+	}
 	bInventoryIsShown = !bInventoryIsShown;
 	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	MyPC->SetMovementMappingContextEnabled(!bInventoryIsShown);
 	TogglePlayerInventoryBP();
 }
 
+void ASurvPlayerCharacter::ToggleBuildingModeBP_Implementation()
+{
+	// This is used if there is no function override in blueprints 
+}
 
+void ASurvPlayerCharacter::ToggleBuildingMode()
+{
+	if(bInventoryIsShown)
+	{
+		TogglePlayerInventory();
+	}
+	bInBuildingMode = !bInBuildingMode;
+	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	MyPC->SetMovementMappingContextEnabled(!bInBuildingMode);
+	ToggleBuildingModeBP();
+}

@@ -8,6 +8,7 @@
 #include "SurvPlayerCharacter.generated.h"
 
 
+class UBuildingComponent;
 class USphereComponent;
 class USpringArmComponent;
 class UCameraComponent;
@@ -29,12 +30,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoLook(float Yaw, float Pitch);
 	
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
+	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE UBuildingComponent* GetBuildingComponent() const {return BuildingComponent;}
+	
 	UFUNCTION(BlueprintNativeEvent)
 	void TogglePlayerInventoryBP();
 	void TogglePlayerInventory();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ToggleBuildingModeBP();
+	void ToggleBuildingMode();
 
 	UFUNCTION()
 	void OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -44,6 +50,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void UpdateInteractionText();
 	void UpdateInteractionText_Implementation();
+
+	
+
 	
 protected:
 	
@@ -76,6 +85,9 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	UInputAction* TogglePerspectiveAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* BuildingModeAction;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	UInputAction* LeanAction;
@@ -113,6 +125,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USphereComponent> InteractionTrigger;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UBuildingComponent> BuildingComponent;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta = (AllowPrivateAccess = "true"))
 	bool bEnableRayTrace = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta = (AllowPrivateAccess = "true"))
@@ -130,7 +145,8 @@ private:
 	bool bUseHeadBob = true;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
 	float LeanAmount = 0.0f;
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
+	bool bInBuildingMode = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DEBUG", meta = (AllowPrivateAccess = "true"))
 	bool DEBUG_INTERACTION_TRACE = false;
