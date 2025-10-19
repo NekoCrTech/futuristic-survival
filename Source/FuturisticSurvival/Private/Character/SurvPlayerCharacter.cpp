@@ -15,6 +15,7 @@
 #include "Interaction/InteractionInterface.h"
 #include "Components/SphereComponent.h"
 #include "Logger.h"
+#include "BuildingSystem/BuildingComponent.h"
 #include "Core/SurvPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -65,6 +66,9 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	InteractionTrigger->SetRelativeScale3D(FVector(10.f));
 	InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin);
 	InteractionTrigger->OnComponentEndOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd);
+
+	//Create Building Component
+	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));
 }
 
 void ASurvPlayerCharacter::BeginPlay()
@@ -114,12 +118,19 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(TogglePerspectiveAction,ETriggerEvent::Started,this, &ASurvPlayerCharacter::TogglePerspective);
 		// User Interface
 		EnhancedInputComponent->BindAction(InventoryAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::TogglePlayerInventory);
+		EnhancedInputComponent->BindAction(BuildingModeAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::ToggleBuildingModeUserInterface);
+		// Building Mode
+		EnhancedInputComponent->BindAction(PlaceAction,ETriggerEvent::Started,this,&ASurvPlayerCharacter::OnPlaceBuilding);
+		EnhancedInputComponent->BindAction(RotateAction,ETriggerEvent::Started,this,&ASurvPlayerCharacter::OnRotateBuilding);
+		EnhancedInputComponent->BindAction(CancelPlacementAction,ETriggerEvent::Started,this,&ASurvPlayerCharacter::OnCancelPlacement);
 	}
 }
 
 //-------------------
 // Interaction System
 //-------------------
+
+
 
 void ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                                             int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -306,6 +317,7 @@ void ASurvPlayerCharacter::TogglePerspective()
 	return;
 }
 
+
 void ASurvPlayerCharacter::TogglePlayerInventoryBP_Implementation()
 {
 	// This is used if there is no function override in blueprints 
@@ -313,10 +325,68 @@ void ASurvPlayerCharacter::TogglePlayerInventoryBP_Implementation()
 
 void ASurvPlayerCharacter::TogglePlayerInventory()
 {
+	if(bInBuildingModeUI)
+	{
+		ToggleBuildingModeUserInterface();
+	}
 	bInventoryIsShown = !bInventoryIsShown;
 	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	MyPC->SetMovementMappingContextEnabled(!bInventoryIsShown);
 	TogglePlayerInventoryBP();
 }
 
+void ASurvPlayerCharacter::ToggleBuildingModeUserInterfaceBP_Implementation()
+{
+	// This is used if there is no function override in blueprints 
+}
+
+void ASurvPlayerCharacter::ToggleBuildingModeUserInterface()
+{
+	if(bInventoryIsShown)
+	{
+		TogglePlayerInventory();
+	}
+	bInBuildingModeUI = !bInBuildingModeUI;
+	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	MyPC->SetMovementMappingContextEnabled(!bInBuildingModeUI);
+	ToggleBuildingModeUserInterfaceBP();
+}
+
+void ASurvPlayerCharacter::ToggleBuildingModePlacementBP_Implementation()
+{
+}
+
+void ASurvPlayerCharacter::ToggleBuildingModePlacement()
+{
+	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if(bInBuildingModeUI)
+	{
+		ToggleBuildingModeUserInterface();
+		bInBuildingModePlacement = true;
+		MyPC->SetBuildingMappingContextEnabled(true);
+		return;
+	}
+	bInBuildingModePlacement = false;
+	MyPC->SetBuildingMappingContextEnabled(false);
+	
+}
+
+// Building Actions
+
+void ASurvPlayerCharacter::OnRotateBuilding(const FInputActionValue& Value)
+{
+	float input = Value.Get<float>();
+	
+	BuildingComponent->RotateBuilding(input>0);
+}
+
+void ASurvPlayerCharacter::OnPlaceBuilding()
+{
+	BuildingComponent->PlaceBuilding();
+}
+
+void ASurvPlayerCharacter::OnCancelPlacement()
+{
+	BuildingComponent->CancelPlacement();
+}
 

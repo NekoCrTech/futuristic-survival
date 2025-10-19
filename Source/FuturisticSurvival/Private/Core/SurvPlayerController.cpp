@@ -54,3 +54,19 @@ void ASurvPlayerController::SetMovementMappingContextEnabled(bool bEnabled)
 		}
 	}
 }
+
+void ASurvPlayerController::SetBuildingMappingContextEnabled(bool bEnabled)
+{if (IsLocalPlayerController())
+{
+	// Add Input Mapping Contexts
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		if (bEnabled)
+		{
+			Subsystem->AddMappingContext(BuildingMappingContext, 10);
+			return;
+		}
+		Subsystem->RemoveMappingContext(BuildingMappingContext);
+	}
+}
+}
