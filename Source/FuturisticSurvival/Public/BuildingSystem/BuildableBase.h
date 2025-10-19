@@ -18,6 +18,8 @@ private:
 	USceneComponent* Root;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess="true"),Category = "Components")
 	TObjectPtr<UStaticMeshComponent> Mesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category = "Data")
+	TArray<AActor*> AttachedActors;
 
 protected:
 	virtual void BeginPlay() override;
