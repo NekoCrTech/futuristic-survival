@@ -39,8 +39,13 @@ public:
 	void TogglePlayerInventory();
 
 	UFUNCTION(BlueprintNativeEvent)
-	void ToggleBuildingModeBP();
-	void ToggleBuildingMode();
+	void ToggleBuildingModeUserInterfaceBP();
+	void ToggleBuildingModeUserInterface();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ToggleBuildingModePlacementBP();
+	void ToggleBuildingModePlacement();
+	
 
 	UFUNCTION()
 	void OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -93,6 +98,18 @@ protected:
 	UInputAction* LeanAction;
 #pragma endregion
 
+#pragma region BuildingInputs
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* RotateAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* PlaceAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* CancelPlacementAction;
+
+#pragma endregion
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Lean(const FInputActionValue& Value);
@@ -108,6 +125,10 @@ protected:
 	void OnInteract();
 
 	void TogglePerspective();
+
+	void OnRotateBuilding(const FInputActionValue& Value);
+	void OnPlaceBuilding();
+	void OnCancelPlacement();
 	
 	virtual void BeginPlay() override;
 
@@ -146,7 +167,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
 	float LeanAmount = 0.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
-	bool bInBuildingMode = false;
+	bool bInBuildingModeUI = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
+	bool bInBuildingModePlacement = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DEBUG", meta = (AllowPrivateAccess = "true"))
 	bool DEBUG_INTERACTION_TRACE = false;

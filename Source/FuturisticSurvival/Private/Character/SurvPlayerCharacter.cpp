@@ -118,7 +118,11 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(TogglePerspectiveAction,ETriggerEvent::Started,this, &ASurvPlayerCharacter::TogglePerspective);
 		// User Interface
 		EnhancedInputComponent->BindAction(InventoryAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::TogglePlayerInventory);
-		EnhancedInputComponent->BindAction(BuildingModeAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::ToggleBuildingMode);
+		EnhancedInputComponent->BindAction(BuildingModeAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::ToggleBuildingModeUserInterface);
+		// Building Mode
+		EnhancedInputComponent->BindAction(PlaceAction,ETriggerEvent::Started,this,&ASurvPlayerCharacter::OnPlaceBuilding);
+		EnhancedInputComponent->BindAction(RotateAction,ETriggerEvent::Started,this,&ASurvPlayerCharacter::OnRotateBuilding);
+		EnhancedInputComponent->BindAction(CancelPlacementAction,ETriggerEvent::Started,this,&ASurvPlayerCharacter::OnCancelPlacement);
 	}
 }
 
@@ -313,6 +317,7 @@ void ASurvPlayerCharacter::TogglePerspective()
 	return;
 }
 
+
 void ASurvPlayerCharacter::TogglePlayerInventoryBP_Implementation()
 {
 	// This is used if there is no function override in blueprints 
@@ -320,9 +325,9 @@ void ASurvPlayerCharacter::TogglePlayerInventoryBP_Implementation()
 
 void ASurvPlayerCharacter::TogglePlayerInventory()
 {
-	if(bInBuildingMode)
+	if(bInBuildingModeUI)
 	{
-		ToggleBuildingMode();
+		ToggleBuildingModeUserInterface();
 	}
 	bInventoryIsShown = !bInventoryIsShown;
 	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
@@ -330,19 +335,58 @@ void ASurvPlayerCharacter::TogglePlayerInventory()
 	TogglePlayerInventoryBP();
 }
 
-void ASurvPlayerCharacter::ToggleBuildingModeBP_Implementation()
+void ASurvPlayerCharacter::ToggleBuildingModeUserInterfaceBP_Implementation()
 {
 	// This is used if there is no function override in blueprints 
 }
 
-void ASurvPlayerCharacter::ToggleBuildingMode()
+void ASurvPlayerCharacter::ToggleBuildingModeUserInterface()
 {
 	if(bInventoryIsShown)
 	{
 		TogglePlayerInventory();
 	}
-	bInBuildingMode = !bInBuildingMode;
+	bInBuildingModeUI = !bInBuildingModeUI;
 	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	MyPC->SetMovementMappingContextEnabled(!bInBuildingMode);
-	ToggleBuildingModeBP();
+	MyPC->SetMovementMappingContextEnabled(!bInBuildingModeUI);
+	ToggleBuildingModeUserInterfaceBP();
 }
+
+void ASurvPlayerCharacter::ToggleBuildingModePlacementBP_Implementation()
+{
+}
+
+void ASurvPlayerCharacter::ToggleBuildingModePlacement()
+{
+	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if(bInBuildingModeUI)
+	{
+		ToggleBuildingModeUserInterface();
+		bInBuildingModePlacement = true;
+		MyPC->SetBuildingMappingContextEnabled(true);
+		return;
+	}
+	bInBuildingModePlacement = false;
+	MyPC->SetBuildingMappingContextEnabled(false);
+	
+}
+
+// Building Actions
+
+void ASurvPlayerCharacter::OnRotateBuilding(const FInputActionValue& Value)
+{
+	float input = Value.Get<float>();
+	
+	BuildingComponent->RotateBuilding(input>0);
+}
+
+void ASurvPlayerCharacter::OnPlaceBuilding()
+{
+	BuildingComponent->PlaceBuilding();
+}
+
+void ASurvPlayerCharacter::OnCancelPlacement()
+{
+	BuildingComponent->CancelPlacement();
+}
+

@@ -3,25 +3,28 @@
 
 #include "BuildingSystem/BuildableBase.h"
 
-// Sets default values
+#include "BuildingSystem/BuildableBaseDataAsset.h"
+
 ABuildableBase::ABuildableBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	SetRootComponent(Root);
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh->SetupAttachment(Root);
 
 }
 
-// Called when the game starts or when spawned
+void ABuildableBase::SetData(const UBuildableBaseDataAsset* Data)
+{
+	Mesh->SetStaticMesh(Data->GetBuildingMesh());
+	//TODO: Set the rest of data
+}
+
 void ABuildableBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
-void ABuildableBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 

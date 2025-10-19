@@ -3,32 +3,113 @@
 
 #include "BuildingSystem/BuildingComponent.h"
 
-// Sets default values for this component's properties
+#include "BuildingSystem/BuildableBase.h"
+#include "BuildingSystem/BuildablePreview.h"
+#include "Character/SurvPlayerCharacter.h"
+
 UBuildingComponent::UBuildingComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
-// Called when the game starts
+
 void UBuildingComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
+	ASurvPlayerCharacter* tOwner = Cast<ASurvPlayerCharacter>(GetOwner());
+	if (tOwner)
+	{
+		Owner = tOwner;
+	}
+	PlayerController = GetWorld()->GetFirstPlayerController();
 }
 
-
-// Called every frame
 void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (CurrentPreview)
+	{
+		FHitResult Hit;
+		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+
+		if (Hit.bBlockingHit)
+		{
+			CurrentPreview->SetActorLocation(Hit.ImpactPoint);
+			// Optional alignment:
+			// CurrentPreview->SetActorRotation(Hit.ImpactNormal.Rotation());
+		}
+	}
+}
+
+bool UBuildingComponent::SelectBuilding(UBuildableBaseDataAsset* Data)
+{
+	// Check for cost
+	/* if (!has enough resources)
+	{
+		return false;
+	}
+	*/
+	
+	Owner->ToggleBuildingModePlacement();
+	bInPlacementMode = true;
+	SpawnPreview(Data);
+	return true;
+}
+
+void UBuildingComponent::PlaceBuilding()
+{
+	FTransform Trans = CurrentPreview->GetActorTransform();
+	ABuildableBase* Buildable = GetWorld()->SpawnActor<ABuildableBase>(CurrentPreviewData->GetBuildable(), Trans);
+	Buildable->SetData(CurrentPreviewData);
+	// remove resources from inventory
+}
+
+void UBuildingComponent::CancelPlacement()
+{
+	if(CurrentPreview)
+	{
+		CurrentPreview->Destroy();
+	}
+	CurrentPreviewData = nullptr;
+	Owner->ToggleBuildingModePlacement();
+}
+
+void UBuildingComponent::RotateBuilding(const bool& bRotateRight)
+{
+}
+
+void UBuildingComponent::SpawnPreview(UBuildableBaseDataAsset* Data)
+{
+	FHitResult HitResult;
+	PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
+
+	if (HitResult.bBlockingHit)
+	{
+		FVector SpawnLocation = HitResult.ImpactPoint;
+		FRotator SpawnRotation = FRotator::ZeroRotator; // Or align with surface normal if needed
+	}
+
+	if (HitResult.bBlockingHit)
+	{
+		FVector SpawnLocation = HitResult.ImpactPoint;
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		CurrentPreview = GetWorld()->SpawnActor<ABuildablePreview>(PreviewClass, SpawnLocation, FRotator::ZeroRotator,SpawnParams);
+		CurrentPreview->SetPreview(Data);
+		CurrentPreviewData = Data;
+	}
+}
+
+void UBuildingComponent::AddToUnlockedBuildings(TArray<UBuildableBaseDataAsset*> BuildingsToUnlock)
+{
+	for (auto BuildingDataToUnlock : BuildingsToUnlock)
+	{
+		UnlockedBuildings.AddUnique(BuildingDataToUnlock);
+	}
+	
 }
 
