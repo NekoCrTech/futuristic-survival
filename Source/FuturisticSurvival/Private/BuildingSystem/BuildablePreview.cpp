@@ -5,7 +5,6 @@
 #include "BuildingSystem/AttachmentPoint.h"
 #include "Structs/AttachmentPointData.h"
 #include "BuildingSystem/BuildableBaseDataAsset.h"
-#include "Components/SphereComponent.h"
 
 // Sets default values
 ABuildablePreview::ABuildablePreview()
@@ -15,9 +14,10 @@ ABuildablePreview::ABuildablePreview()
 	SetRootComponent(Root);
 	PreviewMesh=CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	PreviewMesh->SetupAttachment(Root);
-	CollisionSphere=CreateDefaultSubobject<USphereComponent>("Collision Sphere");
-	CollisionSphere->SetHiddenInGame(false);
+}
 
+void ABuildablePreview::UpdateMaterial()
+{
 }
 
 // Called when the game starts or when spawned
@@ -36,13 +36,37 @@ void ABuildablePreview::Tick(float DeltaTime)
 
 void ABuildablePreview::SetPreview(const UBuildableBaseDataAsset* Data)
 {
+	if (!PreviewMesh || !Data) return;
+
 	PreviewMesh->SetStaticMesh(Data->GetBuildingMesh());
-	PreviewMesh->SetMaterial(0,GoodMaterial);
-	TArray<FAttachmentPointData> AttachmentsData = Data->GetAttachments();
-	for (auto Attachment : AttachmentsData)
+	PreviewMesh->SetMaterial(0, GoodMaterial);
+	AttachedActors.Empty();
+	const FActorSpawnParameters SpawnParameters;
+	const TArray<FAttachmentPointData> AttachmentsData = Data->GetAttachments();
+	for (const FAttachmentPointData Attachment : AttachmentsData)
 	{
-		//UAttachmentPoint* AttachmentPoint = CreateDefaultSubobject<UAttachmentPoint>("Attachment Point");
-		//AttachmentPoint->SetupAttachment()
+		AAttachmentPoint* AP = GetWorld()->SpawnActor<AAttachmentPoint>(AAttachmentPoint::StaticClass(),Attachment.Position,FRotator(0),SpawnParameters);
+		//AP->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
+		AP->AttachToComponent(PreviewMesh,FAttachmentTransformRules::KeepRelativeTransform);
+		AP->SetAcceptedToSnapParts(Attachment.PartsToSnap);
+		AP->SetOwnerActor(this);
+		AP->SetOwnerType(Data->GetType());
+		AttachedActors.Add(AP);
+	}
+
+}
+
+void ABuildablePreview::DestroyAttachments()
+{
+	for (AActor* Actor : AttachedActors)
+	{
+		if (IsValid(Actor))
+		{
+			Actor->Destroy();
+		}
 	}
 }
+
+
+
 

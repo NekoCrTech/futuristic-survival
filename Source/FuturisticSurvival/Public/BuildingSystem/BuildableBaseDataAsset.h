@@ -42,4 +42,5 @@ public:
 	UStaticMesh* GetBuildingMesh() const {return Mesh;}
 	TSubclassOf<ABuildableBase> GetBuildable() {return Buildable;}
 	TArray<FAttachmentPointData> GetAttachments() const {return AttachmentPoints;}
+	EBuildingPartType GetType() const {return Type;}
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Structs/AttachmentPointData.h"
 #include "BuildablePreview.generated.h"
 
 class USphereComponent;
@@ -19,14 +20,14 @@ private:
 	TObjectPtr<USceneComponent> Root;
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Components", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> PreviewMesh;
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Components", meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<USphereComponent> CollisionSphere;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildablePreview", meta = (AllowPrivateAccess = "true"))
 	UMaterialInstance* GoodMaterial;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "BuildablePreview", meta = (AllowPrivateAccess = "true"))
 	UMaterialInstance* BadMaterial;
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess= "true"),Category = "State")
 	bool bCanBeBuilt = true;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "BuildablePreview", meta = (AllowPrivateAccess = "true"))
+	TArray<AActor*> AttachedActors;
 
 	void UpdateMaterial();
 
@@ -39,7 +40,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetPreview(const UBuildableBaseDataAsset* Data);
-	
+	void DestroyAttachments();
 };
 
 

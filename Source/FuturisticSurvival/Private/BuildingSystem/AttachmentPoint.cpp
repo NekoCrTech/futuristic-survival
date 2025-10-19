@@ -1,25 +1,25 @@
-// developed by Neko
+﻿// developed by Neko
 
 
 #include "BuildingSystem/AttachmentPoint.h"
 
 #include "Components/SphereComponent.h"
 
-UAttachmentPoint::UAttachmentPoint()
+AAttachmentPoint::AAttachmentPoint()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	
+	PrimaryActorTick.bCanEverTick = false;
 
-	AttachmentSphere=CreateDefaultSubobject<USphereComponent>("Attachment Mesh");
-	AttachmentSphere->SetHiddenInGame(false);
+	AttachmentSphere = CreateDefaultSubobject<USphereComponent>("AttachmentSphere");
+	RootComponent = AttachmentSphere;
+	AttachmentSphere->InitSphereRadius(50.0f);
+	AttachmentSphere ->SetHiddenInGame(false);
 
 }
 
-
-// Called when the game starts
-void UAttachmentPoint::BeginPlay()
+void AAttachmentPoint::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 }
-
 

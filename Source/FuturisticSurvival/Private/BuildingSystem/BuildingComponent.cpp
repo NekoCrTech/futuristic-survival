@@ -70,10 +70,13 @@ void UBuildingComponent::CancelPlacement()
 {
 	if(CurrentPreview)
 	{
+		CurrentPreview->DestroyAttachments();
 		CurrentPreview->Destroy();
 	}
 	CurrentPreviewData = nullptr;
 	Owner->ToggleBuildingModePlacement();
+
+	//TODO: Destroy Attachment Points
 }
 
 void UBuildingComponent::RotateBuilding(const bool& bRotateRight)
