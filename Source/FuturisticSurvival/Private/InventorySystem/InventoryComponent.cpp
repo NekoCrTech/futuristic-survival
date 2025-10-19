@@ -3,144 +3,87 @@
 
 #include "InventorySystem/InventoryComponent.h"
 #include "InventorySystem/Items/ItemBase.h"
-#include "Character/SurvCharacter.h"
-#include "Actors/PickupActor.h"
 
 UInventoryComponent::UInventoryComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	ASurvCharacter* tOwner = Cast<ASurvCharacter>(GetOwner());
-	if (tOwner)
-	{
-		Owner = tOwner;
-	}
 }
 
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+// Add an item class to inventory (supports stacking)
+bool UInventoryComponent::AddItemToInventory(TSubclassOf<UItemBase> Item)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
+	if (!Item) return false;
 
-bool UInventoryComponent::AddItemToTop(const TSubclassOf<UItemBase> Item)
-{
-	if (!IsValid(Item))
+	const UItemBase* DefaultItem = Item.GetDefaultObject();
+	int32 Remaining = DefaultItem->GetCurrentStack();
+
+	while (Remaining > 0)
 	{
-		//TODO: add error logging for invalid item; 
-		return false;
+		// Try to add to an existing stack
+		if (AddOneToStack(Item))
+		{
+			--Remaining;
+			continue;
+		}
+		
+		Contents.Add(GetFirstEmptySlot(), FInventorySlot(Item,1));
+		--Remaining;
 	}
-	float ItemWeight = Item.GetDefaultObject()->GetStackWeight();
-	if (IsOverCarryWeight(ItemWeight))
-	{
-		return false;
-	}
-	InventoryContents.Insert(Item,0);
-	CurrentWeight += ItemWeight;
+
 	return true;
 }
 
-bool UInventoryComponent::AddItemAtIndex(TSubclassOf<UItemBase> Item, int& Index)
+// Find the first empty slot (infinite grid)
+FIntPoint UInventoryComponent::GetFirstEmptySlot() const
 {
-	float ItemWeight = Item.GetDefaultObject()->GetStackWeight();
-	if (IsOverCarryWeight(ItemWeight))
+	int32 Row = 0;
+
+	while (true)
 	{
-		return false;
+		for (int32 Col = 0; Col < Columns; ++Col)
+		{
+			const FIntPoint Position(Col, Row);
+			if (!Contents.Contains(Position))
+			{
+				return Position;
+			}
+		}
+		++Row;
 	}
-	if (Index > InventoryContents.Num())
-	{
-		Index = InventoryContents.Num();
-	}
-	InventoryContents.Insert(Item,Index);
-	CurrentWeight += ItemWeight;
-	return true;
 }
 
-bool UInventoryComponent::AddItemToStackAtIndex(TSubclassOf<UItemBase> Item, const int& Index)
+// Get the item class stored at a specific slot
+TSubclassOf<UItemBase> UInventoryComponent::GetItemAtPosition(const FIntPoint& Position) const
 {
-	float ItemWeight = Item.GetDefaultObject()->GetStackWeight();
-	if (IsOverCarryWeight(ItemWeight))
+	if (const FInventorySlot* Found = Contents.Find(Position))
 	{
-		return false;
+		return Found->ItemClass;
 	}
-	if (Index > InventoryContents.Num())
-	{
-		//TODO: add error logging
-		return false;
-	}
-
-	UItemBase* TargetItem = Cast<UItemBase>(InventoryContents[Index]);
-	int remain = TargetItem->AddToStack(Item.GetDefaultObject()->GetCurrentStack());
-	if (remain > 0)
-	{
-		Item.GetDefaultObject()->SetStackSize(remain);
-		InventoryContents.Insert(Item,0);
-	}
-	CurrentWeight += ItemWeight;
-	return true;
+	return nullptr;
 }
 
-TArray<FItemUIData> UInventoryComponent::GetInventoryUIData() const
+// Try to add +1 to an existing stack of the same item
+bool UInventoryComponent::AddOneToStack(TSubclassOf<UItemBase> Item)
 {
-	TArray<FItemUIData> Ret;
+	const UItemBase* DefaultItem = Item.GetDefaultObject();
+	if (!DefaultItem) return false;
 	
-	for (int idx = 0; idx < InventoryContents.Num(); idx++)
+	const int32 MaxStack = DefaultItem->GetStackSize();
+
+	for (auto& Pair : Contents)
 	{
-		Ret.Add(InventoryContents[idx].GetDefaultObject()->GetItemUIData(idx));
-	}
+		FInventorySlot& Slot = Pair.Value;
 
-	return Ret;
-}
-
-bool UInventoryComponent::UseItemAtIndex(const int32& Index)
-{
-	if (Owner == nullptr || Index >= InventoryContents.Num())
-	{
-		//TODO: Handle error logging
-		return false;
-	}
-
-	InventoryContents[Index].GetDefaultObject()->OnUse(Owner);
-	InventoryContents[Index].GetDefaultObject()->RemoveFromStack(1);
-	CurrentWeight -= InventoryContents[Index].GetDefaultObject()->GetItemWeight();
-	if(InventoryContents[Index].GetDefaultObject()->GetCurrentStack() == 0)
-	{
-		InventoryContents.RemoveAt(Index);
-	}
-	return true;
-}
-
-bool UInventoryComponent::DropStackAtIndex(const int32& Index)
-{
-	if (Owner == nullptr || Index >= InventoryContents.Num())
-	{
-		//TODO: Handle error logging
-		return false;
-	}
-	
-	FTransform SpawnTrans;
-	SpawnTrans.SetLocation(Owner->GetActorLocation() + (Owner->GetActorForwardVector() * 50));
-	APickupActor* SpawnedItem = GetWorld()->SpawnActor<APickupActor>(APickupActor::StaticClass(), SpawnTrans);
-	SpawnedItem->SetActorTransform(SpawnTrans);
-
-	SpawnedItem->SetPickupMesh(InventoryContents[Index].GetDefaultObject()->GetPickupMesh());
-	SpawnedItem->SetWasSpawned(true);
-
-	TSubclassOf<UItemBase> PickupItem = InventoryContents[Index];
-	SpawnedItem->SetInventoryItem(PickupItem);
-	InventoryContents.RemoveAt(Index);
-	CurrentWeight -= PickupItem.GetDefaultObject()->GetStackWeight();
-	return true;
-}
-
-bool UInventoryComponent::IsOverCarryWeight(const float& ItemWeight) const
-{
-	if(CurrentWeight + ItemWeight > MaxWeight)
-	{
-		return true;
+		if (Slot.ItemClass == Item && Slot.Quantity < MaxStack)
+		{
+			++Slot.Quantity;
+			return true;
+		}
 	}
 	return false;
 }

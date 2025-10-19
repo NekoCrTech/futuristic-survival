@@ -6,6 +6,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Save/SaveActorInterface.h"
+#include "Structs/InventorySlot.h"
 #include "Structs/ItemUiData.h"
 #include "InventoryComponent.generated.h"
 
@@ -17,44 +18,38 @@ class FUTURISTICSURVIVAL_API UInventoryComponent : public UActorComponent, publi
 {
 	GENERATED_BODY()
 
+
+public:	
+	UInventoryComponent();
+
+	bool AddItemToInventory(TSubclassOf<UItemBase> Item);
+	
+protected:
+	virtual void BeginPlay() override;
+
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, SaveGame, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
 	float MaxWeight = 100.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, SaveGame, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
+	int32 Capacity = -1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, SaveGame, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
+	int32 Columns = 10;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
 	float CurrentWeight = 0.f;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, Category = "InventoryData", Meta = (AllowPrivateAccess = "true")) //TODO: make it EditDefaultOnly
-	TArray<TSubclassOf<UItemBase>> InventoryContents;
+	TMap<FIntPoint, FInventorySlot> Contents;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "InventoryData", Meta = (AllowPrivateAccess = "true"))
 	ASurvCharacter* Owner;
 
 	
+	bool AddOneToStack(const TSubclassOf<UItemBase> ItemToAdd);
+	FIntPoint GetFirstEmptySlot() const;
+	TSubclassOf<UItemBase> GetItemAtPosition(const FIntPoint& Position) const;
 
-	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
-	bool IsOverCarryWeight(const float& ItemWeight) const;
+	
 
-protected:
-	virtual void BeginPlay() override;
 
-public:	
-	UInventoryComponent();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
-	bool AddItemToTop(TSubclassOf<UItemBase> Item);
-
-	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
-	bool AddItemAtIndex(TSubclassOf<UItemBase> Item, int& Index);
-
-	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
-	bool AddItemToStackAtIndex(TSubclassOf<UItemBase> Item, const int& Index);
-
-	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
-	TArray<FItemUIData> GetInventoryUIData() const;
-
-	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
-	bool UseItemAtIndex(const int32& Index);
-	UFUNCTION(BlueprintCallable, Category = "InventorySystem")
-	bool DropStackAtIndex(const int32& Index);
+	
 };
