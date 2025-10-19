@@ -24,11 +24,12 @@ void ABuildableBase::SetData(const UBuildableBaseDataAsset* Data)
 	const TArray<FAttachmentPointData> AttachmentsData = Data->GetAttachments();
 	for (const FAttachmentPointData Attachment : AttachmentsData)
 	{
-		AAttachmentPoint* AP = GetWorld()->SpawnActor<AAttachmentPoint>(AAttachmentPoint::StaticClass(),Attachment.Position,FRotator(0),SpawnParameters);
+		AAttachmentPoint* AP = GetWorld()->SpawnActor<AAttachmentPoint>(AAttachmentPoint::StaticClass(),Attachment.Location,FRotator(0),SpawnParameters);
 		AP->AttachToComponent(Mesh,FAttachmentTransformRules::KeepRelativeTransform);
 		AP->SetAcceptedToSnapParts(Attachment.PartsToSnap);
 		AP->SetOwnerActor(this);
 		AP->SetOwnerType(Data->GetType());
+		AP->SetRotateMesh(Attachment.bRotate);
 		AttachedActors.Add(AP);
 	}
 	//TODO: Set the rest of data

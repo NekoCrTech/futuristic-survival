@@ -14,6 +14,8 @@ ABuildablePreview::ABuildablePreview()
 	SetRootComponent(Root);
 	PreviewMesh=CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	PreviewMesh->SetupAttachment(Root);
+	PreviewMesh->SetCollisionResponseToAllChannels(ECR_Overlap);
+	PreviewMesh->SetGenerateOverlapEvents(true);
 }
 
 void ABuildablePreview::UpdateMaterial()
@@ -32,6 +34,21 @@ void ABuildablePreview::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FHitResult Hit;
+	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+	
+	if (!bSnapped)
+	{
+		if (Hit.bBlockingHit)
+		{
+			SetActorLocation(Hit.ImpactPoint);
+		}
+	}
+	if (!Hit.bBlockingHit || FVector::Dist(Hit.ImpactPoint, GetActorLocation()) > 150.0f)
+	{
+		bSnapped = false;
+	}
+	
 }
 
 void ABuildablePreview::SetPreview(const UBuildableBaseDataAsset* Data)
@@ -40,31 +57,13 @@ void ABuildablePreview::SetPreview(const UBuildableBaseDataAsset* Data)
 
 	PreviewMesh->SetStaticMesh(Data->GetBuildingMesh());
 	PreviewMesh->SetMaterial(0, GoodMaterial);
-	AttachedActors.Empty();
-	const FActorSpawnParameters SpawnParameters;
-	const TArray<FAttachmentPointData> AttachmentsData = Data->GetAttachments();
-	for (const FAttachmentPointData Attachment : AttachmentsData)
-	{
-		AAttachmentPoint* AP = GetWorld()->SpawnActor<AAttachmentPoint>(AAttachmentPoint::StaticClass(),Attachment.Position,FRotator(0),SpawnParameters);
-		//AP->AttachToActor(this,FAttachmentTransformRules::KeepRelativeTransform);
-		AP->AttachToComponent(PreviewMesh,FAttachmentTransformRules::KeepRelativeTransform);
-		AP->SetAcceptedToSnapParts(Attachment.PartsToSnap);
-		AP->SetOwnerActor(this);
-		AP->SetOwnerType(Data->GetType());
-		AttachedActors.Add(AP);
-	}
-
+	SetPartType(Data->GetType());
 }
 
-void ABuildablePreview::DestroyAttachments()
+void ABuildablePreview::SnapPreviewToLocation(const FVector& TargetLocation)
 {
-	for (AActor* Actor : AttachedActors)
-	{
-		if (IsValid(Actor))
-		{
-			Actor->Destroy();
-		}
-	}
+	bSnapped=true;
+	SetActorLocation(TargetLocation);
 }
 
 

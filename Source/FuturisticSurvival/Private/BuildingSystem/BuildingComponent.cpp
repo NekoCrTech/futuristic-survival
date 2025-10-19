@@ -29,18 +29,7 @@ void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (CurrentPreview)
-	{
-		FHitResult Hit;
-		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-		if (Hit.bBlockingHit)
-		{
-			CurrentPreview->SetActorLocation(Hit.ImpactPoint);
-			// Optional alignment:
-			// CurrentPreview->SetActorRotation(Hit.ImpactNormal.Rotation());
-		}
-	}
+	
 }
 
 bool UBuildingComponent::SelectBuilding(UBuildableBaseDataAsset* Data)
@@ -70,13 +59,10 @@ void UBuildingComponent::CancelPlacement()
 {
 	if(CurrentPreview)
 	{
-		CurrentPreview->DestroyAttachments();
 		CurrentPreview->Destroy();
 	}
 	CurrentPreviewData = nullptr;
 	Owner->ToggleBuildingModePlacement();
-
-	//TODO: Destroy Attachment Points
 }
 
 void UBuildingComponent::RotateBuilding(const bool& bRotateRight)

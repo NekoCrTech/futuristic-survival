@@ -15,7 +15,9 @@ struct FAttachmentPointData
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "AttachmentPointData")
-	FVector Position = FVector(0);
+	FVector Location = FVector(0);
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "AttachmentPointData")
 	TArray<EBuildingPartType> PartsToSnap;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "AttachmentPointData")
+	bool bRotate = false;
 };

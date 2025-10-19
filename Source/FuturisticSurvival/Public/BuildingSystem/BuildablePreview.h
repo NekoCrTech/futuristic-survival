@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enums/BuildingPartType.h"
 #include "GameFramework/Actor.h"
-#include "Structs/AttachmentPointData.h"
 #include "BuildablePreview.generated.h"
 
 class USphereComponent;
@@ -26,8 +26,12 @@ private:
 	UMaterialInstance* BadMaterial;
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess= "true"),Category = "State")
 	bool bCanBeBuilt = true;
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "BuildablePreview", meta = (AllowPrivateAccess = "true"))
-	TArray<AActor*> AttachedActors;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess= "true"),Category = "State")
+	bool bSnapped = false;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess= "true"),Category = "State")
+	bool bRotated = false;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess= "true"),Category = "State")
+	EBuildingPartType PartType;
 
 	void UpdateMaterial();
 
@@ -40,7 +44,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetPreview(const UBuildableBaseDataAsset* Data);
-	void DestroyAttachments();
+	void SnapPreviewToLocation(const FVector& TargetLocation);
+
+	bool IsRotated() const {return bRotated;}
+	void SetIsRotated(const bool& bInRotated){bRotated = bInRotated;}
+
+	EBuildingPartType GetPartType() const{return PartType;}
+	void SetPartType(const EBuildingPartType& Type){PartType = Type;}
 };
 
 
