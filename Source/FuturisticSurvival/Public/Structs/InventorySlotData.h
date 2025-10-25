@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "InventorySystem/Items/ItemBase.h"
-#include "InventorySlot.generated.h"
+#include "InventorySlotData.generated.h"
 
 USTRUCT(BlueprintType)
-struct FInventorySlot
+struct FInventorySlotData
 {
 	GENERATED_BODY()
 
@@ -15,9 +15,9 @@ struct FInventorySlot
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Quantity = 0;
 
-	FInventorySlot() = default;
+	FInventorySlotData() = default;
 
-	FInventorySlot(TSubclassOf<UItemBase> InItemClass, int32 InQuantity)
+	FInventorySlotData(TSubclassOf<UItemBase> InItemClass, int32 InQuantity)
 	{
 		ItemClass = InItemClass;
 		Quantity = InQuantity;

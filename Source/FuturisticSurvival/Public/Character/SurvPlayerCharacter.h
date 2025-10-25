@@ -22,6 +22,7 @@ class FUTURISTICSURVIVAL_API ASurvPlayerCharacter : public ASurvCharacter
 	GENERATED_BODY()
 public:
 	ASurvPlayerCharacter();
+	virtual void PossessedBy(AController* NewController) override;
 	virtual void Tick(float DeltaTime) override;
 	
 	UFUNCTION(BlueprintCallable, Category="Input")
@@ -34,8 +35,6 @@ public:
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE UBuildingComponent* GetBuildingComponent() const {return BuildingComponent;}
 	
-	UFUNCTION(BlueprintNativeEvent)
-	void TogglePlayerInventoryBP();
 	void TogglePlayerInventory();
 
 	UFUNCTION(BlueprintNativeEvent)
@@ -175,5 +174,7 @@ private:
 	bool DEBUG_INTERACTION_TRACE = false;
 
 	void TraceForInteraction();
+
+public:
 	
 };

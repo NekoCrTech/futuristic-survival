@@ -23,7 +23,10 @@ public class FuturisticSurvival : ModuleRules
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
-
+	
+		// ✅ This line disables Windows min/max macros permanently
+		PublicDefinitions.Add("NOMINMAX");
+		
 		PublicIncludePaths.AddRange(new string[] {
 			"FuturisticSurvival",
 			// "FuturisticSurvival/Variant_Platforming",
