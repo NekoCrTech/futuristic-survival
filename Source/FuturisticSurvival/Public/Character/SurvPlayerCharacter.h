@@ -98,6 +98,12 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	UInputAction* LeanAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* PrimaryAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* SecondaryAction;
 #pragma endregion
 
 #pragma region BuildingInputs
@@ -125,6 +131,9 @@ protected:
 	void SneakOff();
 	
 	void OnInteract();
+
+	void OnPrimary();
+	void OnSecondary();
 
 	void TogglePerspective();
 

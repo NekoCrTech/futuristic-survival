@@ -82,9 +82,10 @@ void ASurvPlayerCharacter::PossessedBy(AController* NewController)
 	
 	Inventory->InitializeInventoryComponent();
 
-	if (!IsValid(GetAbilitySystemComponent())) return;
-
+	if (!IsValid(GetAbilitySystemComponent()) || !HasAuthority()) return;
+	
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
+	GiveStartupAbilities();
 }
 
 void ASurvPlayerCharacter::OnRep_PlayerState()
@@ -147,6 +148,9 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(LeanAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::Lean);
 		// Interacting
 		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::OnInteract);
+		// Abilities
+		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::OnPrimary);
+		EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::OnSecondary);
 		// Camera
 		EnhancedInputComponent->BindAction(TogglePerspectiveAction,ETriggerEvent::Started,this, &ASurvPlayerCharacter::TogglePerspective);
 		// User Interface
@@ -162,8 +166,6 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 //-------------------
 // Interaction System
 //-------------------
-
-
 
 void ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                                             int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -278,7 +280,6 @@ void ASurvPlayerCharacter::Lean(const FInputActionValue& Value)
 	LeanAmount = Value.Get<float>();
 }
 
-
 void ASurvPlayerCharacter::PlayerJump()
 {
 	if (CanCharJump() && !GetMovementComponent()->IsFalling())
@@ -350,7 +351,6 @@ void ASurvPlayerCharacter::TogglePerspective()
 	return;
 }
 
-
 void ASurvPlayerCharacter::TogglePlayerInventory()
 {
 	if(bInBuildingModeUI)
@@ -412,6 +412,16 @@ void ASurvPlayerCharacter::ToggleBuildingModePlacement()
 	bInBuildingModePlacement = false;
 	MyPC->SetBuildingMappingContextEnabled(false);
 	
+}
+
+// Ability Actions
+
+void ASurvPlayerCharacter::OnPrimary()
+{
+}
+
+void ASurvPlayerCharacter::OnSecondary()
+{
 }
 
 // Building Actions

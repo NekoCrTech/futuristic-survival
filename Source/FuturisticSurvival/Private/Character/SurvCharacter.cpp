@@ -2,6 +2,9 @@
 
 
 #include "Public/Character/SurvCharacter.h"
+
+#include "AbilitySystemComponent.h"
+#include "GameplayAbilitySpec.h"
 #include "Structs/SaveActorData.h"
 #include "Components/StatlineComponent.h"
 #include "InventorySystem/InventoryComponent.h"
@@ -57,11 +60,9 @@ void ASurvCharacter::SetSneaking(const bool& IsSneaking)
 	Statline->SetSneaking(IsSneaking);
 }
 
-
 void ASurvCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 UAbilitySystemComponent* ASurvCharacter::GetAbilitySystemComponent() const
@@ -94,5 +95,19 @@ void ASurvCharacter::SetWasSpawned(const bool& IsSpawned)
 {
 	bWasSpawned = IsSpawned;
 }
+
+// ABILITY SYSTEM
+
+void ASurvCharacter::GiveStartupAbilities()
+{
+	if (!IsValid(GetAbilitySystemComponent())) return;
+	
+	for (const auto& Ability : StartupAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability);
+		GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
+	}
+}
+
 
 
