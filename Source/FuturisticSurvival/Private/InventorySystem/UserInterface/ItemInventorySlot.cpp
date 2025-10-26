@@ -12,14 +12,42 @@ void UItemInventorySlot::SetItem(const FInventorySlotData& InventorySlotData,con
 {
 	Item = InventorySlotData.ItemClass;
 	Quantity = InventorySlotData.Quantity;
-	FItemUIData UIData = Item.GetDefaultObject()->GetItemUIData(Location);
-	
-	ItemIcon->SetBrushFromTexture(UIData.ItemIcon);
-	ItemBorder->SetBrushColor(UIData.ItemQualityColor);
-	if (Quantity > 1)
+
+	if (!Item)
 	{
-		ItemQuantity->SetText(FText::AsNumber(Quantity));
-		ItemQuantity->SetVisibility(ESlateVisibility::Visible);
+		UE_LOG(LogTemp, Warning, TEXT("SetItem: ItemClass is null at location %s"), *Location.ToString());
+		return;
 	}
-	
+
+	UItemBase* DefaultItem = Item.GetDefaultObject();
+	if (!DefaultItem)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SetItem: GetDefaultObject() returned null for item %s"), *Item->GetName());
+		return;
+	}
+
+	FItemUIData UIData = DefaultItem->GetItemUIData(Location);
+
+	if (ItemIcon)
+	{
+		ItemIcon->SetBrushFromTexture(UIData.ItemIcon);
+	}
+
+	if (ItemBorder)
+	{
+		ItemBorder->SetBrushColor(UIData.ItemQualityColor);
+	}
+
+	if (ItemQuantity)
+	{
+		if (Quantity > 1)
+		{
+			ItemQuantity->SetText(FText::AsNumber(Quantity));
+			ItemQuantity->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			ItemQuantity->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
 }

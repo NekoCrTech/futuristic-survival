@@ -5,6 +5,7 @@
 
 #include "Core/SurvHUD.h"
 #include "InventorySystem/Items/ItemBase.h"
+#include "InventorySystem/UserInterface/InventoryWidget.h"
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -37,6 +38,7 @@ bool UInventoryComponent::AddItemToInventory(TSubclassOf<UItemBase> Item)
 		Contents.Add(GetFirstEmptySlot(), FInventorySlotData(Item,1));
 		--Remaining;
 	}
+	InventoryWidget->UpdateContents();
 	return true;
 }
 

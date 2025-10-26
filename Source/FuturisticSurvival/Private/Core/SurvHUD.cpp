@@ -64,6 +64,8 @@ void ASurvHUD::ToggleCharacterWindow()
 	case ESlateVisibility::Visible:
 		{
 			PlayerWidget->SetRightPanel(PlayerInventoryWidget);
+			PlayerInventoryWidget->SetIsOnScreen(true);
+			PlayerInventoryWidget->UpdateContents();
 			MyPC->SetMovementMappingContextEnabled(false);
 			MyPC->SetShowMouseCursor(true);
 
@@ -79,6 +81,7 @@ void ASurvHUD::ToggleCharacterWindow()
 		}
 	case ESlateVisibility::Collapsed:
 		{
+			PlayerInventoryWidget->SetIsOnScreen(false);
 			MyPC->SetMovementMappingContextEnabled(true);
 			MyPC->SetShowMouseCursor(false);
 

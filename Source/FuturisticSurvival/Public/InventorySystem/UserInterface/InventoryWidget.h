@@ -24,9 +24,11 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnInventoryUpdate(const TMap<FIntPoint, FInventorySlotData>& Contents);
-
 	void SetInventoryData(const FInventoryData& InventoryDataToSet);
-
+	
+	bool GetIsOnScreen() const {return bIsOnScreen;}
+	void SetIsOnScreen(const bool& bValue) {bIsOnScreen = bValue;}
+	
 private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget, AllowPrivateAccess = "true"), category = "Survival|Components")
@@ -34,4 +36,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Survival|Data")
 	FInventoryData InventoryData;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Survival|Data")
+	bool bIsOnScreen = false;
 };
