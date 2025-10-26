@@ -19,6 +19,9 @@ public:
 	bool bDrawDebug = false;
 
 	UFUNCTION(BlueprintCallable, Category = "Survival|Debug")
-	void DrawDebugActivationMessage();
-	
+	void DrawDebugMessage(const FString& Message);
+
+protected:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 };
