@@ -11,7 +11,7 @@ enum EHitDirection : uint8
 {
 	Left UMETA(Display = "Left"),
 	Right UMETA(Display = "Right"),
-	Front UMETA(Display = "Frond"),
+	Front UMETA(Display = "Front"),
 	Back UMETA(Display = "Back")
 };
 
