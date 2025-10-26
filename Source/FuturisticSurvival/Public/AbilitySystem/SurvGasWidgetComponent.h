@@ -29,10 +29,14 @@ private:
 	TWeakObjectPtr<USurvAttributeSet> AttributeSet;
 
 	void InitAbilitySystemData();
-
 	bool IsASCInitialized() const;
+	void InitializeAtributeDelegate();
 
 	UFUNCTION()
 	void OnASCInitialized(UAbilitySystemComponent* ASC, UAttributeSet* AS);
+
+	UFUNCTION()
+	void BindToAttributeChanges();
+	
 	
 };

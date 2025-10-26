@@ -18,6 +18,27 @@ void USurvAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(USurvAttributeSet, MaxThirst, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USurvAttributeSet, Hunger, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(USurvAttributeSet, MaxHunger, COND_None, REPNOTIFY_Always);
+
+	DOREPLIFETIME(USurvAttributeSet, bAttributesInitialized);
+}
+
+void USurvAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+
+	if (!bAttributesInitialized)
+	{
+		bAttributesInitialized = true;
+		OnAttributeInitialized.Broadcast();
+	}
+}
+
+void USurvAttributeSet::OnRep_AttributesInitialized()
+{
+	if (bAttributesInitialized)
+	{
+		OnAttributeInitialized.Broadcast();
+	}
 }
 
 /** ---------------- Replication Notifies ---------------- */
