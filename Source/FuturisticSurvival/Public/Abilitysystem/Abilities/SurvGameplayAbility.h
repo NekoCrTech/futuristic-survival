@@ -18,7 +18,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Survival|Debug")
 	bool bDrawDebug = false;
 
-protected:
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	UFUNCTION(BlueprintCallable, Category = "Survival|Debug")
+	void DrawDebugActivationMessage();
+	
 };

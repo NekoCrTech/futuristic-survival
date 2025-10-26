@@ -150,8 +150,8 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		// Interacting
 		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::OnInteract);
 		// Abilities
-		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::OnPrimary);
-		EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::OnSecondary);
+		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::OnPrimary);
+		EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::OnSecondary);
 		// Camera
 		EnhancedInputComponent->BindAction(TogglePerspectiveAction,ETriggerEvent::Started,this, &ASurvPlayerCharacter::TogglePerspective);
 		// User Interface
@@ -431,6 +431,7 @@ void ASurvPlayerCharacter::ToggleBuildingModePlacement()
 void ASurvPlayerCharacter::OnPrimary()
 {
 	ActivateAbility(SurvTags::SurvAbilities::Primary);
+	
 }
 
 void ASurvPlayerCharacter::OnSecondary()

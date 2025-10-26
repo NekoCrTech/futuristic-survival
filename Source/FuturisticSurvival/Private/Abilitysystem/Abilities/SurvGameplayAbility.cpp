@@ -3,14 +3,11 @@
 
 #include "Abilitysystem/Abilities/SurvGameplayAbility.h"
 
-void USurvGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void USurvGameplayAbility::DrawDebugActivationMessage()
 {
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
 	if (bDrawDebug == true)
 	{
-		const FString ActorName = ActorInfo->OwnerActor->GetName();
+		const FString ActorName = GetAvatarActorFromActorInfo()->GetName();
 		const FString AbilityName = GetName();
 		const FString DebugMessage = FString::Printf(TEXT("The %s activated %s"), *ActorName, *AbilityName);
 
