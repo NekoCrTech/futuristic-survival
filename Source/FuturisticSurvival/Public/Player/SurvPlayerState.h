@@ -8,7 +8,7 @@
 
 #include "SurvPlayerState.generated.h"
 
-class UAbilitySystemComponent;
+class USurvAbilitySystemComponent;
 /**
  * 
  */
@@ -24,5 +24,5 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Survival|Abilities")
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<USurvAbilitySystemComponent> AbilitySystemComponent;
 };

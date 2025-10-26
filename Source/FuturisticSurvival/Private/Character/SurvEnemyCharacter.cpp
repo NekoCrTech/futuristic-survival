@@ -3,14 +3,14 @@
 
 #include "Character/SurvEnemyCharacter.h"
 
-#include "AbilitySystemComponent.h"
+#include "AbilitySystem/SurvAbilitySystemComponent.h"
 
 
 ASurvEnemyCharacter::ASurvEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent = CreateDefaultSubobject<USurvAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 }

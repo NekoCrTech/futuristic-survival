@@ -6,6 +6,8 @@
 #include "SurvCharacter.h"
 #include "SurvEnemyCharacter.generated.h"
 
+class USurvAbilitySystemComponent;
+
 UCLASS()
 class FUTURISTICSURVIVAL_API ASurvEnemyCharacter : public ASurvCharacter
 {
@@ -13,7 +15,7 @@ class FUTURISTICSURVIVAL_API ASurvEnemyCharacter : public ASurvCharacter
 
 public:
 	ASurvEnemyCharacter();
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const;
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -21,6 +23,6 @@ protected:
 private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<USurvAbilitySystemComponent> AbilitySystemComponent;
 
 };
