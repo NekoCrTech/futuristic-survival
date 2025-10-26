@@ -1,0 +1,13 @@
+﻿#pragma once
+
+#include "CoreMinimal.h"
+#include "NativeGameplayTags.h"
+
+namespace SurvTags
+{
+	namespace SurvAbilities
+	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Primary);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Secondary);
+	}
+}
