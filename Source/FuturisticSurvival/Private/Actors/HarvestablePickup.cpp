@@ -45,7 +45,7 @@ void AHarvestablePickup::Interact_Implementation(class ASurvCharacter* Caller)
 	UInventoryComponent* Inventory = Caller->GetInventory();
 	int Remain = ItemCount;
 	
-	while (Remain > 0 && Inventory->AddItemToTop(InventoryItem))
+	while (Remain > 0 && Inventory->AddItemToInventory(InventoryItem))
 	{
 		Remain--;
 	}

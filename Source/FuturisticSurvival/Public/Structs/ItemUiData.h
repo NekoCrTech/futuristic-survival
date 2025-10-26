@@ -12,7 +12,7 @@ struct FItemUIData
 	GENERATED_BODY()
 public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
-	int ItemIdx = -1;
+	FIntPoint ItemPos = FIntPoint(-1);
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FText	ItemName;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -22,26 +22,23 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bUsable = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FIntPoint ItemSize = FIntPoint(1, 1);
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UTexture2D* ItemIcon = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EItemQuality ItemQuality = EItemQuality::Common;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FLinearColor ItemQualityColor = FLinearColor::White;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	int StackSize = 0;
+	int32 StackSize = 0;
 
 	FItemUIData() = default;
 
-	FItemUIData(const int& Index, const FText& Name, const FText& Description, const FText& InUseText, const bool& Usable,const FIntPoint& Size, UTexture2D* Icon, const EItemQuality& Quality, const int& Count)
+	FItemUIData(const FIntPoint& InvPosition, const FText& Name, const FText& Description, const FText& InUseText, const bool& Usable, UTexture2D* Icon, const EItemQuality& Quality, const int& Count)
 	{
-		ItemIdx = Index;
+		ItemPos = InvPosition;
 		ItemName = Name;
 		ItemDescription = Description;
 		UseText = InUseText;
 		bUsable = Usable;
-		ItemSize = Size;
 		ItemIcon = Icon;
 		ItemQuality = Quality;
 		ItemQualityColor = GetItemQualityColor(Quality);

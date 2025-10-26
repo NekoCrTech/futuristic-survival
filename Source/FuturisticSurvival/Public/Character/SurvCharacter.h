@@ -48,13 +48,15 @@ protected:
 	void SetSprinting(const bool& IsSprinting);
 	void SetSneaking(const bool& IsSneaking);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UInventoryComponent> Inventory;
+
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UStatlineComponent> Statline;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
-	TObjectPtr<UInventoryComponent> Inventory;
-
+	
 	
 
 	

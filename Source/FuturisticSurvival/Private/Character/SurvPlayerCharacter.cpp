@@ -16,7 +16,9 @@
 #include "Components/SphereComponent.h"
 #include "Logger.h"
 #include "BuildingSystem/BuildingComponent.h"
+#include "Core/SurvHUD.h"
 #include "Core/SurvPlayerController.h"
+#include "InventorySystem/InventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ASurvPlayerCharacter::ASurvPlayerCharacter()
@@ -69,6 +71,13 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 
 	//Create Building Component
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));
+}
+
+void ASurvPlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	Inventory->InitializeInventoryComponent();
 }
 
 void ASurvPlayerCharacter::BeginPlay()
@@ -318,11 +327,6 @@ void ASurvPlayerCharacter::TogglePerspective()
 }
 
 
-void ASurvPlayerCharacter::TogglePlayerInventoryBP_Implementation()
-{
-	// This is used if there is no function override in blueprints 
-}
-
 void ASurvPlayerCharacter::TogglePlayerInventory()
 {
 	if(bInBuildingModeUI)
@@ -330,9 +334,24 @@ void ASurvPlayerCharacter::TogglePlayerInventory()
 		ToggleBuildingModeUserInterface();
 	}
 	bInventoryIsShown = !bInventoryIsShown;
-	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	MyPC->SetMovementMappingContextEnabled(!bInventoryIsShown);
-	TogglePlayerInventoryBP();
+	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(GetController());
+	if (!MyPC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ToggleCharacterWindow: PlayerController is null"));
+		return;
+	}
+	// TODO: Remove ASurvHUD reference
+	// Get the HUD from the controller
+	ASurvHUD* MyHUD = Cast<ASurvHUD>(MyPC->GetHUD());
+	if (!MyHUD)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ToggleCharacterWindow: HUD is null or not ASurvHUD"));
+		return;
+	}
+
+	// Call the HUD function
+	MyHUD->ToggleCharacterWindow();
+	
 }
 
 void ASurvPlayerCharacter::ToggleBuildingModeUserInterfaceBP_Implementation()

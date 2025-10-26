@@ -2,145 +2,119 @@
 
 
 #include "InventorySystem/InventoryComponent.h"
+
+#include "Core/SurvHUD.h"
 #include "InventorySystem/Items/ItemBase.h"
-#include "Character/SurvCharacter.h"
-#include "Actors/PickupActor.h"
+#include "InventorySystem/UserInterface/InventoryWidget.h"
 
 UInventoryComponent::UInventoryComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	ASurvCharacter* tOwner = Cast<ASurvCharacter>(GetOwner());
-	if (tOwner)
-	{
-		Owner = tOwner;
-	}
-}
-
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
-bool UInventoryComponent::AddItemToTop(const TSubclassOf<UItemBase> Item)
-{
-	if (!IsValid(Item))
-	{
-		//TODO: add error logging for invalid item; 
-		return false;
-	}
-	float ItemWeight = Item.GetDefaultObject()->GetStackWeight();
-	if (IsOverCarryWeight(ItemWeight))
-	{
-		return false;
-	}
-	InventoryContents.Insert(Item,0);
-	CurrentWeight += ItemWeight;
-	return true;
-}
-
-bool UInventoryComponent::AddItemAtIndex(TSubclassOf<UItemBase> Item, int& Index)
-{
-	float ItemWeight = Item.GetDefaultObject()->GetStackWeight();
-	if (IsOverCarryWeight(ItemWeight))
-	{
-		return false;
-	}
-	if (Index > InventoryContents.Num())
-	{
-		Index = InventoryContents.Num();
-	}
-	InventoryContents.Insert(Item,Index);
-	CurrentWeight += ItemWeight;
-	return true;
-}
-
-bool UInventoryComponent::AddItemToStackAtIndex(TSubclassOf<UItemBase> Item, const int& Index)
-{
-	float ItemWeight = Item.GetDefaultObject()->GetStackWeight();
-	if (IsOverCarryWeight(ItemWeight))
-	{
-		return false;
-	}
-	if (Index > InventoryContents.Num())
-	{
-		//TODO: add error logging
-		return false;
-	}
-
-	UItemBase* TargetItem = Cast<UItemBase>(InventoryContents[Index]);
-	int remain = TargetItem->AddToStack(Item.GetDefaultObject()->GetCurrentStack());
-	if (remain > 0)
-	{
-		Item.GetDefaultObject()->SetStackSize(remain);
-		InventoryContents.Insert(Item,0);
-	}
-	CurrentWeight += ItemWeight;
-	return true;
-}
-
-TArray<FItemUIData> UInventoryComponent::GetInventoryUIData() const
-{
-	TArray<FItemUIData> Ret;
 	
-	for (int idx = 0; idx < InventoryContents.Num(); idx++)
-	{
-		Ret.Add(InventoryContents[idx].GetDefaultObject()->GetItemUIData(idx));
-	}
-
-	return Ret;
 }
 
-bool UInventoryComponent::UseItemAtIndex(const int32& Index)
+// Add an item class to inventory (supports stacking)
+bool UInventoryComponent::AddItemToInventory(TSubclassOf<UItemBase> Item)
 {
-	if (Owner == nullptr || Index >= InventoryContents.Num())
-	{
-		//TODO: Handle error logging
-		return false;
-	}
+	if (!Item) return false;
 
-	InventoryContents[Index].GetDefaultObject()->OnUse(Owner);
-	InventoryContents[Index].GetDefaultObject()->RemoveFromStack(1);
-	CurrentWeight -= InventoryContents[Index].GetDefaultObject()->GetItemWeight();
-	if(InventoryContents[Index].GetDefaultObject()->GetCurrentStack() == 0)
+	const UItemBase* DefaultItem = Item.GetDefaultObject();
+	int32 Remaining = DefaultItem->GetCurrentStack();
+
+	while (Remaining > 0)
 	{
-		InventoryContents.RemoveAt(Index);
+		// Try to add to an existing stack
+		if (AddOneToStack(Item))
+		{
+			--Remaining;
+			continue;
+		}
+		
+		Contents.Add(GetFirstEmptySlot(), FInventorySlotData(Item,1));
+		--Remaining;
 	}
+	InventoryWidget->UpdateContents();
 	return true;
 }
 
-bool UInventoryComponent::DropStackAtIndex(const int32& Index)
+void UInventoryComponent::InitializeInventoryComponent()
 {
-	if (Owner == nullptr || Index >= InventoryContents.Num())
+	if (APawn* Pawn = Cast<APawn>(GetOwner()))
 	{
-		//TODO: Handle error logging
-		return false;
+		if (Pawn->IsPlayerControlled())
+		{
+			CreateInventoryWidget();
+		}
 	}
+}
+
+TMap<FIntPoint, FInventorySlotData> UInventoryComponent::GetInventoryContents_Implementation() const
+{
+	return Contents;
+}
+
+// Find the first empty slot (infinite grid)
+FIntPoint UInventoryComponent::GetFirstEmptySlot() const
+{
+	int32 Row = 0;
+
+	while (true)
+	{
+		for (int32 Col = 0; Col < InventoryData.Columns; ++Col)
+		{
+			const FIntPoint Position(Col, Row);
+			if (!Contents.Contains(Position))
+			{
+				return Position;
+			}
+		}
+		++Row;
+	}
+}
+
+// Get the item class stored at a specific slot
+TSubclassOf<UItemBase> UInventoryComponent::GetItemAtPosition(const FIntPoint& Position) const
+{
+	if (const FInventorySlotData* Found = Contents.Find(Position))
+	{
+		return Found->ItemClass;
+	}
+	return nullptr;
+}
+
+void UInventoryComponent::CreateInventoryWidget()
+{
+	if (APlayerController* PC = Cast<APlayerController>(GetOwner()->GetInstigatorController()))
+	{
+		if (ASurvHUD* HUD = Cast<ASurvHUD>(PC->GetHUD()))
+		{
+			InventoryWidget = HUD->CreateInvWidget(GetOwner(), InventoryData, this);
+		}
+	}
+}
+
+// Try to add +1 to an existing stack of the same item
+bool UInventoryComponent::AddOneToStack(TSubclassOf<UItemBase> Item)
+{
+	const UItemBase* DefaultItem = Item.GetDefaultObject();
+	if (!DefaultItem) return false;
 	
-	FTransform SpawnTrans;
-	SpawnTrans.SetLocation(Owner->GetActorLocation() + (Owner->GetActorForwardVector() * 50));
-	APickupActor* SpawnedItem = GetWorld()->SpawnActor<APickupActor>(APickupActor::StaticClass(), SpawnTrans);
-	SpawnedItem->SetActorTransform(SpawnTrans);
+	const int32 MaxStack = DefaultItem->GetStackSize();
 
-	SpawnedItem->SetPickupMesh(InventoryContents[Index].GetDefaultObject()->GetPickupMesh());
-	SpawnedItem->SetWasSpawned(true);
-
-	TSubclassOf<UItemBase> PickupItem = InventoryContents[Index];
-	SpawnedItem->SetInventoryItem(PickupItem);
-	InventoryContents.RemoveAt(Index);
-	CurrentWeight -= PickupItem.GetDefaultObject()->GetStackWeight();
-	return true;
-}
-
-bool UInventoryComponent::IsOverCarryWeight(const float& ItemWeight) const
-{
-	if(CurrentWeight + ItemWeight > MaxWeight)
+	for (auto& Pair : Contents)
 	{
-		return true;
+		FInventorySlotData& Slot = Pair.Value;
+
+		if (Slot.ItemClass == Item && Slot.Quantity < MaxStack)
+		{
+			++Slot.Quantity;
+			return true;
+		}
 	}
 	return false;
 }

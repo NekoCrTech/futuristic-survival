@@ -4,9 +4,9 @@
 #include "InventorySystem/Items/ItemBase.h"
 
 
-int UItemBase::AddToStack(const int& Amount)
+int32 UItemBase::AddToCurrentStack(const int& Amount)
 {
-	int remains = 0;
+	int32 remains = 0;
 	if (CurrentStackSize == MaxStackSize)
 	{
 		return Amount;

@@ -24,8 +24,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
 	bool bUsable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
-	FIntPoint ItemSize;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
 	FText PickupText;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Info", Meta = (AllowPrivateAccess = "true"))
 	UTexture2D* ItemIcon;
@@ -46,17 +44,17 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void OnUse(class ASurvCharacter* Caller) {};
-
+	
 	UFUNCTION(BlueprintCallable)
 	float GetItemWeight() const {return ItemWeight;}
 	UFUNCTION(BlueprintCallable)
-	int GetStackSize() const {return MaxStackSize;}
+	int32 GetStackSize() const {return MaxStackSize;}
 	UFUNCTION(BlueprintCallable)
-	int GetCurrentStack() const {return CurrentStackSize;}
+	int32 GetCurrentStack() const {return CurrentStackSize;}
 	UFUNCTION(BlueprintCallable)
 	float GetStackWeight() const {return ItemWeight * CurrentStackSize;}
 	UFUNCTION(BlueprintCallable)
-	FItemUIData GetItemUIData(const int& idx) const {return FItemUIData(idx, ItemName, ItemDescription,ItemUseText,bUsable,ItemSize , ItemIcon, ItemQuality, CurrentStackSize);}
+	FItemUIData GetItemUIData(const FIntPoint& ItemPos) const {return FItemUIData(ItemPos, ItemName, ItemDescription,ItemUseText,bUsable, ItemIcon, ItemQuality, CurrentStackSize);}
 	UFUNCTION(BlueprintCallable)
 	TArray<FSalvageItem> GetSalvageData() const {return SalvageItems;}
 	UFUNCTION(BlueprintCallable)
@@ -65,9 +63,9 @@ public:
 	FText GetPickupText() const {return PickupText;}
 
 	UFUNCTION(BlueprintCallable)
-	int AddToStack(const int& Amount);
+	int32 AddToCurrentStack(const int32& Amount);
 	UFUNCTION(BlueprintCallable)
-	int RemoveFromStack(const int& Amount);
+	int32 RemoveFromStack(const int32& Amount);
 	UFUNCTION(BlueprintCallable)
-	void SetStackSize(const int& NewStackSize) {CurrentStackSize = NewStackSize;}
+	void SetStackSize(const int32& NewStackSize) {CurrentStackSize = NewStackSize;}
 };

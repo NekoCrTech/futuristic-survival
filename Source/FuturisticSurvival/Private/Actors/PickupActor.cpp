@@ -11,14 +11,15 @@ APickupActor::APickupActor()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent=Mesh;
 	Mesh->SetSimulatePhysics(true);
+	Mesh->SetCollisionProfileName(TEXT("PhysicsActor"));
 
-	Root->DestroyComponent();
+	//Root->DestroyComponent();
 }
 
 void APickupActor::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWorld()->GetTimerManager().SetTimer(PhysicsTimer, this, &APickupActor::StopPhysics,2.f,false);
+	GetWorld()->GetTimerManager().SetTimer(PhysicsTimer, this, &APickupActor::StopPhysics,3.f,false);
 }
 
 FText APickupActor::GetInteractionText_Implementation()
@@ -28,38 +29,16 @@ FText APickupActor::GetInteractionText_Implementation()
 
 void APickupActor::Interact_Implementation(class ASurvCharacter* Caller)
 {
-	if (!IsValid(InventoryItem))
+	if (!Caller || !IsInteractable_Implementation()) return;
+
+	if (UInventoryComponent* Inventory = Caller->GetInventory())
 	{
-		//TODO: Add Logging system
-		return;
+		// Add the item type to the inventory — it handles stacking internally
+		if (Inventory->AddItemToInventory(InventoryItem))
+		{
+			Destroy();
+		}
 	}
-	if(!IsInteractable_Implementation())
-	{
-		return;
-	}
-	UInventoryComponent* Inventory = Caller->GetInventory();
-	int Remain = ItemCount;
-	
-	while (Remain > 0 && Inventory->AddItemToTop(InventoryItem))
-	{
-		Remain--;
-	}
-	if (Remain == 0)
-	{
-		this->Destroy();
-		//this->SetAutoDestroyWhenFinished(true);
-	}
-	ItemCount = Remain;
-	return;
-	// class UInventoryComponent* InvComp = Caller->GetInventory();
-	// int rem = -1;
-	// if( rem = InvComp->AddItem(InventoryItem, ItemCount) == 0)
-	// {
-	// 	Interact(Caller)
-	// 	return;
-	// }
-	// ItemCount = rem;
-	// return;
 }
 
 bool APickupActor::IsInteractable_Implementation() const
