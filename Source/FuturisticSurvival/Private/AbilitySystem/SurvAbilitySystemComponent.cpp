@@ -3,16 +3,37 @@
 
 #include "Abilitysystem/SurvAbilitySystemComponent.h"
 
-USurvAbilitySystemComponent::USurvAbilitySystemComponent()
+#include "GameplayTags/SurvTags.h"
+
+void USurvAbilitySystemComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
 {
+	Super::OnGiveAbility(AbilitySpec);
+
+	HandleAutoActivatedAbility(AbilitySpec);
 }
 
-void USurvAbilitySystemComponent::BeginPlay()
+void USurvAbilitySystemComponent::OnRep_ActivateAbilities()
 {
-	Super::BeginPlay();
+	Super::OnRep_ActivateAbilities();
+
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	for(const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		HandleAutoActivatedAbility(AbilitySpec);
+	}
 }
 
-void USurvAbilitySystemComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USurvAbilitySystemComponent::HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if(!IsValid(AbilitySpec.Ability))
+	{
+		for (const FGameplayTag& Tag : AbilitySpec.Ability->GetAssetTags())
+		{
+			if (Tag.MatchesTagExact(SurvTags::SurvAbilities::ActivateOnGiven))
+			{
+				TryActivateAbility(AbilitySpec.Handle);
+				return;
+			}
+		}
+	}
 }
