@@ -6,6 +6,7 @@
 #include "SurvCharacter.h"
 #include "SurvEnemyCharacter.generated.h"
 
+class USurvAttributeSet;
 class USurvAbilitySystemComponent;
 
 UCLASS()
@@ -24,5 +25,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USurvAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<USurvAttributeSet> AttributeSet;
 
 };

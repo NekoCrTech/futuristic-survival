@@ -8,6 +8,7 @@
 
 #include "SurvPlayerState.generated.h"
 
+class USurvAttributeSet;
 class USurvAbilitySystemComponent;
 /**
  * 
@@ -25,4 +26,7 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Survival|Abilities")
 	TObjectPtr<USurvAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<USurvAttributeSet> AttributeSet;
 };
