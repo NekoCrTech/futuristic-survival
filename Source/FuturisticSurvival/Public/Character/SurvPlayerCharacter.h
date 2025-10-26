@@ -23,7 +23,10 @@ class FUTURISTICSURVIVAL_API ASurvPlayerCharacter : public ASurvCharacter
 public:
 	ASurvPlayerCharacter();
 	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
 	virtual void Tick(float DeltaTime) override;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);

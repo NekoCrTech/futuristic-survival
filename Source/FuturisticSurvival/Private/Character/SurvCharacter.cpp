@@ -64,6 +64,11 @@ void ASurvCharacter::Tick(float DeltaTime)
 
 }
 
+UAbilitySystemComponent* ASurvCharacter::GetAbilitySystemComponent() const
+{
+	return nullptr;
+}
+
 FGuid ASurvCharacter::GetActorSaveID_Implementation()
 {
 	

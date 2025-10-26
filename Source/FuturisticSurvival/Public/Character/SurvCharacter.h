@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Save/SaveActorInterface.h"
+#include "AbilitySystemInterface.h"
 #include "SurvCharacter.generated.h"
 
 class UInventoryComponent;
 class UStatlineComponent;
 
 UCLASS()
-class FUTURISTICSURVIVAL_API ASurvCharacter : public ACharacter, public ISaveActorInterface
+class FUTURISTICSURVIVAL_API ASurvCharacter : public ACharacter, public ISaveActorInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -19,6 +20,8 @@ public:
 	
 	ASurvCharacter();
 	virtual void Tick(float DeltaTime) override;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	virtual FGuid GetActorSaveID_Implementation() override;
 	virtual FSaveActorData GetSaveData_Implementation() override;

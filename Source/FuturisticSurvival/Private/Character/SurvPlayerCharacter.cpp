@@ -2,6 +2,8 @@
 
 
 #include "Public/Character/SurvPlayerCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -20,6 +22,7 @@
 #include "Core/SurvPlayerController.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/SurvPlayerState.h"
 
 ASurvPlayerCharacter::ASurvPlayerCharacter()
 {
@@ -76,8 +79,21 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 void ASurvPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
+	
 	Inventory->InitializeInventoryComponent();
+
+	if (!IsValid(GetAbilitySystemComponent())) return;
+
+	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
+}
+
+void ASurvPlayerCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	if (!IsValid(GetAbilitySystemComponent())) return;
+
+	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
 }
 
 void ASurvPlayerCharacter::BeginPlay()
@@ -97,6 +113,14 @@ void ASurvPlayerCharacter::Tick(float DeltaTime)
 	{
 		TraceForInteraction();
 	}
+}
+
+UAbilitySystemComponent* ASurvPlayerCharacter::GetAbilitySystemComponent() const
+{
+	ASurvPlayerState* SurvPlayerState = Cast<ASurvPlayerState>(GetPlayerState());
+	if (!IsValid(SurvPlayerState)) return nullptr;
+	
+	return SurvPlayerState->GetAbilitySystemComponent();
 }
 
 void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
