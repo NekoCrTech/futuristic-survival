@@ -12,4 +12,12 @@ namespace SurvTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Primary);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Secondary);
 	}
+
+	namespace Events
+	{
+		namespace Enemy
+		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HitReact)
+		}
+	}
 }

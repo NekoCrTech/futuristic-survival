@@ -13,7 +13,7 @@ void USurvGameplayAbility::DrawDebugActivationMessage()
 
 		GEngine->AddOnScreenDebugMessage(
 			-1,               // key (-1 means create new message)
-			3.f,              // display time
+			5.f,              // display time
 			FColor::Yellow,   // color
 			DebugMessage      // message
 		);

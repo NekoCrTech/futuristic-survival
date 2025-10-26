@@ -25,15 +25,14 @@ void USurvAbilitySystemComponent::OnRep_ActivateAbilities()
 
 void USurvAbilitySystemComponent::HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec)
 {
-	if(!IsValid(AbilitySpec.Ability))
+	if(!IsValid(AbilitySpec.Ability)) return;
+	
+	for (const FGameplayTag& Tag : AbilitySpec.Ability->GetAssetTags())
 	{
-		for (const FGameplayTag& Tag : AbilitySpec.Ability->GetAssetTags())
+		if (Tag.MatchesTagExact(SurvTags::SurvAbilities::ActivateOnGiven))
 		{
-			if (Tag.MatchesTagExact(SurvTags::SurvAbilities::ActivateOnGiven))
-			{
-				TryActivateAbility(AbilitySpec.Handle);
-				return;
-			}
+			TryActivateAbility(AbilitySpec.Handle);
+			return;
 		}
 	}
 }
