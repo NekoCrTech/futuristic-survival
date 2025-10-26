@@ -27,10 +27,11 @@ void ASurvEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!IsValid(AbilitySystemComponent))return;
+	if (!IsValid(GetAbilitySystemComponent()))return;
 	GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
 
 	if (!HasAuthority())return;
 	GiveStartupAbilities();
+	InitializeAttributes();
 }
 

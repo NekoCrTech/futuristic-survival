@@ -8,6 +8,7 @@
 #include "AbilitySystemInterface.h"
 #include "SurvCharacter.generated.h"
 
+class UGameplayEffect;
 class UGameplayAbility;
 class UInventoryComponent;
 class UStatlineComponent;
@@ -56,6 +57,8 @@ protected:
 	TObjectPtr<UInventoryComponent> Inventory;
 
 	void GiveStartupAbilities();
+	void InitializeAttributes() const;
+	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UStatlineComponent> Statline;
@@ -63,9 +66,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
-	
-	
-
-	
+	UPROPERTY(EditDefaultsOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGameplayEffect> InitializeAttributesEffect;	
 
 };

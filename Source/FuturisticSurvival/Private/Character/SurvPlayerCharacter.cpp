@@ -87,6 +87,7 @@ void ASurvPlayerCharacter::PossessedBy(AController* NewController)
 	
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
 	GiveStartupAbilities();
+	InitializeAttributes();
 }
 
 void ASurvPlayerCharacter::OnRep_PlayerState()
