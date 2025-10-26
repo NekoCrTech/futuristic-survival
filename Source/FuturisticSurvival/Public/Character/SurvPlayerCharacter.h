@@ -8,6 +8,7 @@
 #include "SurvPlayerCharacter.generated.h"
 
 
+struct FGameplayTag;
 class UBuildingComponent;
 class USphereComponent;
 class USpringArmComponent;
@@ -187,6 +188,7 @@ private:
 
 	void TraceForInteraction();
 
+	void ActivateAbility(const FGameplayTag& AbilityTag) const;
 public:
 	
 };

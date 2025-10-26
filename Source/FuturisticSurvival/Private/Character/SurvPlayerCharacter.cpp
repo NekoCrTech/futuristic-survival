@@ -20,6 +20,7 @@
 #include "BuildingSystem/BuildingComponent.h"
 #include "Core/SurvHUD.h"
 #include "Core/SurvPlayerController.h"
+#include "GameplayTags/SurvTags.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/SurvPlayerState.h"
@@ -229,6 +230,17 @@ void ASurvPlayerCharacter::TraceForInteraction()
 	UpdateInteractionText_Implementation();
 }
 
+//------------------------
+// Gameplay Ability System
+//------------------------
+
+void ASurvPlayerCharacter::ActivateAbility(const FGameplayTag& AbilityTag) const
+{
+	if(!IsValid(GetAbilitySystemComponent())) return;
+
+	GetAbilitySystemComponent()->TryActivateAbilitiesByTag(AbilityTag.GetSingleTagContainer());
+}
+
 //------------------
 // Actions on Inputs
 //------------------
@@ -418,10 +430,12 @@ void ASurvPlayerCharacter::ToggleBuildingModePlacement()
 
 void ASurvPlayerCharacter::OnPrimary()
 {
+	ActivateAbility(SurvTags::SurvAbilities::Primary);
 }
 
 void ASurvPlayerCharacter::OnSecondary()
 {
+	ActivateAbility(SurvTags::SurvAbilities::Secondary);
 }
 
 // Building Actions
