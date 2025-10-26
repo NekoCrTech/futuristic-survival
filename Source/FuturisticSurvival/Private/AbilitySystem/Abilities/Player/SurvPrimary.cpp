@@ -2,10 +2,11 @@
 
 
 #include "AbilitySystem/Abilities/Player/SurvPrimary.h"
-
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Engine/OverlapResult.h"
+#include "GameplayTags/SurvTags.h"
 
-void USurvPrimary::HitBoxOverlapTest()
+TArray<AActor*> USurvPrimary::HitBoxOverlapTest()
 {
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(GetAvatarActorFromActorInfo());
@@ -25,18 +26,42 @@ void USurvPrimary::HitBoxOverlapTest()
 
 	GetWorld()->OverlapMultiByChannel(OverlapResults, HitBoxLocation,FQuat::Identity,ECC_Visibility, Sphere, QueryParams, ResponseParams);
 
+	TArray<AActor*> ActorsHit;
+	for (const FOverlapResult& OverlapResult : OverlapResults)
+	{
+		if(!IsValid(OverlapResult.GetActor())) continue;
+		ActorsHit.AddUnique(OverlapResult.GetActor());
+	}
+	
 	if (bDrawDebug)
 	{
-		DrawDebugSphere(GetWorld(),HitBoxLocation, HitBoxRadius, 16, FColor::Red,false,3.f);
+		DrawHitBoxOverlapDebugs(OverlapResults, HitBoxLocation);
+	}
+	
+	return ActorsHit;
+}
 
-		for (const FOverlapResult& OverlapResult : OverlapResults)
+void USurvPrimary::SendHitReactEventToActors(TArray<AActor*> ActorsHit)
+{
+	for (AActor* Actor : ActorsHit)
+	{
+		FGameplayEventData Payload;
+		Payload.Instigator = GetAvatarActorFromActorInfo();
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Actor, SurvTags::Events::Enemy::HitReact,Payload);
+	}
+}
+
+void USurvPrimary::DrawHitBoxOverlapDebugs(const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation) const
+{
+	DrawDebugSphere(GetWorld(),HitBoxLocation, HitBoxRadius, 16, FColor::Red,false,3.f);
+
+	for (const FOverlapResult& OverlapResult : OverlapResults)
+	{
+		if (IsValid(OverlapResult.GetActor()))
 		{
-			if (IsValid(OverlapResult.GetActor()))
-			{
-				FVector DebugLocation = OverlapResult.GetActor()->GetActorLocation();
-				DebugLocation.Z += 100.f;
-				DrawDebugSphere(GetWorld(),DebugLocation, 30.f, 10, FColor::Green, false, 3.f);
-			}
+			FVector DebugLocation = OverlapResult.GetActor()->GetActorLocation();
+			DebugLocation.Z += 100.f;
+			DrawDebugSphere(GetWorld(),DebugLocation, 30.f, 10, FColor::Green, false, 3.f);
 		}
 	}
 }

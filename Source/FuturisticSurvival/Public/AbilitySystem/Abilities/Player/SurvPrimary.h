@@ -17,9 +17,14 @@ class FUTURISTICSURVIVAL_API USurvPrimary : public USurvGameplayAbility
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Survival|Ability")
-	void HitBoxOverlapTest();
+	TArray<AActor*> HitBoxOverlapTest();
+
+	UFUNCTION(BlueprintCallable, Category = "Survival|Ability")
+	void SendHitReactEventToActors(TArray<AActor*> ActorsHit);
 
 private:
+	void DrawHitBoxOverlapDebugs(const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation) const;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Survival|Ability")
 	float HitBoxRadius = 80.f;
 
