@@ -8,7 +8,7 @@
 
 #include "SurvPlayerState.generated.h"
 
-class USurvAttributeSet;
+class UAttributeSet;
 class USurvAbilitySystemComponent;
 /**
  * 
@@ -22,11 +22,12 @@ public:
 	ASurvPlayerState();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	UAttributeSet* GetAttributeSet() const {return AttributeSet;}
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Survival|Abilities")
 	TObjectPtr<USurvAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY()
-	TObjectPtr<USurvAttributeSet> AttributeSet;
+	TObjectPtr<UAttributeSet> AttributeSet;
 };

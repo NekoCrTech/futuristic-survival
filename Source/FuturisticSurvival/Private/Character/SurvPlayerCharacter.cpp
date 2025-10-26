@@ -88,6 +88,7 @@ void ASurvPlayerCharacter::PossessedBy(AController* NewController)
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
 	GiveStartupAbilities();
 	InitializeAttributes();
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(),GetAttributeSet());	
 }
 
 void ASurvPlayerCharacter::OnRep_PlayerState()
@@ -97,6 +98,7 @@ void ASurvPlayerCharacter::OnRep_PlayerState()
 	if (!IsValid(GetAbilitySystemComponent())) return;
 
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(),GetAttributeSet());	
 }
 
 void ASurvPlayerCharacter::BeginPlay()
@@ -124,6 +126,14 @@ UAbilitySystemComponent* ASurvPlayerCharacter::GetAbilitySystemComponent() const
 	if (!IsValid(SurvPlayerState)) return nullptr;
 	
 	return SurvPlayerState->GetAbilitySystemComponent();
+}
+
+UAttributeSet* ASurvPlayerCharacter::GetAttributeSet() const
+{
+	ASurvPlayerState* SurvPlayerState = Cast<ASurvPlayerState>(GetPlayerState());
+	if (!IsValid(SurvPlayerState)) return nullptr;
+	
+	return SurvPlayerState->GetAttributeSet();
 }
 
 void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

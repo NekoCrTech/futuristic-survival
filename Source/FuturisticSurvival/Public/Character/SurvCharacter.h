@@ -8,10 +8,13 @@
 #include "AbilitySystemInterface.h"
 #include "SurvCharacter.generated.h"
 
+class UAttributeSet;
 class UGameplayEffect;
 class UGameplayAbility;
 class UInventoryComponent;
 class UStatlineComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FASCInitialized, UAbilitySystemComponent*, ASC, UAttributeSet*, AS);
 
 UCLASS()
 class FUTURISTICSURVIVAL_API ASurvCharacter : public ACharacter, public ISaveActorInterface, public IAbilitySystemInterface
@@ -24,6 +27,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual UAttributeSet* GetAttributeSet() const {return nullptr;}
+	UPROPERTY(BlueprintAssignable)
+	FASCInitialized OnASCInitialized;
 
 	virtual FGuid GetActorSaveID_Implementation() override;
 	virtual FSaveActorData GetSaveData_Implementation() override;
