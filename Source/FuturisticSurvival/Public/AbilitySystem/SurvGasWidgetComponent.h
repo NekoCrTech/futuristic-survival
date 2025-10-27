@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AttributeSet.h"
 #include "Components/WidgetComponent.h"
 #include "SurvGasWidgetComponent.generated.h"
 
@@ -23,6 +24,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, Category = "Survival|Abilities")
+	TMap<FGameplayAttribute, FGameplayAttribute> AttributeMap;
+
 private:
 	TWeakObjectPtr<ASurvCharacter> SurvCharacter;
 	TWeakObjectPtr<USurvAbilitySystemComponent> AbilitySystemComponent;
@@ -37,6 +41,8 @@ private:
 
 	UFUNCTION()
 	void BindToAttributeChanges();
+
+	void BindWidgetToAttributeChanges(UWidget* WidgetObject, const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair) const;
 	
 	
 };

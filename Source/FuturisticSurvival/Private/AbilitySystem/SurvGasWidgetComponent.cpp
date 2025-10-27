@@ -5,6 +5,8 @@
 
 #include "AbilitySystem/SurvAbilitySystemComponent.h"
 #include "AbilitySystem/SurvAttributeSet.h"
+#include "AbilitySystem/UserInterface/SurvAttributeWidget.h"
+#include "Blueprint/WidgetTree.h"
 #include "Character/SurvCharacter.h"
 
 void USurvGasWidgetComponent::BeginPlay()
@@ -56,5 +58,27 @@ void USurvGasWidgetComponent::OnASCInitialized(UAbilitySystemComponent* ASC, UAt
 
 void USurvGasWidgetComponent::BindToAttributeChanges()
 {
-	
+	for (const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair : AttributeMap)
+	{
+		BindWidgetToAttributeChanges(GetUserWidgetObject(), Pair);
+
+		GetUserWidgetObject()->WidgetTree->ForEachWidget([this, &Pair](UWidget* ChildWidget)
+		{
+			BindWidgetToAttributeChanges(ChildWidget, Pair);
+		});
+	}
+}
+
+void USurvGasWidgetComponent::BindWidgetToAttributeChanges(UWidget* WidgetObject, const TTuple<FGameplayAttribute, FGameplayAttribute>& Pair) const
+{
+	USurvAttributeWidget* AttributeWidget = Cast<USurvAttributeWidget>(WidgetObject);
+	if(!IsValid(AttributeWidget)) return;
+	if(!AttributeWidget->MatchesAttributes(Pair)) return;
+
+	AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get());
+
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Key).AddLambda([this, AttributeWidget, &Pair](const FOnAttributeChangeData& Data)
+	{
+		AttributeWidget->OnAttributeChange(Pair, AttributeSet.Get());
+	});
 }
