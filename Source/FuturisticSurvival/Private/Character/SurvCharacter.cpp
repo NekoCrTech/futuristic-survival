@@ -125,6 +125,17 @@ void ASurvCharacter::InitializeAttributes() const
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }
 
+void ASurvCharacter::ResetAttributes()
+{
+	checkf(IsValid(ResetAttributesEffect), TEXT("ResetAttributesEffect not set."))
+
+	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(ResetAttributesEffect, 1.f, ContextHandle);
+
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+
 void ASurvCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)
 {
 	if (AttributeChangeData.NewValue <= 0.f)
@@ -147,6 +158,7 @@ void ASurvCharacter::HandleRespawn()
 {
 	bAlive = true;
 }
+
 
 
 

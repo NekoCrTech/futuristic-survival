@@ -50,6 +50,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Survival|Death")
 	virtual void HandleRespawn();
 
+	UFUNCTION(BlueprintCallable, Category = "Survival|Death")
+	void ResetAttributes();
+
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
@@ -85,6 +88,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UGameplayEffect> InitializeAttributesEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGameplayEffect> ResetAttributesEffect;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"),Replicated)
 	bool bAlive = true;
