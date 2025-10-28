@@ -19,6 +19,14 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSet() const override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Survival|AI")
+	float AcceptanceRadius{500.f};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Survival|AI")
+	float MinAttackDelay{.1f};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Survival|AI")
+	float MaxAttackDelay{.5f};
+	
+
 protected:
 	virtual void BeginPlay() override;
 
