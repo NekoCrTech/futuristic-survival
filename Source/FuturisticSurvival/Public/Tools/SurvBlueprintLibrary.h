@@ -15,6 +15,24 @@ enum EHitDirection : uint8
 	Back UMETA(Display = "Back")
 };
 
+USTRUCT(BlueprintType)
+struct FClosestActorWithTagResult
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	TWeakObjectPtr<AActor> Actor = nullptr;
+
+	UPROPERTY(BlueprintReadWrite)
+	float Distance = 0.0f;
+
+	// Default constructor
+	FClosestActorWithTagResult(): Actor(nullptr), Distance(0.f)	{}
+	
+	// Parameterized constructor
+	FClosestActorWithTagResult(AActor* InActor, float InDistance): Actor(InActor), Distance(InDistance) {}
+};
+
 UCLASS()
 class FUTURISTICSURVIVAL_API USurvBlueprintLibrary : public UBlueprintFunctionLibrary
 {
@@ -27,4 +45,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Survival|Utilities")
 	static FName GetHitDirectionName(const EHitDirection& HitDirection);
+
+	UFUNCTION(BlueprintCallable, Category = "Survival|Utilities")
+	static FClosestActorWithTagResult FindClosestActorWithTag(const UObject* WorldContextObject, const FVector& Origin, const FName& Tag);
 };

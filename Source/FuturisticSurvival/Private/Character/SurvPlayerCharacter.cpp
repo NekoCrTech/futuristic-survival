@@ -76,6 +76,9 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 
 	//Create Building Component
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));
+
+	Tags.Add(SurvivalTags::Player);
+	Tags.Add(SurvivalTags::DamageCauser);
 }
 
 void ASurvPlayerCharacter::PossessedBy(AController* NewController)

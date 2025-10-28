@@ -2,13 +2,18 @@
 
 
 #include "Public/Character/SurvCharacter.h"
-
 #include "AbilitySystemComponent.h"
 #include "GameplayAbilitySpec.h"
 #include "Structs/SaveActorData.h"
 #include "Components/StatlineComponent.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "Net/UnrealNetwork.h"
+
+namespace SurvivalTags
+{
+	const FName Player = FName("Player");
+	const FName DamageCauser = FName("DamageCauser");
+}
 
 
 ASurvCharacter::ASurvCharacter()

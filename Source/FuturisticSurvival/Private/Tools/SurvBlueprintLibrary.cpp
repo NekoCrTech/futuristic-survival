@@ -3,6 +3,9 @@
 
 #include "Tools/SurvBlueprintLibrary.h"
 
+#include "Character/SurvCharacter.h"
+#include "Kismet/GameplayStatics.h"
+
 EHitDirection USurvBlueprintLibrary::GetHitDirection(const FVector& TargetForward, const FVector& ToInstigator)
 {
 	const float Dot = FVector::DotProduct(TargetForward, ToInstigator);
@@ -35,4 +38,28 @@ FName USurvBlueprintLibrary::GetHitDirectionName(const EHitDirection& HitDirecti
 		case EHitDirection::Front: return FName("Front");
 		default: return FName("None");
 	}
+}
+
+FClosestActorWithTagResult USurvBlueprintLibrary::FindClosestActorWithTag(const UObject* WorldContextObject, const FVector& Origin, const FName& Tag)
+{
+	TArray<AActor*> ActorsWithTag;
+	UGameplayStatics::GetAllActorsWithTag(WorldContextObject, Tag, ActorsWithTag);
+
+	float ClosestDistance = TNumericLimits<float>::Max();
+	AActor* ClosestActor = nullptr;
+
+	for (AActor* Actor : ActorsWithTag)
+	{
+		if (!IsValid(Actor)) continue;
+		ASurvCharacter* Character = Cast<ASurvCharacter>(Actor);
+		if (!IsValid(Character) || !Character->IsAlive()) continue;
+
+		const float Distance = FVector::Dist(Origin, Character->GetActorLocation());
+		if (Distance < ClosestDistance)
+		{
+			ClosestDistance = Distance;
+			ClosestActor = Actor;
+		}
+	}
+	return FClosestActorWithTagResult(ClosestActor, ClosestDistance);
 }

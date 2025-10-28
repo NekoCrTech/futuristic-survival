@@ -8,6 +8,12 @@
 #include "AbilitySystemInterface.h"
 #include "SurvCharacter.generated.h"
 
+namespace SurvivalTags
+{
+	extern FUTURISTICSURVIVAL_API const FName Player;
+	extern FUTURISTICSURVIVAL_API const FName DamageCauser;
+}
+
 struct FOnAttributeChangeData;
 class UAttributeSet;
 class UGameplayEffect;
