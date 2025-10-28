@@ -8,11 +8,11 @@
 #include "Structs/SaveActorData.h"
 #include "Components/StatlineComponent.h"
 #include "InventorySystem/InventoryComponent.h"
+#include "Net/UnrealNetwork.h"
 
 
 ASurvCharacter::ASurvCharacter()
 {
- 	
 	PrimaryActorTick.bCanEverTick = true;
 
 	Statline = CreateDefaultSubobject<UStatlineComponent>(TEXT("Statline"));
@@ -31,7 +31,13 @@ void ASurvCharacter::BeginPlay()
 	{
 		SaveActorID = FGuid::NewGuid();
 	}
-	
+}
+
+void ASurvCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, bAlive);
 }
 
 bool ASurvCharacter::CanCharJump() const
@@ -117,6 +123,29 @@ void ASurvCharacter::InitializeAttributes() const
 	FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(InitializeAttributesEffect, 1.f, ContextHandle);
 
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+void ASurvCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)
+{
+	if (AttributeChangeData.NewValue <= 0.f)
+	{
+		HandleDeath();
+	}
+}
+
+void ASurvCharacter::HandleDeath()
+{
+	bAlive = false;
+
+	if (IsValid(GEngine))
+	{
+		GEngine->AddOnScreenDebugMessage(-1,3.f,FColor::Red, FString::Printf(TEXT("SurvCharacter::HandleDeath() - %s is dead"), *GetName()));
+	}
+}
+
+void ASurvCharacter::HandleRespawn()
+{
+	bAlive = true;
 }
 
 

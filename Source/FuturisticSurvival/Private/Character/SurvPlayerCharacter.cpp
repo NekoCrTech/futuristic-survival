@@ -17,6 +17,7 @@
 #include "Interaction/InteractionInterface.h"
 #include "Components/SphereComponent.h"
 #include "Logger.h"
+#include "AbilitySystem/SurvAttributeSet.h"
 #include "BuildingSystem/BuildingComponent.h"
 #include "Core/SurvHUD.h"
 #include "Core/SurvPlayerController.h"
@@ -86,9 +87,14 @@ void ASurvPlayerCharacter::PossessedBy(AController* NewController)
 	if (!IsValid(GetAbilitySystemComponent()) || !HasAuthority()) return;
 	
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(),GetAttributeSet());
 	GiveStartupAbilities();
 	InitializeAttributes();
-	OnASCInitialized.Broadcast(GetAbilitySystemComponent(),GetAttributeSet());	
+	
+	USurvAttributeSet* SurvAttributeSet = Cast<USurvAttributeSet>(GetAttributeSet());
+	if (!IsValid(SurvAttributeSet)) return;
+	
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(SurvAttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 }
 
 void ASurvPlayerCharacter::OnRep_PlayerState()
@@ -98,7 +104,12 @@ void ASurvPlayerCharacter::OnRep_PlayerState()
 	if (!IsValid(GetAbilitySystemComponent())) return;
 
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
-	OnASCInitialized.Broadcast(GetAbilitySystemComponent(),GetAttributeSet());	
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(),GetAttributeSet());
+
+	USurvAttributeSet* SurvAttributeSet = Cast<USurvAttributeSet>(GetAttributeSet());
+	if (!IsValid(SurvAttributeSet)) return;
+	
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(SurvAttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 }
 
 void ASurvPlayerCharacter::BeginPlay()

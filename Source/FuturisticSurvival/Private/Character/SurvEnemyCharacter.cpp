@@ -18,6 +18,26 @@ ASurvEnemyCharacter::ASurvEnemyCharacter()
 	AttributeSet = CreateDefaultSubobject<USurvAttributeSet>("AttributeSet");
 }
 
+void ASurvEnemyCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!IsValid(GetAbilitySystemComponent()))return;
+	GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
+	
+	if (!HasAuthority()) return;
+	
+	GiveStartupAbilities();
+	InitializeAttributes();
+
+	USurvAttributeSet* SurvAttributeSet = Cast<USurvAttributeSet>(GetAttributeSet());
+	if (!IsValid(SurvAttributeSet)) return;
+	
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(SurvAttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+	
+}
+
 UAbilitySystemComponent* ASurvEnemyCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
@@ -28,17 +48,5 @@ UAttributeSet* ASurvEnemyCharacter::GetAttributeSet() const
 	return AttributeSet;
 }
 
-void ASurvEnemyCharacter::BeginPlay()
-{
-	Super::BeginPlay();
 
-	if (!IsValid(GetAbilitySystemComponent()))return;
-	GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
-	if (HasAuthority())
-	{
-		GiveStartupAbilities();
-		InitializeAttributes();
-	}
-	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
-}
 

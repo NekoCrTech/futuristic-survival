@@ -24,4 +24,5 @@ protected:
 
 private:
 	void HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec);
+	
 };

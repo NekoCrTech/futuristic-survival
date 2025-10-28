@@ -8,6 +8,7 @@
 #include "AbilitySystemInterface.h"
 #include "SurvCharacter.generated.h"
 
+struct FOnAttributeChangeData;
 class UAttributeSet;
 class UGameplayEffect;
 class UGameplayAbility;
@@ -25,6 +26,7 @@ public:
 	
 	ASurvCharacter();
 	virtual void Tick(float DeltaTime) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSet() const {return nullptr;}
@@ -41,6 +43,12 @@ public:
 	UStatlineComponent* GetStatline() const {return Statline;}
 	UFUNCTION(BlueprintCallable)
 	UInventoryComponent* GetInventory() const {return Inventory;}
+
+	bool IsAlive() const {return bAlive;}
+	void SetAlive(const bool& bAliveStatus) { bAlive = bAliveStatus; }
+
+	UFUNCTION(BlueprintCallable, Category = "Survival|Death")
+	virtual void HandleRespawn();
 
 protected:
 
@@ -64,7 +72,10 @@ protected:
 
 	void GiveStartupAbilities();
 	void InitializeAttributes() const;
-	
+
+	void OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData);
+	virtual void HandleDeath();	
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UStatlineComponent> Statline;
@@ -73,6 +84,9 @@ private:
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UGameplayEffect> InitializeAttributesEffect;	
+	TSubclassOf<UGameplayEffect> InitializeAttributesEffect;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"),Replicated)
+	bool bAlive = true;
 
 };
