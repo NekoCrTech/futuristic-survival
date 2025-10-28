@@ -2,6 +2,11 @@
 
 
 #include "AbilitySystem/SurvAttributeSet.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayEffectExtension.h"
+#include "GameplayTags/SurvTags.h"
+
 #include "Net/UnrealNetwork.h"
 
 void USurvAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -22,9 +27,16 @@ void USurvAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(USurvAttributeSet, bAttributesInitialized);
 }
 
-void USurvAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
+void USurvAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
+
+	if(Data.EvaluatedData.Attribute == GetHealthAttribute() && GetHealth() <= 0.f)
+	{
+		FGameplayEventData Payload;
+		Payload.Instigator = Data.Target.GetAvatarActor();
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Data.EffectSpec.GetEffectContext().GetInstigator(), SurvTags::Events::KillScored, Payload);
+	}
 
 	if (!bAttributesInitialized)
 	{
