@@ -3,6 +3,7 @@
 
 #include "Character/SurvEnemyCharacter.h"
 
+#include "AIController.h"
 #include "AbilitySystem/SurvAbilitySystemComponent.h"
 #include "AbilitySystem/SurvAttributeSet.h"
 
@@ -36,6 +37,15 @@ void ASurvEnemyCharacter::BeginPlay()
 	
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(SurvAttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 	
+}
+
+void ASurvEnemyCharacter::HandleDeath()
+{
+	Super::HandleDeath();
+
+	AAIController* AIController = GetController<AAIController>();
+	if (!IsValid(AIController)) return;
+	AIController->StopMovement();
 }
 
 UAbilitySystemComponent* ASurvEnemyCharacter::GetAbilitySystemComponent() const

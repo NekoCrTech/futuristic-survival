@@ -153,10 +153,7 @@ void ASurvCharacter::HandleDeath()
 {
 	bAlive = false;
 
-	if (IsValid(GEngine))
-	{
-		GEngine->AddOnScreenDebugMessage(-1,3.f,FColor::Red, FString::Printf(TEXT("SurvCharacter::HandleDeath() - %s is dead"), *GetName()));
-	}
+	
 }
 
 void ASurvCharacter::HandleRespawn()
