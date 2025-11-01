@@ -25,7 +25,12 @@ public:
 	float MinAttackDelay{.1f};
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Survival|AI")
 	float MaxAttackDelay{.5f};
-	
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RotateToTarget(AActor* RotateTarget);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	float GetTimelineLength();
 
 protected:
 	virtual void BeginPlay() override;

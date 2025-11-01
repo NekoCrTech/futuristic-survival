@@ -8,6 +8,11 @@ namespace SurvTags
 		
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Primary, "SurvTags.SurvAbilities.Primary", "Tag for the primary ability")
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Secondary, "SurvTags.SurvAbilities.Secondary", "Tag for the secondary ability")
+
+		namespace Enemy
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attack, "SurvTags.SurvAbilities.Enemy.Attack", "Tag for the enemy attack ability")
+		}
 	}
 	namespace Events
 	{
@@ -15,6 +20,7 @@ namespace SurvTags
 		namespace Enemy
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HitReact, "SurvTags.Events.Enemy.HitReact", "Tag for the enemy Hit React")
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(EndAttack, "SurvTags.Events.Enemy.EndAttack", "Tag for the enemy ending the attack")
 		}
 	}
 }
