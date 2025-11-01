@@ -3,9 +3,11 @@
 
 #include "GameObjects/SurvProjectile.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Character/SurvPlayerCharacter.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "GameplayTags/SurvTags.h"
 
 
 ASurvProjectile::ASurvProjectile()
@@ -31,7 +33,9 @@ void ASurvProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
 	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
-	OnImpact();
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,SurvTags::SetByCaller::Projectile,Damage);
+	
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 
 	Destroy();

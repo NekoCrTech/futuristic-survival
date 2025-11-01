@@ -2,6 +2,11 @@
 
 namespace SurvTags
 {
+	namespace SetByCaller
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Projectile, "SurvTags.SetByCaller.Projectile", "Tag for Projectile")
+
+	}
 	namespace SurvAbilities
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActivateOnGiven, "SurvTags.SurvAbilities.ActivateOnGiven", "Tag for auto activating given ability")
