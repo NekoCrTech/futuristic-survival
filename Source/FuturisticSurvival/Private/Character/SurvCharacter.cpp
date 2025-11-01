@@ -152,8 +152,6 @@ void ASurvCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChan
 void ASurvCharacter::HandleDeath()
 {
 	bAlive = false;
-
-	
 }
 
 void ASurvCharacter::HandleRespawn()
