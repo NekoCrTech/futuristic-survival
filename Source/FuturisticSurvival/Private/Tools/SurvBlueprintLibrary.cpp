@@ -3,7 +3,10 @@
 
 #include "Tools/SurvBlueprintLibrary.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/SurvAttributeSet.h"
 #include "Character/SurvCharacter.h"
+#include "GameplayTags/SurvTags.h"
 #include "Kismet/GameplayStatics.h"
 
 EHitDirection USurvBlueprintLibrary::GetHitDirection(const FVector& TargetForward, const FVector& ToInstigator)
@@ -62,4 +65,29 @@ FClosestActorWithTagResult USurvBlueprintLibrary::FindClosestActorWithTag(const 
 		}
 	}
 	return FClosestActorWithTagResult(ClosestActor, ClosestDistance);
+}
+
+void USurvBlueprintLibrary::SendDamageEventToPlayer(AActor* Target, const TSubclassOf<UGameplayEffect>& DamageEffect, const FGameplayEventData& Payload,
+	const FGameplayTag& DataTag, float Damage)
+{
+	ASurvCharacter* Character = Cast<ASurvCharacter>(Target);
+	if (!IsValid(Character)) return;
+	if (!Character->IsAlive()) return;
+
+	USurvAttributeSet* AttributeSet = Cast<USurvAttributeSet>(Character->GetAttributeSet());
+	if (!IsValid(AttributeSet)) return;
+
+	const bool bLethal = AttributeSet->GetHealth() - Damage <= 0.f;
+	const FGameplayTag EventTag = bLethal ? SurvTags::Events::Player::Death : SurvTags::Events::Player::HitReact;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Character,EventTag, Payload);
+	
+	UAbilitySystemComponent* TargetASC = Character->GetAbilitySystemComponent();
+	if (!IsValid(TargetASC)) return;
+
+	FGameplayEffectContextHandle ContextHandle = TargetASC->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = TargetASC->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DataTag, -Damage);
+	TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }

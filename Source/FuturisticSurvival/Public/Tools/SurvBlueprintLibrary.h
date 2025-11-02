@@ -6,6 +6,10 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SurvBlueprintLibrary.generated.h"
 
+struct FGameplayTag;
+struct FGameplayEventData;
+class UGameplayEffect;
+
 UENUM(BlueprintType)
 enum EHitDirection : uint8
 {
@@ -48,4 +52,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Survival|Utilities")
 	static FClosestActorWithTagResult FindClosestActorWithTag(const UObject* WorldContextObject, const FVector& Origin, const FName& Tag);
+
+	UFUNCTION(BlueprintCallable, Category = "Survival|Utilities")
+	static void SendDamageEventToPlayer(AActor* Target, const TSubclassOf<UGameplayEffect>& DamageEffect, const FGameplayEventData& Payload, const FGameplayTag& DataTag, float Damage);
 };

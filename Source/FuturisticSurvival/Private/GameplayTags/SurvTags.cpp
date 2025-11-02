@@ -5,7 +5,7 @@ namespace SurvTags
 	namespace SetByCaller
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Projectile, "SurvTags.SetByCaller.Projectile", "Tag for Projectile")
-
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Melee, "SurvTags.SetByCaller.Melee", "Tag for Melee")
 	}
 	namespace SurvAbilities
 	{
@@ -22,6 +22,11 @@ namespace SurvTags
 	namespace Events
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(KillScored, "SurvTags.Events.KillScored", "Tag for an enemy is KillScored Event")
+		namespace Player
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HitReact, "SurvTags.Events.Player.HitReact", "Tag for the player Hit React")
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Death, "SurvTags.Events.Player.Death", "Tag for the player death")
+		}
 		namespace Enemy
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HitReact, "SurvTags.Events.Enemy.HitReact", "Tag for the enemy Hit React")

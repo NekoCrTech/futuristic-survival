@@ -8,6 +8,7 @@
 #include "Character/SurvPlayerCharacter.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GameplayTags/SurvTags.h"
+#include "Tools/SurvBlueprintLibrary.h"
 
 
 ASurvProjectile::ASurvProjectile()
@@ -31,13 +32,12 @@ void ASurvProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	UAbilitySystemComponent* AbilitySystemComponent = PlayerCharacter->GetAbilitySystemComponent();
 	if (!IsValid(AbilitySystemComponent) || !HasAuthority()) return;
 
-	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
-	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DamageEffect, 1.f, ContextHandle);
+	FGameplayEventData Payload;
+	Payload.Instigator = GetOwner();
+	Payload.Target = PlayerCharacter;
 
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,SurvTags::SetByCaller::Projectile,Damage);
+	USurvBlueprintLibrary::SendDamageEventToPlayer(PlayerCharacter, DamageEffect,Payload, SurvTags::SetByCaller::Projectile, Damage);
 	
-	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
-
 	Destroy();
 }
 

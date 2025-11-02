@@ -92,13 +92,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Survival|Effects", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UGameplayEffect> InitializeAttributesEffect;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Survival|Effects", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UGameplayEffect> ResetAttributesEffect;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Survival|Abilities", meta = (AllowPrivateAccess = "true"),Replicated)
+	UPROPERTY(BlueprintReadOnly, Category = "Survival|State", meta = (AllowPrivateAccess = "true"),Replicated)
 	bool bAlive = true;
 
 };
