@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/SurvUserWidget.h"
+#include "UserInterface/SurvUserWidget.h"
 #include "SurvInventorySlot.generated.h"
 
 class UTextBlock;

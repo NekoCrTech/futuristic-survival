@@ -1,7 +1,7 @@
 // developed by Neko
 
 
-#include "Core/SurvUserWidget.h"
+#include "UserInterface/SurvUserWidget.h"
 
 void USurvUserWidget::SetWidgetOwner(UObject* InOwner)
 {

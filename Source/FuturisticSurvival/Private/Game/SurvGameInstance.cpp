@@ -6,7 +6,7 @@
 #include "Save/SurvSaveGame.h"
 #include "EngineUtils.h"
 #include "Logger.h"
-#include "Core/SurvActor.h"
+#include "Actors/SurvActor.h"
 #include <Serialization/ObjectAndNameAsStringProxyArchive.h>
 #include "GameFramework/Character.h"
 #include "SaveGameSystem.h"

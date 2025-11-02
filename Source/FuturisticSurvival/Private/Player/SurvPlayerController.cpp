@@ -1,7 +1,7 @@
 // developed by Neko
 
 
-#include "Public/Core/SurvPlayerController.h"
+#include "Public/Player/SurvPlayerController.h"
 
 #include "EnhancedInputSubsystems.h"
 

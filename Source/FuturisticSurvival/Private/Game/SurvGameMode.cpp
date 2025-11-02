@@ -1,7 +1,7 @@
 // developed by Neko
 
 
-#include "Public/Core/SurvGameMode.h"
+#include "Public/Game/SurvGameMode.h"
 
 #include "Actors/Chronomanager.h"
 #include "Kismet/GameplayStatics.h"

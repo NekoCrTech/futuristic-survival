@@ -1,11 +1,11 @@
 // developed by Neko
 
 
-#include "Public/Core/SurvHUD.h"
+#include "Public/UserInterface/SurvHUD.h"
 #include "InventorySystem/UserInterface/InventoryWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Character/SurvPlayerCharacter.h"
-#include "Core/SurvPlayerController.h"
+#include "Player/SurvPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Structs/InventoryData.h"
 #include "Structs/InventorySlotData.h"

@@ -1,7 +1,7 @@
 // developed by Neko
 
 
-#include "Core/SurvActor.h"
+#include "Actors/SurvActor.h"
 #include "Structs/SaveActorData.h"
 
 
