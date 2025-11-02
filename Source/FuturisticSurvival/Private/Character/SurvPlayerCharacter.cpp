@@ -2,6 +2,8 @@
 
 
 #include "Public/Character/SurvPlayerCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -15,11 +17,14 @@
 #include "Interaction/InteractionInterface.h"
 #include "Components/SphereComponent.h"
 #include "Logger.h"
+#include "AbilitySystem/SurvAttributeSet.h"
 #include "BuildingSystem/BuildingComponent.h"
 #include "Core/SurvHUD.h"
 #include "Core/SurvPlayerController.h"
+#include "GameplayTags/SurvTags.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/SurvPlayerState.h"
 
 ASurvPlayerCharacter::ASurvPlayerCharacter()
 {
@@ -71,13 +76,43 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 
 	//Create Building Component
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));
+
+	Tags.Add(SurvivalTags::Player);
+	Tags.Add(SurvivalTags::DamageCauser);
 }
 
 void ASurvPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
+	
 	Inventory->InitializeInventoryComponent();
+
+	if (!IsValid(GetAbilitySystemComponent()) || !HasAuthority()) return;
+	
+	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(),GetAttributeSet());
+	GiveStartupAbilities();
+	InitializeAttributes();
+	
+	USurvAttributeSet* SurvAttributeSet = Cast<USurvAttributeSet>(GetAttributeSet());
+	if (!IsValid(SurvAttributeSet)) return;
+	
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(SurvAttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+}
+
+void ASurvPlayerCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	if (!IsValid(GetAbilitySystemComponent())) return;
+
+	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(),GetAttributeSet());
+
+	USurvAttributeSet* SurvAttributeSet = Cast<USurvAttributeSet>(GetAttributeSet());
+	if (!IsValid(SurvAttributeSet)) return;
+	
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(SurvAttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 }
 
 void ASurvPlayerCharacter::BeginPlay()
@@ -97,6 +132,22 @@ void ASurvPlayerCharacter::Tick(float DeltaTime)
 	{
 		TraceForInteraction();
 	}
+}
+
+UAbilitySystemComponent* ASurvPlayerCharacter::GetAbilitySystemComponent() const
+{
+	ASurvPlayerState* SurvPlayerState = Cast<ASurvPlayerState>(GetPlayerState());
+	if (!IsValid(SurvPlayerState)) return nullptr;
+	
+	return SurvPlayerState->GetAbilitySystemComponent();
+}
+
+UAttributeSet* ASurvPlayerCharacter::GetAttributeSet() const
+{
+	ASurvPlayerState* SurvPlayerState = Cast<ASurvPlayerState>(GetPlayerState());
+	if (!IsValid(SurvPlayerState)) return nullptr;
+	
+	return SurvPlayerState->GetAttributeSet();
 }
 
 void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -123,6 +174,9 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 		EnhancedInputComponent->BindAction(LeanAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::Lean);
 		// Interacting
 		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::OnInteract);
+		// Abilities
+		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::OnPrimary);
+		EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::OnSecondary);
 		// Camera
 		EnhancedInputComponent->BindAction(TogglePerspectiveAction,ETriggerEvent::Started,this, &ASurvPlayerCharacter::TogglePerspective);
 		// User Interface
@@ -138,8 +192,6 @@ void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 //-------------------
 // Interaction System
 //-------------------
-
-
 
 void ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                                             int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -203,6 +255,17 @@ void ASurvPlayerCharacter::TraceForInteraction()
 	UpdateInteractionText_Implementation();
 }
 
+//------------------------
+// Gameplay Ability System
+//------------------------
+
+void ASurvPlayerCharacter::ActivateAbility(const FGameplayTag& AbilityTag) const
+{
+	if(!IsValid(GetAbilitySystemComponent())) return;
+
+	GetAbilitySystemComponent()->TryActivateAbilitiesByTag(AbilityTag.GetSingleTagContainer());
+}
+
 //------------------
 // Actions on Inputs
 //------------------
@@ -253,7 +316,6 @@ void ASurvPlayerCharacter::Lean(const FInputActionValue& Value)
 	}
 	LeanAmount = Value.Get<float>();
 }
-
 
 void ASurvPlayerCharacter::PlayerJump()
 {
@@ -326,7 +388,6 @@ void ASurvPlayerCharacter::TogglePerspective()
 	return;
 }
 
-
 void ASurvPlayerCharacter::TogglePlayerInventory()
 {
 	if(bInBuildingModeUI)
@@ -388,6 +449,19 @@ void ASurvPlayerCharacter::ToggleBuildingModePlacement()
 	bInBuildingModePlacement = false;
 	MyPC->SetBuildingMappingContextEnabled(false);
 	
+}
+
+// Ability Actions
+
+void ASurvPlayerCharacter::OnPrimary()
+{
+	ActivateAbility(SurvTags::SurvAbilities::Primary);
+	
+}
+
+void ASurvPlayerCharacter::OnSecondary()
+{
+	ActivateAbility(SurvTags::SurvAbilities::Secondary);
 }
 
 // Building Actions

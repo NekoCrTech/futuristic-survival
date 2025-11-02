@@ -8,6 +8,7 @@
 #include "SurvPlayerCharacter.generated.h"
 
 
+struct FGameplayTag;
 class UBuildingComponent;
 class USphereComponent;
 class USpringArmComponent;
@@ -23,7 +24,11 @@ class FUTURISTICSURVIVAL_API ASurvPlayerCharacter : public ASurvCharacter
 public:
 	ASurvPlayerCharacter();
 	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
 	virtual void Tick(float DeltaTime) override;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual UAttributeSet* GetAttributeSet() const override;
 	
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);
@@ -95,6 +100,12 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
 	UInputAction* LeanAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* PrimaryAction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
+	UInputAction* SecondaryAction;
 #pragma endregion
 
 #pragma region BuildingInputs
@@ -122,6 +133,9 @@ protected:
 	void SneakOff();
 	
 	void OnInteract();
+
+	void OnPrimary();
+	void OnSecondary();
 
 	void TogglePerspective();
 
@@ -175,6 +189,7 @@ private:
 
 	void TraceForInteraction();
 
+	void ActivateAbility(const FGameplayTag& AbilityTag) const;
 public:
 	
 };

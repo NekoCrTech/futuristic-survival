@@ -2,14 +2,22 @@
 
 
 #include "Public/Character/SurvCharacter.h"
+#include "AbilitySystemComponent.h"
+#include "GameplayAbilitySpec.h"
 #include "Structs/SaveActorData.h"
 #include "Components/StatlineComponent.h"
 #include "InventorySystem/InventoryComponent.h"
+#include "Net/UnrealNetwork.h"
+
+namespace SurvivalTags
+{
+	const FName Player = FName("Player");
+	const FName DamageCauser = FName("DamageCauser");
+}
 
 
 ASurvCharacter::ASurvCharacter()
 {
- 	
 	PrimaryActorTick.bCanEverTick = true;
 
 	Statline = CreateDefaultSubobject<UStatlineComponent>(TEXT("Statline"));
@@ -28,7 +36,13 @@ void ASurvCharacter::BeginPlay()
 	{
 		SaveActorID = FGuid::NewGuid();
 	}
-	
+}
+
+void ASurvCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, bAlive);
 }
 
 bool ASurvCharacter::CanCharJump() const
@@ -57,11 +71,14 @@ void ASurvCharacter::SetSneaking(const bool& IsSneaking)
 	Statline->SetSneaking(IsSneaking);
 }
 
-
 void ASurvCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
+UAbilitySystemComponent* ASurvCharacter::GetAbilitySystemComponent() const
+{
+	return nullptr;
 }
 
 FGuid ASurvCharacter::GetActorSaveID_Implementation()
@@ -89,5 +106,59 @@ void ASurvCharacter::SetWasSpawned(const bool& IsSpawned)
 {
 	bWasSpawned = IsSpawned;
 }
+
+// ABILITY SYSTEM
+
+void ASurvCharacter::GiveStartupAbilities()
+{
+	if (!IsValid(GetAbilitySystemComponent())) return;
+	
+	for (const auto& Ability : StartupAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability);
+		GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
+	}
+}
+
+void ASurvCharacter::InitializeAttributes() const
+{
+	checkf(IsValid(InitializeAttributesEffect), TEXT("InitializeAttributesEffect not set."))
+
+	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(InitializeAttributesEffect, 1.f, ContextHandle);
+
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+void ASurvCharacter::ResetAttributes()
+{
+	checkf(IsValid(ResetAttributesEffect), TEXT("ResetAttributesEffect not set."))
+
+	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(ResetAttributesEffect, 1.f, ContextHandle);
+
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+
+void ASurvCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)
+{
+	if (AttributeChangeData.NewValue <= 0.f)
+	{
+		HandleDeath();
+	}
+}
+
+void ASurvCharacter::HandleDeath()
+{
+	bAlive = false;
+}
+
+void ASurvCharacter::HandleRespawn()
+{
+	bAlive = true;
+}
+
+
 
 
