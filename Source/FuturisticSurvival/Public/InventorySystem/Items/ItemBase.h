@@ -61,11 +61,5 @@ public:
 	UStaticMesh* GetPickupMesh() const {return Mesh;}
 	UFUNCTION(BlueprintCallable)
 	FText GetPickupText() const {return PickupText;}
-
-	UFUNCTION(BlueprintCallable)
-	int32 AddToCurrentStack(const int32& Amount);
-	UFUNCTION(BlueprintCallable)
-	int32 RemoveFromStack(const int32& Amount);
-	UFUNCTION(BlueprintCallable)
-	void SetStackSize(const int32& NewStackSize) {CurrentStackSize = NewStackSize;}
+	
 };
