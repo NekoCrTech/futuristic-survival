@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/SurvActor.h"
+#include "Actors/SurvActor.h"
 #include "Structs/TimeData.h"
 #include "Enums/DayLength.h"
 #include "Chronomanager.generated.h"

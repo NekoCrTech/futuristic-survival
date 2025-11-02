@@ -3,7 +3,7 @@
 
 #include "InventorySystem/InventoryComponent.h"
 
-#include "Core/SurvHUD.h"
+#include "UserInterface/SurvHUD.h"
 #include "InventorySystem/Items/ItemBase.h"
 #include "InventorySystem/UserInterface/InventoryWidget.h"
 

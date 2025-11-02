@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/SurvUserWidget.h"
+#include "UserInterface/SurvUserWidget.h"
 #include "AbilitySystem/SurvAttributeSet.h"
 #include "SurvAttributeWidget.generated.h"
 

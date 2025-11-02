@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/SurvUserWidget.h"
+#include "UserInterface/SurvUserWidget.h"
 #include "PlayerWidget.generated.h"
 
 class UOverlay;

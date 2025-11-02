@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/SurvActor.h"
+#include "Actors/SurvActor.h"
 #include "Interaction/InteractionInterface.h"
 #include "NiagaraComponent.h"
 #include "HeatSourceActor.generated.h"

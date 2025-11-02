@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/SurvUserWidget.h"
+#include "UserInterface/SurvUserWidget.h"
 #include "Structs/InventoryData.h"
 #include "Structs/InventorySlotData.h"
 #include "InventoryWidget.generated.h"

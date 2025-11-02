@@ -5,7 +5,7 @@
 
 #include "SurvUtils.h"
 #include "Logger.h"
-#include "Core/SurvGameMode.h"
+#include "Game/SurvGameMode.h"
 #include "Actors/Chronomanager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
