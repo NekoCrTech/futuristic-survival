@@ -21,8 +21,6 @@ namespace SurvTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack);
 		}
 	}
-	
-
 	namespace Events
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(KillScored)
@@ -30,6 +28,7 @@ namespace SurvTags
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HitReact)
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(EndAttack)
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(MeleeTraceHit)
 		}
 	}
 }

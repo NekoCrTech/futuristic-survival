@@ -1,0 +1,74 @@
+// developed by Neko
+
+
+#include "Notifies/SurvMeleeAttackNotify.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+#include "KismetTraceUtils.h"
+#include "Character/SurvPlayerCharacter.h"
+#include "GameplayTags/SurvTags.h"
+#include "Kismet/KismetMathLibrary.h"
+
+void USurvMeleeAttackNotify::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime,
+                                        const FAnimNotifyEventReference& EventReference)
+{
+	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
+
+	if(!IsValid(MeshComp)) return;
+	if(!IsValid(MeshComp->GetOwner())) return;
+
+	TArray<FHitResult> Hits = PerformSphereTrace(MeshComp);
+	SendEventToActors(Hits, MeshComp);
+}
+
+TArray<FHitResult> USurvMeleeAttackNotify::PerformSphereTrace(USkeletalMeshComponent* MeshComp) const
+{
+	TArray<FHitResult> OutHits;
+
+	const FTransform SocketTransform = MeshComp->GetSocketTransform(SocketName);
+	const FVector Start = SocketTransform.GetLocation();
+	const FVector ExtendedSocketDirection = UKismetMathLibrary::GetForwardVector(SocketTransform.GetRotation().Rotator()) * SocketExtensionOffset;
+	const FVector End = Start - ExtendedSocketDirection; 
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(MeshComp->GetOwner());
+
+	FCollisionResponseParams ResponseParams;
+	ResponseParams.CollisionResponse.SetAllChannels(ECR_Ignore);
+	ResponseParams.CollisionResponse.SetResponse(ECC_Pawn, ECR_Block);
+	
+	UWorld* World = GEngine->GetWorldFromContextObject(MeshComp, EGetWorldErrorMode::LogAndReturnNull);
+	if (!IsValid(World)) return  OutHits;
+	bool const bHit = World->SweepMultiByChannel(OutHits, Start, End, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(SphereTraceRadius), Params, ResponseParams);
+
+	if(bDebug)
+	{
+		DrawDebugSphereTraceMulti(World, Start, End, SphereTraceRadius, EDrawDebugTrace::ForDuration, bHit, OutHits, FColor::Red, FColor::Green, 5.f);
+	}
+	return OutHits;
+}
+
+void USurvMeleeAttackNotify::SendEventToActors(const TArray<FHitResult>& Hits, USkeletalMeshComponent* MeshComp) const
+{
+	for(const FHitResult& Hit: Hits)
+	{
+		ASurvPlayerCharacter* PlayerCharacter = Cast<ASurvPlayerCharacter>(Hit.GetActor());
+		if(!IsValid(PlayerCharacter)) continue;
+		if(!PlayerCharacter->IsAlive()) continue;
+		UAbilitySystemComponent* ASC = PlayerCharacter->GetAbilitySystemComponent();
+		if(!IsValid(ASC)) continue;
+
+		FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+		ContextHandle.AddHitResult(Hit);
+
+		FGameplayEventData Payload;
+		Payload.Target = PlayerCharacter;
+		Payload.ContextHandle = ContextHandle;
+		Payload.Instigator = MeshComp->GetOwner();
+
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(MeshComp->GetOwner(),SurvTags::Events::Enemy::MeleeTraceHit ,Payload);
+	}
+}
+
+

@@ -26,6 +26,7 @@ namespace SurvTags
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HitReact, "SurvTags.Events.Enemy.HitReact", "Tag for the enemy Hit React")
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(EndAttack, "SurvTags.Events.Enemy.EndAttack", "Tag for the enemy ending the attack")
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(MeleeTraceHit, "SurvTags.Events.Enemy.MeleeTraceHit", "Tag for the enemy melee trace hit")
 		}
 	}
 }
