@@ -30,8 +30,9 @@ void UInventoryWidget::OnInventoryUpdate_Implementation(const TMap<FIntPoint, FI
 }
 
 
-void UInventoryWidget::SetInventoryData(const FInventoryData& InventoryDataToSet)
+void UInventoryWidget::SetInventoryData(const FInventoryData& InventoryDataToSet, UInventoryComponent* InventoryComponent)
 {
+	OwningInventoryComponent = InventoryComponent;
 	InventoryData = InventoryDataToSet;
 	UpdateContents();
 }

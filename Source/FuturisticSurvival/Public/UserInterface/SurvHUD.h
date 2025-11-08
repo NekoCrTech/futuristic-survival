@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "SurvHUD.generated.h"
 
+class UInventoryComponent;
 class UPlayerWidget;
 class USurvUserWidget;
 class UInventoryWidget;
@@ -22,7 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitializeHUD();
 	
-	UInventoryWidget* CreateInvWidget(AActor* InOwner, const FInventoryData& InventoryData, UActorComponent* InventoryComponent);
+	UInventoryWidget* CreateInvWidget(AActor* InOwner, const FInventoryData& InventoryData, UInventoryComponent* InventoryComponent);
 	void ToggleCharacterWindow();
 
 protected:

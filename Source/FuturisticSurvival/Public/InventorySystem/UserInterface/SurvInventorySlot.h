@@ -17,6 +17,13 @@ UCLASS()
 class FUTURISTICSURVIVAL_API USurvInventorySlot : public USurvUserWidget
 {
 	GENERATED_BODY()
+
+	UFUNCTION(BlueprintCallable, Category = "Survival|Inventory")
+	void SetOwningInventory(class UInventoryComponent* Inventory) { OwningInventory = Inventory; }
+	UFUNCTION(BlueprintCallable, Category = "Survival|Inventory")
+	UInventoryComponent* GetOwningInventory() const { return OwningInventory; }
+	UFUNCTION(BlueprintCallable, Category = "Survival|Inventory")
+	FIntPoint GetItemSlotLocation() const { return SlotLocation; }
 	
 protected:
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), category = "Survival|Components")
@@ -24,4 +31,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, category = "Survival|Inventory")
 	FIntPoint SlotLocation;
+
+	UPROPERTY(VisibleAnywhere, category = "Survival|Inventory")
+	class UInventoryComponent* OwningInventory;
 };
