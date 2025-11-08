@@ -20,5 +20,8 @@ class FUTURISTICSURVIVAL_API USurvInventorySlot : public USurvUserWidget
 	
 protected:
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), category = "Survival|Components")
-	UBorder* ItemBorder;	
+	UBorder* ItemBorder;
+
+	UPROPERTY(VisibleAnywhere, category = "Survival|Inventory")
+	FIntPoint SlotLocation;
 };

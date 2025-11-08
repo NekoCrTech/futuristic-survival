@@ -26,6 +26,7 @@ void UItemInventorySlot::SetItem(const FInventorySlotData& InventorySlotData,con
 		return;
 	}
 
+	SlotLocation = Location;
 	FItemUIData UIData = DefaultItem->GetItemUIData(Location);
 
 	if (ItemIcon)
@@ -50,4 +51,9 @@ void UItemInventorySlot::SetItem(const FInventorySlotData& InventorySlotData,con
 			ItemQuantity->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
+}
+
+FItemUIData UItemInventorySlot::GetItemUIData() const
+{
+	return Item ? Item.GetDefaultObject()->GetItemUIData(SlotLocation) : FItemUIData();
 }

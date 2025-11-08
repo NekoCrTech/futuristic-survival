@@ -18,6 +18,8 @@ void UInventoryComponent::BeginPlay()
 	
 }
 
+void UInventoryComponent::InitializeInventoryComponent()
+{
 	if (APawn* Pawn = Cast<APawn>(GetOwner()))
 	{
 		if (Pawn->IsPlayerControlled())

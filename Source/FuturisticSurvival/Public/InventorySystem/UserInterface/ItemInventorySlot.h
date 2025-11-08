@@ -20,6 +20,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Survival|InventorySystem")
 	void SetItem(const FInventorySlotData& InventorySlotData,const FIntPoint& Location);
 
+	UFUNCTION(BlueprintCallable)
+	FItemUIData GetItemUIData() const;
+
 protected:
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = "Survival|Components")
 	UImage* ItemIcon;

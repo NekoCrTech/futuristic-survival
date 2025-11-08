@@ -29,10 +29,12 @@ public:
 	FLinearColor ItemQualityColor = FLinearColor::White;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 StackSize = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float Weight = 0;
 
 	FItemUIData() = default;
 
-	FItemUIData(const FIntPoint& InvPosition, const FText& Name, const FText& Description, const FText& InUseText, const bool& Usable, UTexture2D* Icon, const EItemQuality& Quality, const int& Count)
+	FItemUIData(const FIntPoint& InvPosition, const FText& Name, const FText& Description, const FText& InUseText, const bool& Usable, UTexture2D* Icon, const EItemQuality& Quality, const int& Count, const float& InWeight)
 	{
 		ItemPos = InvPosition;
 		ItemName = Name;
@@ -43,5 +45,6 @@ public:
 		ItemQuality = Quality;
 		ItemQualityColor = GetItemQualityColor(Quality);
 		StackSize = Count;
+		Weight = InWeight;
 	}
 };
