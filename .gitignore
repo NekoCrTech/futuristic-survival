@@ -75,3 +75,6 @@ DerivedDataCache/*
 
 # Build files
 TestBuilds/*
+
+#Rider
+.idea/*
