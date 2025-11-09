@@ -139,6 +139,83 @@ bool UInventoryComponent::RemoveSingleItem(const TSubclassOf<UItemBase>& ItemToR
 	return false;
 }
 
+void UInventoryComponent::TransferSlots(const FIntPoint& SourceLocation, UInventoryComponent* SourceInventory, const FIntPoint& TargetLocation)
+{
+	if (!SourceInventory) return;
+    if (SourceInventory->IsOutOfBounds(SourceLocation)) return;
+    // Ignore same-slot moves
+    if (SourceInventory == this && SourceLocation == TargetLocation) return;
+
+    FInventorySlotData* SourceSlotPtr = SourceInventory->Contents.Find(SourceLocation);
+    if (!SourceSlotPtr) return;
+
+    const FInventorySlotData SourceSlotData = *SourceSlotPtr;
+
+    if (IsOutOfBounds(TargetLocation))
+    {
+        // TODO: Drop logic
+        return;
+    }
+
+    // --- Same inventory move ---
+    if (SourceInventory == this)
+    {
+        // Moving inside the same map
+        FInventorySlotData* TargetSlotPtr = Contents.Find(TargetLocation);
+
+        if (!TargetSlotPtr)
+        {
+            // Move: Add new slot, then remove old
+            Contents.Add(TargetLocation, SourceSlotData);
+            Contents.Remove(SourceLocation);
+        }
+        else if (TargetSlotPtr->ItemClass == SourceSlotData.ItemClass)
+        {
+            // Stack
+            TargetSlotPtr->Quantity += SourceSlotData.Quantity;
+            Contents.Remove(SourceLocation);
+        }
+        else
+        {
+            // Swap
+            FInventorySlotData OldTarget = *TargetSlotPtr;
+            Contents.Add(TargetLocation, SourceSlotData);
+            Contents.Add(SourceLocation, OldTarget);
+        }
+    }
+    // --- Between two different inventories ---
+    else
+    {
+        FInventorySlotData* TargetSlotPtr = Contents.Find(TargetLocation);
+
+        if (!TargetSlotPtr)
+        {
+            // Move from source to target
+            Contents.Add(TargetLocation, SourceSlotData);
+            SourceInventory->Contents.Remove(SourceLocation);
+        }
+        else if (TargetSlotPtr->ItemClass == SourceSlotData.ItemClass)
+        {
+            // Stack
+            TargetSlotPtr->Quantity += SourceSlotData.Quantity;
+            SourceInventory->Contents.Remove(SourceLocation);
+        }
+        else
+        {
+            // Swap
+            FInventorySlotData OldTarget = *TargetSlotPtr;
+            SourceInventory->Contents.Add(SourceLocation, OldTarget);
+            Contents.Add(TargetLocation, SourceSlotData);
+        }
+    }
+
+    // --- Update widgets ---
+    if (IsValid(InventoryWidget))
+        InventoryWidget->UpdateContents();
+    if (IsValid(SourceInventory->InventoryWidget) && SourceInventory != this)
+        SourceInventory->InventoryWidget->UpdateContents();
+}
+
 
 TMap<FIntPoint, FInventorySlotData> UInventoryComponent::GetInventoryContents_Implementation() const
 {
@@ -221,6 +298,11 @@ int32 UInventoryComponent::GetQuantityOfItem(const TSubclassOf<UItemBase>& ItemC
 	}
 
 	return TotalQuantity;
+}
+
+bool UInventoryComponent::IsOutOfBounds(const FIntPoint& Position) const
+{
+	return false;
 }
 
 // Try to add +1 to an existing stack of the same item

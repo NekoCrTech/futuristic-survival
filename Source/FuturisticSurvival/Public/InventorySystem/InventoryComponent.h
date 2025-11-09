@@ -32,6 +32,9 @@ public:
 	bool HasEnoughItems(const TArray<FInventorySlotData>& Items) const;
 	bool RemoveItems(const TArray<FInventorySlotData>& ItemsToRemove);
 	bool RemoveSingleItem(const TSubclassOf<UItemBase>& ItemToRemove);
+
+	UFUNCTION(BlueprintCallable)
+	void TransferSlots(const FIntPoint& SourceLocation, UInventoryComponent* SourceInventory, const FIntPoint& TargetLocation);
 	
 	virtual TMap<FIntPoint, FInventorySlotData>GetInventoryContents_Implementation() const override;
 
@@ -59,4 +62,6 @@ private:
 
 	void CreateInventoryWidget();
 	int32 GetQuantityOfItem(const TSubclassOf<UItemBase>& ItemClass) const;
+
+	bool IsOutOfBounds(const FIntPoint& Position) const;
 };
