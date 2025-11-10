@@ -48,6 +48,4 @@ private:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Survival|References")
 	UInventoryWidget* OtherInventoryWidget;
 
-	
-	
 };
