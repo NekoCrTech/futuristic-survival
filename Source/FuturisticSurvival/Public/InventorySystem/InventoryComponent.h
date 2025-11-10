@@ -26,9 +26,11 @@ class FUTURISTICSURVIVAL_API UInventoryComponent : public UActorComponent, publi
 public:	
 	UInventoryComponent();
 	void InitializeInventoryComponent();
+	void CreateInventoryWidget();
+	void UpdateInventoryWidget();
 	
 	bool AddItemToInventory(TSubclassOf<UItemBase> Item);
-	
+
 	bool HasEnoughItems(const TArray<FInventorySlotData>& Items) const;
 	bool RemoveItems(const TArray<FInventorySlotData>& ItemsToRemove);
 	bool RemoveSingleItem(const TSubclassOf<UItemBase>& ItemToRemove);
@@ -60,7 +62,7 @@ private:
 	FIntPoint GetFirstEmptySlot() const;
 	TSubclassOf<UItemBase> GetItemAtPosition(const FIntPoint& Position) const;
 
-	void CreateInventoryWidget();
+	
 	int32 GetQuantityOfItem(const TSubclassOf<UItemBase>& ItemClass) const;
 
 	bool IsOutOfBounds(const FIntPoint& Position) const;

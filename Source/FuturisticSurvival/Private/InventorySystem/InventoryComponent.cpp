@@ -211,7 +211,7 @@ void UInventoryComponent::TransferSlots(const FIntPoint& SourceLocation, UInvent
 
     // --- Update widgets ---
     if (IsValid(InventoryWidget))
-        InventoryWidget->UpdateContents();
+        UpdateInventoryWidget();
     if (IsValid(SourceInventory->InventoryWidget) && SourceInventory != this)
         SourceInventory->InventoryWidget->UpdateContents();
 }
@@ -273,13 +273,18 @@ TSubclassOf<UItemBase> UInventoryComponent::GetItemAtPosition(const FIntPoint& P
 
 void UInventoryComponent::CreateInventoryWidget()
 {
-	if (APlayerController* PC = Cast<APlayerController>(GetOwner()->GetInstigatorController()))
+	if (APlayerController* PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
 		if (ASurvHUD* HUD = Cast<ASurvHUD>(PC->GetHUD()))
 		{
 			InventoryWidget = HUD->CreateInvWidget(GetOwner(), InventoryData, this);
 		}
 	}
+}
+
+void UInventoryComponent::UpdateInventoryWidget()
+{
+	InventoryWidget->UpdateContents();
 }
 
 int32 UInventoryComponent::GetQuantityOfItem(const TSubclassOf<UItemBase>& ItemClass) const

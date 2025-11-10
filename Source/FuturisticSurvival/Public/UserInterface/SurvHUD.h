@@ -24,7 +24,7 @@ public:
 	void InitializeHUD();
 	
 	UInventoryWidget* CreateInvWidget(AActor* InOwner, const FInventoryData& InventoryData, UInventoryComponent* InventoryComponent);
-	void ToggleCharacterWindow();
+	void ToggleCharacterWindow(bool bUseOtherInventory = false);
 
 protected:
 	virtual void BeginPlay() override;

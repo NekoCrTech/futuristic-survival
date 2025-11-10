@@ -56,7 +56,7 @@ UInventoryWidget* ASurvHUD::CreateInvWidget(AActor* InOwner, const FInventoryDat
 	return InventoryWidget;
 }
 
-void ASurvHUD::ToggleCharacterWindow()
+void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
 {
 	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	
@@ -65,6 +65,10 @@ void ASurvHUD::ToggleCharacterWindow()
 	case ESlateVisibility::Visible:
 		{
 			PlayerWidget->SetRightPanel(PlayerInventoryWidget);
+			if(bUseOtherInventory)
+			{
+				PlayerWidget->SetLeftPanel(OtherInventoryWidget);
+			}
 			PlayerInventoryWidget->SetIsOnScreen(true);
 			PlayerInventoryWidget->UpdateContents();
 			MyPC->SetMovementMappingContextEnabled(false);

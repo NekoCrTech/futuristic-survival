@@ -13,7 +13,7 @@ void UInventoryWidget::UpdateContents()
 		UE_LOG(LogTemp, Warning, TEXT("InventoryWidget has no owner set."));
 		return;
 	}
-	if (WidgetOwner->GetClass()->ImplementsInterface(UInventoryInterface::StaticClass()) && GetIsOnScreen())
+	if (WidgetOwner->GetClass()->ImplementsInterface(UInventoryInterface::StaticClass()) )
 	{
 		TMap<FIntPoint, FInventorySlotData> Contents = IInventoryInterface::Execute_GetInventoryContents(WidgetOwner);
 		OnInventoryUpdate(Contents);
