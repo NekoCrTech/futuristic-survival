@@ -5,6 +5,7 @@
 #include "InventorySystem/UserInterface/InventoryWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Character/SurvPlayerCharacter.h"
+#include "InventorySystem/InventoryComponent.h"
 #include "Player/SurvPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Structs/InventoryData.h"
@@ -33,7 +34,7 @@ void ASurvHUD::InitializeHUD()
 	PlayerWidget->AddToViewport();
 }
 
-UInventoryWidget* ASurvHUD::CreateInvWidget(AActor* InOwner, const FInventoryData& InventoryData, UActorComponent* InventoryComponent)
+UInventoryWidget* ASurvHUD::CreateInvWidget(AActor* InOwner, const FInventoryData& InventoryData, UInventoryComponent* InventoryComponent)
 {
 	if (!InventoryData.InventoryWidget)
 	{
@@ -42,7 +43,7 @@ UInventoryWidget* ASurvHUD::CreateInvWidget(AActor* InOwner, const FInventoryDat
 	}
 	UInventoryWidget* InventoryWidget = CreateWidget<UInventoryWidget>(GetOwningPlayerController(), InventoryData.InventoryWidget);
 	InventoryWidget->SetWidgetOwner(InventoryComponent);
-	InventoryWidget->SetInventoryData(InventoryData);
+	InventoryWidget->SetInventoryData(InventoryData, InventoryComponent);
 	
 	if (Cast<ASurvPlayerCharacter>(InOwner))
 	{
@@ -55,7 +56,7 @@ UInventoryWidget* ASurvHUD::CreateInvWidget(AActor* InOwner, const FInventoryDat
 	return InventoryWidget;
 }
 
-void ASurvHUD::ToggleCharacterWindow()
+void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
 {
 	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	
@@ -64,6 +65,10 @@ void ASurvHUD::ToggleCharacterWindow()
 	case ESlateVisibility::Visible:
 		{
 			PlayerWidget->SetRightPanel(PlayerInventoryWidget);
+			if(bUseOtherInventory)
+			{
+				PlayerWidget->SetLeftPanel(OtherInventoryWidget);
+			}
 			PlayerInventoryWidget->SetIsOnScreen(true);
 			PlayerInventoryWidget->UpdateContents();
 			MyPC->SetMovementMappingContextEnabled(false);

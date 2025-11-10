@@ -388,7 +388,7 @@ void ASurvPlayerCharacter::TogglePerspective()
 	return;
 }
 
-void ASurvPlayerCharacter::TogglePlayerInventory()
+void ASurvPlayerCharacter::TogglePlayerWindow(bool bUseOtherInventory)
 {
 	if(bInBuildingModeUI)
 	{
@@ -411,8 +411,12 @@ void ASurvPlayerCharacter::TogglePlayerInventory()
 	}
 
 	// Call the HUD function
-	MyHUD->ToggleCharacterWindow();
-	
+	MyHUD->ToggleCharacterWindow(bUseOtherInventory);
+}
+
+void ASurvPlayerCharacter::TogglePlayerInventory()
+{
+	TogglePlayerWindow();
 }
 
 void ASurvPlayerCharacter::ToggleBuildingModeUserInterfaceBP_Implementation()

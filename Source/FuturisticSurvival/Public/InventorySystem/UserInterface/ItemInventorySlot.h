@@ -20,6 +20,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Survival|InventorySystem")
 	void SetItem(const FInventorySlotData& InventorySlotData,const FIntPoint& Location);
 
+	UFUNCTION(BlueprintCallable)
+	FItemUIData GetItemUIData() const;
+
+	UFUNCTION(BlueprintCallable)
+	TSubclassOf<UItemBase> GetItemClass() const { return Item; }
+
 protected:
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = "Survival|Components")
 	UImage* ItemIcon;
@@ -28,8 +34,8 @@ protected:
 
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Survival|InventorySlot", meta = (AllowPrivateAccess = "true")) // TODO: Revert to VisibleAnywhere
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Survival|InventorySlot", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UItemBase> Item;
-	UPROPERTY(editAnywhere, BlueprintReadOnly, Category = "Survival|InventorySlot", meta = (AllowPrivateAccess = "true")) // TODO: Revert to VisibleAnywhere
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Survival|InventorySlot", meta = (AllowPrivateAccess = "true"))
 	int32 Quantity;
 };

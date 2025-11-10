@@ -54,18 +54,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetStackWeight() const {return ItemWeight * CurrentStackSize;}
 	UFUNCTION(BlueprintCallable)
-	FItemUIData GetItemUIData(const FIntPoint& ItemPos) const {return FItemUIData(ItemPos, ItemName, ItemDescription,ItemUseText,bUsable, ItemIcon, ItemQuality, CurrentStackSize);}
+	FItemUIData GetItemUIData(const FIntPoint& ItemPos) const {return FItemUIData(ItemPos, ItemName, ItemDescription,ItemUseText,bUsable, ItemIcon, ItemQuality, CurrentStackSize, ItemWeight);}
 	UFUNCTION(BlueprintCallable)
 	TArray<FSalvageItem> GetSalvageData() const {return SalvageItems;}
 	UFUNCTION(BlueprintCallable)
 	UStaticMesh* GetPickupMesh() const {return Mesh;}
 	UFUNCTION(BlueprintCallable)
 	FText GetPickupText() const {return PickupText;}
-
-	UFUNCTION(BlueprintCallable)
-	int32 AddToCurrentStack(const int32& Amount);
-	UFUNCTION(BlueprintCallable)
-	int32 RemoveFromStack(const int32& Amount);
-	UFUNCTION(BlueprintCallable)
-	void SetStackSize(const int32& NewStackSize) {CurrentStackSize = NewStackSize;}
+	
 };

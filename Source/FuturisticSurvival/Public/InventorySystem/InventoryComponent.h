@@ -25,12 +25,23 @@ class FUTURISTICSURVIVAL_API UInventoryComponent : public UActorComponent, publi
 
 public:	
 	UInventoryComponent();
-
+	void InitializeInventoryComponent();
+	void CreateInventoryWidget();
+	void UpdateInventoryWidget();
+	
 	bool AddItemToInventory(TSubclassOf<UItemBase> Item);
 
-	void InitializeInventoryComponent();
+	bool HasEnoughItems(const TArray<FInventorySlotData>& Items) const;
+	bool RemoveItems(const TArray<FInventorySlotData>& ItemsToRemove);
+	bool RemoveSingleItem(const TSubclassOf<UItemBase>& ItemToRemove);
+
+	UFUNCTION(BlueprintCallable)
+	void TransferSlots(const FIntPoint& SourceLocation, UInventoryComponent* SourceInventory, const FIntPoint& TargetLocation);
 	
 	virtual TMap<FIntPoint, FInventorySlotData>GetInventoryContents_Implementation() const override;
+
+	UFUNCTION(BlueprintCallable, Category="Survival|Inventory")
+	TArray<FInventorySlotData> GetMissingItems(const TArray<FInventorySlotData>& RequiredItems) const;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -51,5 +62,8 @@ private:
 	FIntPoint GetFirstEmptySlot() const;
 	TSubclassOf<UItemBase> GetItemAtPosition(const FIntPoint& Position) const;
 
-	void CreateInventoryWidget();
+	
+	int32 GetQuantityOfItem(const TSubclassOf<UItemBase>& ItemClass) const;
+
+	bool IsOutOfBounds(const FIntPoint& Position) const;
 };

@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "SurvHUD.generated.h"
 
+class UInventoryComponent;
 class UPlayerWidget;
 class USurvUserWidget;
 class UInventoryWidget;
@@ -22,8 +23,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitializeHUD();
 	
-	UInventoryWidget* CreateInvWidget(AActor* InOwner, const FInventoryData& InventoryData, UActorComponent* InventoryComponent);
-	void ToggleCharacterWindow();
+	UInventoryWidget* CreateInvWidget(AActor* InOwner, const FInventoryData& InventoryData, UInventoryComponent* InventoryComponent);
+	void ToggleCharacterWindow(bool bUseOtherInventory = false);
 
 protected:
 	virtual void BeginPlay() override;
@@ -47,6 +48,4 @@ private:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Survival|References")
 	UInventoryWidget* OtherInventoryWidget;
 
-	
-	
 };

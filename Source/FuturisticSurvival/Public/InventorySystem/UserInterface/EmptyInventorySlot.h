@@ -13,5 +13,9 @@ UCLASS()
 class FUTURISTICSURVIVAL_API UEmptyInventorySlot : public USurvInventorySlot
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetLocation(const FIntPoint& Location) { SlotLocation = Location; }
 	
 };
