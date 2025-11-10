@@ -141,6 +141,7 @@ bool UInventoryComponent::RemoveSingleItem(const TSubclassOf<UItemBase>& ItemToR
 
 void UInventoryComponent::TransferSlots(const FIntPoint& SourceLocation, UInventoryComponent* SourceInventory, const FIntPoint& TargetLocation)
 {
+	//TODO: Fix Stacking.
 	if (!SourceInventory) return;
     if (SourceInventory->IsOutOfBounds(SourceLocation)) return;
     // Ignore same-slot moves
