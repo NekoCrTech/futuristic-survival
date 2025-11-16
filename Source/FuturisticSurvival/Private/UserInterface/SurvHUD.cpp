@@ -11,6 +11,7 @@
 #include "Structs/InventoryData.h"
 #include "Structs/InventorySlotData.h"
 #include "Player/PlayerWidget.h"
+#include "Player/UserInterface/PlayerHud.h"
 
 ASurvHUD::ASurvHUD()
 {
@@ -30,7 +31,7 @@ void ASurvHUD::InitializeHUD()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,"ASurvHUD::InitializeHUD - PlayerWidgetClass is not valid");
 		return;
 	}
-	PlayerWidget = CreateWidget<UPlayerWidget>(GetWorld(),PlayerWidgetClass);
+	PlayerWidget = CreateWidget<UPlayerHud>(GetWorld(),PlayerWidgetClass);
 	PlayerWidget->AddToViewport();
 }
 
@@ -64,11 +65,10 @@ void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
 	{
 	case ESlateVisibility::Visible:
 		{
-			PlayerWidget->SetRightPanel(PlayerInventoryWidget);
-			if(bUseOtherInventory)
-			{
-				PlayerWidget->SetLeftPanel(OtherInventoryWidget);
-			}
+			// if(bUseOtherInventory)
+			// {
+			// 	PlayerWidget->SetLeftPanel(OtherInventoryWidget);
+			// }
 			PlayerInventoryWidget->SetIsOnScreen(true);
 			PlayerInventoryWidget->UpdateContents();
 			MyPC->SetMovementMappingContextEnabled(false);
@@ -77,8 +77,6 @@ void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
 			FInputModeGameAndUI InputGameAndUIMode;
 			InputGameAndUIMode.SetHideCursorDuringCapture(false);
 			InputGameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
-
-			// ✅ Use GetCachedWidget() instead of TakeWidget()
 			InputGameAndUIMode.SetWidgetToFocus(PlayerWidget->GetCachedWidget());
 
 			MyPC->SetInputMode(InputGameAndUIMode);

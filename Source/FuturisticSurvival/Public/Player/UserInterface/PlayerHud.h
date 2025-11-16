@@ -6,6 +6,9 @@
 #include "UserInterface/SurvUserWidget.h"
 #include "PlayerHud.generated.h"
 
+class UInventoryWidget;
+class UOverlay;
+class UBarXP;
 /**
  * 
  */
@@ -16,5 +19,13 @@ class FUTURISTICSURVIVAL_API UPlayerHud : public USurvUserWidget
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), Category="Components")
-	class UBarXP* BarXP;
+	UBarXP* BarXP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), Category="Components")
+	UInventoryWidget* PlayerInventoryWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), Category="Components")
+	UOverlay* CharacterMenuOverlay;
+	
+	UFUNCTION(BlueprintCallable, Category="Survival")
+	ESlateVisibility ToggleCharacterWindow(bool bUseOtherInventory = false);
 };

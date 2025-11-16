@@ -6,8 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "SurvHUD.generated.h"
 
+class UPlayerHud;
 class UInventoryComponent;
-class UPlayerWidget;
 class USurvUserWidget;
 class UInventoryWidget;
 struct FInventoryData;
@@ -38,10 +38,10 @@ protected:
 private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Survival|HUD")
-	TSubclassOf<UPlayerWidget> PlayerWidgetClass;
+	TSubclassOf<UPlayerHud> PlayerWidgetClass;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, meta=(AllowPrivateAccess="true"), Category="Survival|References") //TODO: convert to ReadOnly
-	UPlayerWidget* PlayerWidget;
+	UPlayerHud* PlayerWidget;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Survival|References")
 	UInventoryWidget* PlayerInventoryWidget;
