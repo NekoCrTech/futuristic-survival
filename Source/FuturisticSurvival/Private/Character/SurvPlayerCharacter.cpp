@@ -142,61 +142,6 @@ void ASurvPlayerCharacter::Tick(float DeltaTime)
 	}
 }
 
-UAbilitySystemComponent* ASurvPlayerCharacter::GetAbilitySystemComponent() const
-{
-	ASurvPlayerState* SurvPlayerState = Cast<ASurvPlayerState>(GetPlayerState());
-	if (!IsValid(SurvPlayerState)) return nullptr;
-	
-	return SurvPlayerState->GetAbilitySystemComponent();
-}
-
-UAttributeSet* ASurvPlayerCharacter::GetAttributeSet() const
-{
-	ASurvPlayerState* SurvPlayerState = Cast<ASurvPlayerState>(GetPlayerState());
-	if (!IsValid(SurvPlayerState)) return nullptr;
-	
-	return SurvPlayerState->GetAttributeSet();
-}
-
-void ASurvPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
-	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::PlayerJump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Move);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::SprintOn);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvPlayerCharacter::SprintOff);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::SprintOff);
-		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Started, this, &ASurvPlayerCharacter::SneakOn);
-		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Completed, this, &ASurvPlayerCharacter::SneakOff);
-		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::SneakOff);
-		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
-		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Look);
-		EnhancedInputComponent->BindAction(LeanAction,ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::Lean);
-		EnhancedInputComponent->BindAction(LeanAction,ETriggerEvent::Canceled, this, &ASurvPlayerCharacter::Lean);
-		EnhancedInputComponent->BindAction(LeanAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::Lean);
-		// Interacting
-		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Completed, this, &ASurvPlayerCharacter::OnInteract);
-		// Abilities
-		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::OnPrimary);
-		EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Triggered, this, &ASurvPlayerCharacter::OnSecondary);
-		// Camera
-		EnhancedInputComponent->BindAction(TogglePerspectiveAction,ETriggerEvent::Started,this, &ASurvPlayerCharacter::TogglePerspective);
-		// User Interface
-		EnhancedInputComponent->BindAction(InventoryAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::TogglePlayerInventory);
-		EnhancedInputComponent->BindAction(BuildingModeAction,ETriggerEvent::Started, this, &ASurvPlayerCharacter::ToggleBuildingModeUserInterface);
-		// Building Mode
-		EnhancedInputComponent->BindAction(PlaceAction,ETriggerEvent::Started,this,&ASurvPlayerCharacter::OnPlaceBuilding);
-		EnhancedInputComponent->BindAction(RotateAction,ETriggerEvent::Started,this,&ASurvPlayerCharacter::OnRotateBuilding);
-		EnhancedInputComponent->BindAction(CancelPlacementAction,ETriggerEvent::Started,this,&ASurvPlayerCharacter::OnCancelPlacement);
-	}
-}
-
 //-------------------
 // Interaction System
 //-------------------
@@ -230,7 +175,6 @@ void ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd(UPrimitiveComponent* O
 
 void ASurvPlayerCharacter::UpdateInteractionText_Implementation()
 {
-	UpdateInteractionText();
 }
 
 void ASurvPlayerCharacter::TraceForInteraction()
@@ -255,12 +199,12 @@ void ASurvPlayerCharacter::TraceForInteraction()
 	
 	if(!LTHit.bBlockingHit || !LTHit.GetActor()->Implements<UInteractionInterface>())
 	{
-		UpdateInteractionText_Implementation();
+		UpdateInteractionText();
 		InteractionActor = nullptr;
 		return;
 	}
 	InteractionActor = LTHit.GetActor();
-	UpdateInteractionText_Implementation();
+	UpdateInteractionText();
 }
 
 //------------------------
@@ -274,88 +218,27 @@ void ASurvPlayerCharacter::ActivateAbility(const FGameplayTag& AbilityTag) const
 	GetAbilitySystemComponent()->TryActivateAbilitiesByTag(AbilityTag.GetSingleTagContainer());
 }
 
+UAbilitySystemComponent* ASurvPlayerCharacter::GetAbilitySystemComponent() const
+{
+	ASurvPlayerState* SurvPlayerState = Cast<ASurvPlayerState>(GetPlayerState());
+	if (!IsValid(SurvPlayerState)) return nullptr;
+	
+	return SurvPlayerState->GetAbilitySystemComponent();
+}
+
+UAttributeSet* ASurvPlayerCharacter::GetAttributeSet() const
+{
+	ASurvPlayerState* SurvPlayerState = Cast<ASurvPlayerState>(GetPlayerState());
+	if (!IsValid(SurvPlayerState)) return nullptr;
+	
+	return SurvPlayerState->GetAttributeSet();
+}
+
 //------------------
 // Actions on Inputs
 //------------------
 
-void ASurvPlayerCharacter::DoMove(float Right, float Forward)
-{
-	if (GetController() != nullptr)
-	{
-		const FRotator Rotation = GetController()->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		AddMovementInput(ForwardDirection, Forward);
-		AddMovementInput(RightDirection, Right);
-	}
-}
-
-void ASurvPlayerCharacter::DoLook(float Yaw, float Pitch)
-{
-	if (GetController() != nullptr)
-	{
-		AddControllerYawInput(Yaw);
-		AddControllerPitchInput(Pitch);
-	}
-}
-
-void ASurvPlayerCharacter::Move(const FInputActionValue& Value)
-{
-	FVector2D MovementVector = Value.Get<FVector2D>();
-	
-	DoMove(MovementVector.X, MovementVector.Y);
-}
-
-void ASurvPlayerCharacter::Look(const FInputActionValue& Value)
-{
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	DoLook(LookAxisVector.X, LookAxisVector.Y);
-}
-
-void ASurvPlayerCharacter::Lean(const FInputActionValue& Value)
-{
-	if (!bInFirstPerson)
-	{
-		return;
-	}
-	LeanAmount = Value.Get<float>();
-}
-
-void ASurvPlayerCharacter::PlayerJump()
-{
-	if (CanCharJump() && !GetMovementComponent()->IsFalling())
-	{
-		HasJumped();
-	}
-}
-
-void ASurvPlayerCharacter::SprintOn()
-{
-	SetSprinting(true);
-}
-
-void ASurvPlayerCharacter::SprintOff()
-{
-	SetSprinting(false);
-}
-
-void ASurvPlayerCharacter::SneakOn()
-{
-	SetSneaking(true);
-	Crouch();
-}
-
-void ASurvPlayerCharacter::SneakOff()
-{
-	SetSneaking(false);
-	UnCrouch();
-}
-
-void ASurvPlayerCharacter::OnInteract()
+void ASurvPlayerCharacter::HandleInteract()
 {
 	if(InteractionActor == nullptr)
 	{
@@ -374,7 +257,7 @@ void ASurvPlayerCharacter::OnInteract()
 	
 }
 
-void ASurvPlayerCharacter::TogglePerspective()
+void ASurvPlayerCharacter::HandleTogglePerspective()
 {
 	bInFirstPerson = !bInFirstPerson;
 	if(!bInFirstPerson)
@@ -396,101 +279,31 @@ void ASurvPlayerCharacter::TogglePerspective()
 	return;
 }
 
-void ASurvPlayerCharacter::TogglePlayerWindow(bool bUseOtherInventory)
-{
-	if(bInBuildingModeUI)
-	{
-		ToggleBuildingModeUserInterface();
-	}
-	bInventoryIsShown = !bInventoryIsShown;
-	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(GetController());
-	if (!MyPC)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ToggleCharacterWindow: PlayerController is null"));
-		return;
-	}
-	// TODO: Remove ASurvHUD reference
-	// Get the HUD from the controller
-	ASurvHUD* MyHUD = Cast<ASurvHUD>(MyPC->GetHUD());
-	if (!MyHUD)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ToggleCharacterWindow: HUD is null or not ASurvHUD"));
-		return;
-	}
-
-	// Call the HUD function
-	MyHUD->ToggleCharacterWindow(bUseOtherInventory);
-}
-
-void ASurvPlayerCharacter::TogglePlayerInventory()
-{
-	TogglePlayerWindow();
-}
-
-void ASurvPlayerCharacter::ToggleBuildingModeUserInterfaceBP_Implementation()
-{
-	// This is used if there is no function override in blueprints 
-}
-
-void ASurvPlayerCharacter::ToggleBuildingModeUserInterface()
-{
-	if(bInventoryIsShown)
-	{
-		TogglePlayerInventory();
-	}
-	bInBuildingModeUI = !bInBuildingModeUI;
-	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	MyPC->SetMovementMappingContextEnabled(!bInBuildingModeUI);
-	ToggleBuildingModeUserInterfaceBP();
-}
-
-void ASurvPlayerCharacter::ToggleBuildingModePlacementBP_Implementation()
-{
-}
-
-void ASurvPlayerCharacter::ToggleBuildingModePlacement()
-{
-	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if(bInBuildingModeUI)
-	{
-		ToggleBuildingModeUserInterface();
-		bInBuildingModePlacement = true;
-		MyPC->SetBuildingMappingContextEnabled(true);
-		return;
-	}
-	bInBuildingModePlacement = false;
-	MyPC->SetBuildingMappingContextEnabled(false);
-	
-}
-
 // Ability Actions
 
-void ASurvPlayerCharacter::OnPrimary()
+void ASurvPlayerCharacter::ActivatePrimaryAbility() const
 {
 	ActivateAbility(SurvTags::SurvAbilities::Primary);
-	
 }
 
-void ASurvPlayerCharacter::OnSecondary()
+void ASurvPlayerCharacter::ActivateSecondaryAbility() const
 {
 	ActivateAbility(SurvTags::SurvAbilities::Secondary);
 }
 
 // Building Actions
 
-void ASurvPlayerCharacter::OnRotateBuilding(const FInputActionValue& Value)
+void ASurvPlayerCharacter::HandleRotateBuilding(const bool& bRotateRight)
 {
-	float input = Value.Get<float>();
-	
-	BuildingComponent->RotateBuilding(input>0);
+	BuildingComponent->RotateBuilding(bRotateRight);
 }
 
-void ASurvPlayerCharacter::OnPlaceBuilding()
+void ASurvPlayerCharacter::HandlePlaceBuilding()
 {
 	BuildingComponent->PlaceBuilding();
 }
 
-void ASurvPlayerCharacter::OnCancelPlacement()
+void ASurvPlayerCharacter::HandleCancelPlacement()
 {
 	BuildingComponent->CancelPlacement();
 }

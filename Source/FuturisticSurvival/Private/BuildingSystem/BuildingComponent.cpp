@@ -41,7 +41,7 @@ bool UBuildingComponent::SelectBuilding(UBuildableBaseDataAsset* Data)
 	}
 	*/
 	
-	Owner->ToggleBuildingModePlacement();
+	//Owner->ToggleBuildingModePlacement();
 	bInPlacementMode = true;
 	SpawnPreview(Data);
 	return true;
@@ -62,7 +62,7 @@ void UBuildingComponent::CancelPlacement()
 		CurrentPreview->Destroy();
 	}
 	CurrentPreviewData = nullptr;
-	Owner->ToggleBuildingModePlacement();
+	//Owner->ToggleBuildingModePlacement();
 }
 
 void UBuildingComponent::RotateBuilding(const bool& bRotateRight)

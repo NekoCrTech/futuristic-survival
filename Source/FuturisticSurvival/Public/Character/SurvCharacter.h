@@ -58,6 +58,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Survival|Death")
 	void ResetAttributes();
+	
+	bool CanCharJump() const;
+	bool CanSprint() const;
+	void HasJumped();
+	void SetSprinting(const bool& IsSprinting);
+	void SetSneaking(const bool& IsSneaking);
 
 protected:
 
@@ -69,12 +75,10 @@ protected:
 	
 	virtual void BeginPlay() override;
 
-	bool CanCharJump() const;
-	void HasJumped();
+	
+	
 
-	bool CanSprint() const;
-	void SetSprinting(const bool& IsSprinting);
-	void SetSneaking(const bool& IsSneaking);
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, SaveGame, meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UInventoryComponent> Inventory;

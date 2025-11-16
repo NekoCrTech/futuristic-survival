@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interaction/InteractionInterface.h"
 #include "Public/Character/SurvCharacter.h"
 #include "SurvPlayerCharacter.generated.h"
 
@@ -30,28 +29,13 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSet() const override;
 	
-	UFUNCTION(BlueprintCallable, Category="Input")
-	virtual void DoMove(float Right, float Forward);
-	
-	UFUNCTION(BlueprintCallable, Category="Input")
-	virtual void DoLook(float Yaw, float Pitch);
+	bool IsInFirstPerson() const {return bInFirstPerson;}
+	void SetLeanAmount(float NewLeanAmount) {LeanAmount = NewLeanAmount;}
 	
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE UBuildingComponent* GetBuildingComponent() const {return BuildingComponent;}
-
-	void TogglePlayerWindow(bool bUseOtherInventory = false);
-	void TogglePlayerInventory();
-
-	UFUNCTION(BlueprintNativeEvent)
-	void ToggleBuildingModeUserInterfaceBP();
-	void ToggleBuildingModeUserInterface();
-
-	UFUNCTION(BlueprintNativeEvent)
-	void ToggleBuildingModePlacementBP();
-	void ToggleBuildingModePlacement();
 	
-
 	UFUNCTION()
 	void OnInteractionTriggerOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
@@ -59,90 +43,18 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void UpdateInteractionText();
-	void UpdateInteractionText_Implementation();
-
 	
-
+	void HandleInteract();
+	void HandleTogglePerspective();
+	
+	void ActivatePrimaryAbility() const;
+	void ActivateSecondaryAbility() const;
+	
+	void HandleRotateBuilding(const bool& bRotateRight);
+	void HandlePlaceBuilding();
+	void HandleCancelPlacement();
 	
 protected:
-	
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-#pragma region Input
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* JumpAction;
-                 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* MoveAction;
-                 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* LookAction;
-                 	
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* MouseLookAction;
-                 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* SprintAction;
-                 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* SneakAction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* InteractAction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* InventoryAction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* TogglePerspectiveAction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* BuildingModeAction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* LeanAction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* PrimaryAction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* SecondaryAction;
-#pragma endregion
-
-#pragma region BuildingInputs
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* RotateAction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* PlaceAction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess="true"))
-	UInputAction* CancelPlacementAction;
-
-#pragma endregion
-
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
-	void Lean(const FInputActionValue& Value);
-	
-
-	void PlayerJump();
-
-	void SprintOn();
-	void SprintOff();
-	void SneakOn();
-	void SneakOff();
-	
-	void OnInteract();
-
-	void OnPrimary();
-	void OnSecondary();
-
-	void TogglePerspective();
-
-	void OnRotateBuilding(const FInputActionValue& Value);
-	void OnPlaceBuilding();
-	void OnCancelPlacement();
 	
 	virtual void BeginPlay() override;
 
@@ -166,34 +78,26 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBuildingComponent> BuildingComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Survival|Interaction", meta = (AllowPrivateAccess = "true"))
 	bool bEnableRayTrace = false;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Survival|Interaction", meta = (AllowPrivateAccess = "true"))
 	TArray<AActor*> InteractableActors;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Survival|Interaction", meta = (AllowPrivateAccess = "true"))
 	AActor* InteractionActor = nullptr;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Interaction Settings", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Survival|Interaction|Settings", meta = (AllowPrivateAccess = "true"))
 	float InteractionTraceLength = 200.f;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
-	bool bInventoryIsShown = false;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Survival|State", meta = (AllowPrivateAccess = "true"))
 	bool bInFirstPerson = true;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="State", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Survival|State", meta=(AllowPrivateAccess="true"))
 	bool bUseHeadBob = true;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Survival|State", meta = (AllowPrivateAccess = "true"))
 	float LeanAmount = 0.0f;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
-	bool bInBuildingModeUI = false;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="State", meta = (AllowPrivateAccess = "true"))
-	bool bInBuildingModePlacement = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="DEBUG", meta = (AllowPrivateAccess = "true"))
 	bool DEBUG_INTERACTION_TRACE = false;
 
 	void TraceForInteraction();
-
 	void ActivateAbility(const FGameplayTag& AbilityTag) const;
-public:
 	
 };

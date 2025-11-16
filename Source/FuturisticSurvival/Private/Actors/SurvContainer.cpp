@@ -3,7 +3,6 @@
 
 #include "Actors/SurvContainer.h"
 
-#include "Character/SurvPlayerCharacter.h"
 #include "InventorySystem/InventoryComponent.h"
 
 ASurvContainer::ASurvContainer()
@@ -22,9 +21,9 @@ FText ASurvContainer::GetInteractionText_Implementation()
 void ASurvContainer::Interact_Implementation(class ASurvCharacter* Caller)
 {
 	InventoryComponent->CreateInventoryWidget();
-	ASurvPlayerCharacter* PlayerCharacter = Cast<ASurvPlayerCharacter>(Caller);
-	if(!PlayerCharacter) return;
-	PlayerCharacter->TogglePlayerWindow(true);
+	//ASurvPlayerCharacter* PlayerCharacter = Cast<ASurvPlayerCharacter>(Caller);
+	//if(!PlayerCharacter) return;
+	//PlayerCharacter->TogglePlayerWindow(true);
 	InventoryComponent->UpdateInventoryWidget();
 }
 
