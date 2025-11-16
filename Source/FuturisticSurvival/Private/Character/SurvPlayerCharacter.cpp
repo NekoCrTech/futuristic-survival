@@ -19,6 +19,7 @@
 #include "Logger.h"
 #include "AbilitySystem/SurvAttributeSet.h"
 #include "BuildingSystem/BuildingComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
 #include "UserInterface/SurvHUD.h"
 #include "Player/SurvPlayerController.h"
 #include "GameplayTags/SurvTags.h"
@@ -73,6 +74,13 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 	InteractionTrigger->SetRelativeScale3D(FVector(10.f));
 	InteractionTrigger->OnComponentBeginOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapBegin);
 	InteractionTrigger->OnComponentEndOverlap.AddDynamic(this, &ASurvPlayerCharacter::OnInteractionTriggerOverlapEnd);
+	
+	// Create Inventory Scene Capture
+	InventorySceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("Inventory Scene Capture"));
+	InventorySceneCapture->SetupAttachment(RootComponent);
+	InventorySceneCapture->SetRelativeLocation(FVector(150.f,0.f,0.f));
+	InventorySceneCapture->SetRelativeRotation(FRotator(0.f,-180.f,0.f));
+	InventorySceneCapture->ShowOnlyActorComponents(this);
 
 	//Create Building Component
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));

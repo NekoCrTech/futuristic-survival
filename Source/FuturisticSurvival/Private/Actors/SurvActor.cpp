@@ -10,7 +10,7 @@ ASurvActor::ASurvActor()
 	Root=CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
  	
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	SaveID = FGuid::NewGuid();
 
