@@ -92,9 +92,6 @@ ASurvPlayerCharacter::ASurvPlayerCharacter()
 void ASurvPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	
-	Inventory->InitializeInventoryComponent();
-
 	if (!IsValid(GetAbilitySystemComponent()) || !HasAuthority()) return;
 	
 	GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(),this);
@@ -306,5 +303,12 @@ void ASurvPlayerCharacter::HandlePlaceBuilding()
 void ASurvPlayerCharacter::HandleCancelPlacement()
 {
 	BuildingComponent->CancelPlacement();
+}
+
+// Inventory
+
+void ASurvPlayerCharacter::CreateInventory()
+{
+	Inventory->CreateInventoryWidget();
 }
 

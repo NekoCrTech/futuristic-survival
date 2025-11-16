@@ -10,12 +10,21 @@
 #include "Character/SurvPlayerCharacter.h"
 #include "UserInterface/SurvHUD.h"
 
+
+
 void ASurvPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 	
 	PlayerCharacter = Cast<ASurvPlayerCharacter>(aPawn);
 	HUD = Cast<ASurvHUD>(GetHUD());
+	if(!HUD)
+	{
+		GEngine->AddOnScreenDebugMessage(1,1,FColor::Red,"HUD is invalid");
+		return;
+	}
+	HUD->OnHudCreated.AddDynamic(this, &ASurvPlayerController::OnHudCreated);
+	HUD->InitializeHUD();
 }
 
 void ASurvPlayerController::SetupInputComponent()
@@ -262,6 +271,11 @@ void ASurvPlayerController::TogglePlacementMode()
 	}
 	bInBuildingModePlacement = false;
 	SetBuildingMappingContextEnabled(false);
+}
+
+void ASurvPlayerController::OnHudCreated()
+{
+	PlayerCharacter->CreateInventory();
 }
 
 

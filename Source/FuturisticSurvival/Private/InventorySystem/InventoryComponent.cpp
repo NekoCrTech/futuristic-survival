@@ -2,10 +2,10 @@
 
 
 #include "InventorySystem/InventoryComponent.h"
-
-#include "UserInterface/SurvHUD.h"
 #include "InventorySystem/Items/ItemBase.h"
 #include "InventorySystem/UserInterface/InventoryWidget.h"
+#include "GameFramework/HUD.h"
+#include "UserInterface/HudInterface.h"
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -16,17 +16,6 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-void UInventoryComponent::InitializeInventoryComponent()
-{
-	if (APawn* Pawn = Cast<APawn>(GetOwner()))
-	{
-		if (Pawn->IsPlayerControlled())
-		{
-			CreateInventoryWidget();
-		}
-	}
 }
 
 // Add an item class to inventory (supports stacking)
@@ -276,9 +265,12 @@ void UInventoryComponent::CreateInventoryWidget()
 {
 	if (APlayerController* PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
-		if (ASurvHUD* HUD = Cast<ASurvHUD>(PC->GetHUD()))
+		AHUD* HUD = PC->GetHUD();
+		if (HUD && HUD->GetClass()->ImplementsInterface(UHudInterface::StaticClass()))
 		{
-			InventoryWidget = HUD->CreateInvWidget(GetOwner(), InventoryData, this);
+			InventoryWidget = IHudInterface::Execute_CreateInventoryWidget(HUD,GetOwner(),InventoryData);
+			InventoryWidget->SetWidgetOwner(this);
+			InventoryWidget->SetInventoryData(InventoryData,this);
 		}
 	}
 }

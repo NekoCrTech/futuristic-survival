@@ -3,37 +3,34 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HudInterface.h"
 #include "GameFramework/HUD.h"
 #include "SurvHUD.generated.h"
 
 class UPlayerHud;
-class UInventoryComponent;
 class USurvUserWidget;
 class UInventoryWidget;
 struct FInventoryData;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHudCreated);
+
 UCLASS()
-class FUTURISTICSURVIVAL_API ASurvHUD : public AHUD
+class FUTURISTICSURVIVAL_API ASurvHUD : public AHUD, public IHudInterface
 {
 	GENERATED_BODY()
 
 public:
-	ASurvHUD();
 
-	UFUNCTION(BlueprintCallable)
 	void InitializeHUD();
 	
-	UInventoryWidget* CreateInvWidget(AActor* InOwner, const FInventoryData& InventoryData, UInventoryComponent* InventoryComponent);
 	void ToggleCharacterWindow(bool bUseOtherInventory = false);
+	
+	FOnHudCreated OnHudCreated;
+	
+	virtual UInventoryWidget* CreateInventoryWidget_Implementation(AActor* InOwner, const FInventoryData& InventoryData) override;
 
 protected:
 	virtual void BeginPlay() override;
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnPlayerInventoryCreated();
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnOtherInventoryCreated();
-	
 
 private:
 
@@ -43,8 +40,6 @@ private:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, meta=(AllowPrivateAccess="true"), Category="Survival|References") //TODO: convert to ReadOnly
 	UPlayerHud* PlayerWidget;
 	
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Survival|References")
-	UInventoryWidget* PlayerInventoryWidget;
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Survival|References")
 	UInventoryWidget* OtherInventoryWidget;
 

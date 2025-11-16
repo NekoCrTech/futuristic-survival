@@ -4,25 +4,17 @@
 #include "Public/UserInterface/SurvHUD.h"
 #include "InventorySystem/UserInterface/InventoryWidget.h"
 #include "Blueprint/UserWidget.h"
-#include "Character/SurvPlayerCharacter.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "Player/SurvPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Structs/InventoryData.h"
-#include "Structs/InventorySlotData.h"
-#include "Player/PlayerWidget.h"
 #include "Player/UserInterface/PlayerHud.h"
 
-ASurvHUD::ASurvHUD()
-{
-}
 
 void ASurvHUD::BeginPlay()
 {
 	Super::BeginPlay();
 }
-
-
 
 void ASurvHUD::InitializeHUD()
 {
@@ -33,28 +25,7 @@ void ASurvHUD::InitializeHUD()
 	}
 	PlayerWidget = CreateWidget<UPlayerHud>(GetWorld(),PlayerWidgetClass);
 	PlayerWidget->AddToViewport();
-}
-
-UInventoryWidget* ASurvHUD::CreateInvWidget(AActor* InOwner, const FInventoryData& InventoryData, UInventoryComponent* InventoryComponent)
-{
-	if (!InventoryData.InventoryWidget)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CreateInvWidget failed: InventoryWidget class is null."));
-		return nullptr;
-	}
-	UInventoryWidget* InventoryWidget = CreateWidget<UInventoryWidget>(GetOwningPlayerController(), InventoryData.InventoryWidget);
-	InventoryWidget->SetWidgetOwner(InventoryComponent);
-	InventoryWidget->SetInventoryData(InventoryData, InventoryComponent);
-	
-	if (Cast<ASurvPlayerCharacter>(InOwner))
-	{
-		PlayerInventoryWidget = InventoryWidget;
-		OnPlayerInventoryCreated();
-		return InventoryWidget;
-	}
-	OtherInventoryWidget = InventoryWidget;
-	OnOtherInventoryCreated();
-	return InventoryWidget;
+	OnHudCreated.Broadcast();
 }
 
 void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
@@ -69,8 +40,8 @@ void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
 			// {
 			// 	PlayerWidget->SetLeftPanel(OtherInventoryWidget);
 			// }
-			PlayerInventoryWidget->SetIsOnScreen(true);
-			PlayerInventoryWidget->UpdateContents();
+			PlayerWidget->PlayerInventoryWidget->SetIsOnScreen(true);
+			PlayerWidget->PlayerInventoryWidget->UpdateContents();
 			MyPC->SetMovementMappingContextEnabled(false);
 			MyPC->SetShowMouseCursor(true);
 
@@ -84,7 +55,7 @@ void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
 		}
 	case ESlateVisibility::Collapsed:
 		{
-			PlayerInventoryWidget->SetIsOnScreen(false);
+			PlayerWidget->PlayerInventoryWidget->SetIsOnScreen(false);
 			MyPC->SetMovementMappingContextEnabled(true);
 			MyPC->SetShowMouseCursor(false);
 
@@ -101,13 +72,14 @@ void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
 	}
 }
 
-
-void ASurvHUD::OnPlayerInventoryCreated_Implementation()
+UInventoryWidget* ASurvHUD::CreateInventoryWidget_Implementation(AActor* InOwner, const FInventoryData& InventoryData)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,"ASurvHUD::OnPlayerInventoryCreated - is not overwritten in blueprints");
+	if (GetOwningPlayerController()->GetPawn() == InOwner)
+	{
+		return PlayerWidget->PlayerInventoryWidget;
+	}
+	UInventoryWidget* InventoryWidget = CreateWidget<UInventoryWidget>(GetOwningPlayerController(), InventoryData.InventoryWidget);
+	OtherInventoryWidget = InventoryWidget;
+	return InventoryWidget;
 }
 
-void ASurvHUD::OnOtherInventoryCreated_Implementation()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,"ASurvHUD::OnOtherInventoryCreated - is not overwritten in blueprints");
-}

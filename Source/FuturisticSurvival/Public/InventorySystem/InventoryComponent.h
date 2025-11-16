@@ -25,7 +25,7 @@ class FUTURISTICSURVIVAL_API UInventoryComponent : public UActorComponent, publi
 
 public:	
 	UInventoryComponent();
-	void InitializeInventoryComponent();
+	UFUNCTION(BlueprintCallable)
 	void CreateInventoryWidget();
 	void UpdateInventoryWidget();
 	

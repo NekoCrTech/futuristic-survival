@@ -109,6 +109,8 @@ private:
 	/** Utilities */
 	void HandleTogglePlayerWindow(bool bUseOtherInventory = false);
 	void TogglePlacementMode();
+	UFUNCTION()
+	void OnHudCreated();
 	
 	/** Input handlers **/
 	void Move(const FInputActionValue& Value);
@@ -131,5 +133,7 @@ private:
 	void OnRotateBuilding(const FInputActionValue& Value);
 	void OnPlaceBuilding();
 	void OnCancelPlacement();
+
+protected:
 	
 };
