@@ -8,6 +8,7 @@
 #include "Structs/InventorySlotData.h"
 #include "InventoryWidget.generated.h"
 
+class UOverlay;
 class UInventoryComponent;
 class UUniformGridPanel;
 /**
@@ -29,14 +30,14 @@ public:
 	
 	bool GetIsOnScreen() const {return bIsOnScreen;}
 	void SetIsOnScreen(const bool& bValue) {bIsOnScreen = bValue;}
-
+	
 	UInventoryComponent* GetOwningInventoryComponent() const {return OwningInventoryComponent;}
 	
 private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget, AllowPrivateAccess = "true"), category = "Survival|Components")
 	UUniformGridPanel* InventoryGrid;
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Survival|Data")
 	FInventoryData InventoryData;
 

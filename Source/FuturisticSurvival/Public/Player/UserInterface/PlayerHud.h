@@ -18,6 +18,10 @@ class FUTURISTICSURVIVAL_API UPlayerHud : public USurvUserWidget
 	GENERATED_BODY()
 
 public:
+	
+	void SetOtherInventory(UInventoryWidget* OtherInventoryWidget);
+	void CloseOtherInventory();
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), Category="Components")
 	UBarXP* BarXP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), Category="Components")
@@ -26,6 +30,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), Category="Components")
 	UOverlay* CharacterMenuOverlay;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), category = "Components")
+	UOverlay* OtherInventoryOverlay;
+	
 	UFUNCTION(BlueprintCallable, Category="Survival")
-	ESlateVisibility ToggleCharacterWindow(bool bUseOtherInventory = false);
+	ESlateVisibility ToggleCharacterWindow();
 };

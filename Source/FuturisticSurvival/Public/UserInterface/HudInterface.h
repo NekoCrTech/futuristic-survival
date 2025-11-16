@@ -25,5 +25,8 @@ class FUTURISTICSURVIVAL_API IHudInterface
 public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void ToggleCharacterWindow(bool bUseOtherInventory = false);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	UInventoryWidget* CreateInventoryWidget(AActor* InOwner, const FInventoryData& InventoryData);
 };

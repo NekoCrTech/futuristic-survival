@@ -2,10 +2,22 @@
 
 
 #include "Player/UserInterface/PlayerHud.h"
-
 #include "Components/Overlay.h"
+#include "InventorySystem/UserInterface/InventoryWidget.h"
 
-ESlateVisibility UPlayerHud::ToggleCharacterWindow(bool bUseOtherInventory)
+void UPlayerHud::SetOtherInventory(UInventoryWidget* OtherInventoryWidget)
+{
+	OtherInventoryOverlay->AddChildToOverlay(OtherInventoryWidget);
+	OtherInventoryOverlay->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPlayerHud::CloseOtherInventory()
+{
+	OtherInventoryOverlay->ClearChildren();
+	OtherInventoryOverlay->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+ESlateVisibility UPlayerHud::ToggleCharacterWindow()
 {
 	switch(CharacterMenuOverlay->GetVisibility())
 	{

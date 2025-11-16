@@ -28,7 +28,7 @@ void ASurvHUD::InitializeHUD()
 	OnHudCreated.Broadcast();
 }
 
-void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
+void ASurvHUD::ToggleCharacterWindow_Implementation(bool bUseOtherInventory)
 {
 	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	
@@ -36,10 +36,10 @@ void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
 	{
 	case ESlateVisibility::Visible:
 		{
-			// if(bUseOtherInventory)
-			// {
-			// 	PlayerWidget->SetLeftPanel(OtherInventoryWidget);
-			// }
+			if(bUseOtherInventory)
+			{
+				PlayerWidget->SetOtherInventory(OtherInventoryWidget);
+			}
 			PlayerWidget->PlayerInventoryWidget->SetIsOnScreen(true);
 			PlayerWidget->PlayerInventoryWidget->UpdateContents();
 			MyPC->SetMovementMappingContextEnabled(false);
@@ -58,6 +58,12 @@ void ASurvHUD::ToggleCharacterWindow(bool bUseOtherInventory)
 			PlayerWidget->PlayerInventoryWidget->SetIsOnScreen(false);
 			MyPC->SetMovementMappingContextEnabled(true);
 			MyPC->SetShowMouseCursor(false);
+			
+			if(OtherInventoryWidget)
+			{
+				PlayerWidget->CloseOtherInventory();
+				OtherInventoryWidget=nullptr;
+			}
 
 			FInputModeGameOnly InputGameOnlyMode;
 			MyPC->SetInputMode(InputGameOnlyMode);

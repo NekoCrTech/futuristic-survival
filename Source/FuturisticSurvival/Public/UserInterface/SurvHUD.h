@@ -22,13 +22,12 @@ class FUTURISTICSURVIVAL_API ASurvHUD : public AHUD, public IHudInterface
 public:
 
 	void InitializeHUD();
-	
-	void ToggleCharacterWindow(bool bUseOtherInventory = false);
-	
-	FOnHudCreated OnHudCreated;
-	
+
+	virtual void ToggleCharacterWindow_Implementation(bool bUseOtherInventory = false) override;
 	virtual UInventoryWidget* CreateInventoryWidget_Implementation(AActor* InOwner, const FInventoryData& InventoryData) override;
 
+	FOnHudCreated OnHudCreated;
+	
 protected:
 	virtual void BeginPlay() override;
 

@@ -257,7 +257,7 @@ void ASurvPlayerController::HandleTogglePlayerWindow(bool bUseOtherInventory)
 	}
 	bInventoryIsShown = !bInventoryIsShown;
 	
-	HUD->ToggleCharacterWindow(bUseOtherInventory);
+	HUD->Execute_ToggleCharacterWindow(HUD, bUseOtherInventory);
 }
 
 void ASurvPlayerController::TogglePlacementMode()
