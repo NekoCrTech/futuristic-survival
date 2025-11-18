@@ -292,12 +292,12 @@ void ASurvPlayerCharacter::ActivateSecondaryAbility() const
 
 void ASurvPlayerCharacter::HandleRotateBuilding(const bool& bRotateRight)
 {
-	BuildingComponent->RotateBuilding(bRotateRight);
+	BuildingComponent->RotatePlacement(bRotateRight);
 }
 
 void ASurvPlayerCharacter::HandlePlaceBuilding()
 {
-	BuildingComponent->PlaceBuilding();
+	BuildingComponent->Place();
 }
 
 void ASurvPlayerCharacter::HandleCancelPlacement()

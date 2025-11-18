@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "BuildablePreview.generated.h"
 
+class USurvPlaceableBase;
 class USphereComponent;
 class UBuildableBaseDataAsset;
 
@@ -43,7 +44,7 @@ public:
 	ABuildablePreview();
 	virtual void Tick(float DeltaTime) override;
 
-	void SetPreview(const UBuildableBaseDataAsset* Data);
+	void SetPreview(TSubclassOf<USurvPlaceableBase> PlaceableClass);
 	void SnapPreviewToLocation(const FVector& TargetLocation);
 
 	bool IsRotated() const {return bRotated;}

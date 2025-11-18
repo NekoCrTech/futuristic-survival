@@ -3,16 +3,15 @@
 
 #include "BuildingSystem/BuildingComponent.h"
 
-#include "BuildingSystem/BuildableBase.h"
+#include "BuildingSystem/PlaceableActor.h"
 #include "BuildingSystem/BuildablePreview.h"
+#include "BuildingSystem/Placeables/SurvPlaceableBase.h"
 #include "Character/SurvPlayerCharacter.h"
 
 UBuildingComponent::UBuildingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
-
-
 
 void UBuildingComponent::BeginPlay()
 {
@@ -28,11 +27,9 @@ void UBuildingComponent::BeginPlay()
 void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	
 }
 
-bool UBuildingComponent::SelectBuilding(UBuildableBaseDataAsset* Data)
+bool UBuildingComponent::SelectPlaceable(TSubclassOf<USurvPlaceableBase> PlaceableClass)
 {
 	// Check for cost
 	/* if (!has enough resources)
@@ -43,15 +40,15 @@ bool UBuildingComponent::SelectBuilding(UBuildableBaseDataAsset* Data)
 	
 	//Owner->ToggleBuildingModePlacement();
 	bInPlacementMode = true;
-	SpawnPreview(Data);
+	SpawnPreview(PlaceableClass);
 	return true;
 }
 
-void UBuildingComponent::PlaceBuilding()
+void UBuildingComponent::Place()
 {
 	FTransform Trans = CurrentPreview->GetActorTransform();
-	ABuildableBase* Buildable = GetWorld()->SpawnActor<ABuildableBase>(CurrentPreviewData->GetBuildable(), Trans);
-	Buildable->SetData(CurrentPreviewData);
+	APlaceableActor* Buildable = GetWorld()->SpawnActor<APlaceableActor>(CurrentPreviewClass.GetDefaultObject()->GetPlaceableClass(), Trans);
+	Buildable->SetPlaceableClass(CurrentPreviewClass);
 	// remove resources from inventory
 }
 
@@ -61,15 +58,15 @@ void UBuildingComponent::CancelPlacement()
 	{
 		CurrentPreview->Destroy();
 	}
-	CurrentPreviewData = nullptr;
+	CurrentPreviewClass = nullptr;
 	//Owner->ToggleBuildingModePlacement();
 }
 
-void UBuildingComponent::RotateBuilding(const bool& bRotateRight)
+void UBuildingComponent::RotatePlacement(const bool& bRotateRight)
 {
 }
 
-void UBuildingComponent::SpawnPreview(UBuildableBaseDataAsset* Data)
+void UBuildingComponent::SpawnPreview(const TSubclassOf<USurvPlaceableBase> PlaceableClass)
 {
 	FHitResult HitResult;
 	PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
@@ -78,27 +75,22 @@ void UBuildingComponent::SpawnPreview(UBuildableBaseDataAsset* Data)
 	{
 		FVector SpawnLocation = HitResult.ImpactPoint;
 		FRotator SpawnRotation = FRotator::ZeroRotator; // Or align with surface normal if needed
-	}
-
-	if (HitResult.bBlockingHit)
-	{
-		FVector SpawnLocation = HitResult.ImpactPoint;
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 		CurrentPreview = GetWorld()->SpawnActor<ABuildablePreview>(PreviewClass, SpawnLocation, FRotator::ZeroRotator,SpawnParams);
-		CurrentPreview->SetPreview(Data);
-		CurrentPreviewData = Data;
+		CurrentPreview->SetPreview(PlaceableClass);
+		CurrentPreviewClass = PlaceableClass;
 	}
 }
 
-void UBuildingComponent::AddToUnlockedBuildings(TArray<UBuildableBaseDataAsset*> BuildingsToUnlock)
+void UBuildingComponent::AddToUnlockedPlaceables(TArray<TSubclassOf<USurvPlaceableBase>> PlaceablesToUnlock)
 {
-	for (auto BuildingDataToUnlock : BuildingsToUnlock)
+	for (auto PlaceableToUnlock : PlaceablesToUnlock)
 	{
-		UnlockedBuildings.AddUnique(BuildingDataToUnlock);
+		UnlockedPlaceables.AddUnique(PlaceableToUnlock);
 	}
-	
 }
+
 

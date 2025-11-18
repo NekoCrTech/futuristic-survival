@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "BuildableBase.generated.h"
+#include "PlaceableActor.generated.h"
 
 class UBuildableBaseDataAsset;
 
 UCLASS()
-class FUTURISTICSURVIVAL_API ABuildableBase : public AActor
+class FUTURISTICSURVIVAL_API APlaceableActor : public AActor
 {
 	GENERATED_BODY()
 
@@ -25,8 +25,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	ABuildableBase();
+	APlaceableActor();
 
 	UFUNCTION()
-	void SetData(const UBuildableBaseDataAsset* Data);
+	void SetPlaceableClass(TSubclassOf<USurvPlaceableBase> PlaceableClass);
 };

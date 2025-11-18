@@ -6,6 +6,7 @@
 #include "Structs/AttachmentPointData.h"
 #include "BuildingSystem/BuildableBaseDataAsset.h"
 
+class USurvPlaceableBase;
 // Sets default values
 ABuildablePreview::ABuildablePreview()
 {
@@ -51,13 +52,13 @@ void ABuildablePreview::Tick(float DeltaTime)
 	
 }
 
-void ABuildablePreview::SetPreview(const UBuildableBaseDataAsset* Data)
+void ABuildablePreview::SetPreview(TSubclassOf<USurvPlaceableBase> PlaceableClass)
 {
-	if (!PreviewMesh || !Data) return;
-
-	PreviewMesh->SetStaticMesh(Data->GetBuildingMesh());
-	PreviewMesh->SetMaterial(0, GoodMaterial);
-	SetPartType(Data->GetType());
+	// if (!PreviewMesh || !Data) return;
+	//
+	// PreviewMesh->SetStaticMesh(Data->GetBuildingMesh());
+	// PreviewMesh->SetMaterial(0, GoodMaterial);
+	// SetPartType(Data->GetType());
 }
 
 void ABuildablePreview::SnapPreviewToLocation(const FVector& TargetLocation)

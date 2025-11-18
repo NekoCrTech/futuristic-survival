@@ -9,7 +9,7 @@
 #include "InventorySystem/Items/ItemBase.h"
 #include "BuildableBaseDataAsset.generated.h"
 
-class ABuildableBase;
+class APlaceableActor;
 /**
  * 
  */
@@ -28,7 +28,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "World Data")
 	UStaticMesh* Mesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "World Data")
-	TSubclassOf<ABuildableBase> Buildable;
+	TSubclassOf<APlaceableActor> Buildable;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "World Data")
 	TArray<FAttachmentPointData> AttachmentPoints;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "World Data")
@@ -40,7 +40,7 @@ private:
 
 public:
 	UStaticMesh* GetBuildingMesh() const {return Mesh;}
-	TSubclassOf<ABuildableBase> GetBuildable() {return Buildable;}
+	TSubclassOf<APlaceableActor> GetBuildable() {return Buildable;}
 	TArray<FAttachmentPointData> GetAttachments() const {return AttachmentPoints;}
 	EBuildingPartType GetType() const {return Type;}
 };

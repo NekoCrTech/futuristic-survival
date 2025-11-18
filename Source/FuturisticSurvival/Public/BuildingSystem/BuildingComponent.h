@@ -8,6 +8,7 @@
 #include "BuildingComponent.generated.h"
 
 
+class USurvPlaceableBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FUTURISTICSURVIVAL_API UBuildingComponent : public UActorComponent
@@ -20,16 +21,16 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	bool SelectBuilding(UBuildableBaseDataAsset* Data);
+	bool SelectPlaceable(TSubclassOf<USurvPlaceableBase> PlaceableClass);
 	UFUNCTION(BlueprintCallable)
-	void PlaceBuilding();
+	void Place();
 	UFUNCTION(BlueprintCallable)
 	void CancelPlacement();
 	UFUNCTION(BlueprintCallable)
-	void RotateBuilding(const bool& bRotateRight);
+	void RotatePlacement(const bool& bRotateRight);
 
 	UFUNCTION(BlueprintCallable)
-	void AddToUnlockedBuildings(TArray<UBuildableBaseDataAsset*> BuildingsToUnlock);
+	void AddToUnlockedPlaceables(TArray<TSubclassOf<USurvPlaceableBase>> PlaceablesToUnlock);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -48,11 +49,13 @@ private:
 	bool bInPlacementMode = false;
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category = "State")
-	TArray<UBuildableBaseDataAsset*> UnlockedBuildings;
+	TArray<TSubclassOf<USurvPlaceableBase>> UnlockedPlaceables;
 
 	UPROPERTY()
-	UBuildableBaseDataAsset* CurrentPreviewData;
+	TSubclassOf<USurvPlaceableBase> CurrentPreviewClass;
 
-	void SpawnPreview(UBuildableBaseDataAsset* Data);
+	void SpawnPreview(TSubclassOf<USurvPlaceableBase> PlaceableClass);
+	
+	
 	
 };
