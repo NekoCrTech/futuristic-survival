@@ -307,8 +307,9 @@ void ASurvPlayerCharacter::HandleCancelPlacement()
 
 // Inventory
 
-void ASurvPlayerCharacter::CreateInventory()
+void ASurvPlayerCharacter::InitializeComponents()
 {
 	Inventory->CreateInventoryWidget();
+	BuildingComponent->InitializeBuildingComponent();
 }
 

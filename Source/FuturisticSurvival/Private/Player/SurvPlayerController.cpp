@@ -223,7 +223,7 @@ void ASurvPlayerController::TogglePlacementWindow()
 	}
 	bInBuildingModeUI = !bInBuildingModeUI;
 	SetMovementMappingContextEnabled(!bInBuildingModeUI);
-	//TODO: Toggle Building Mode UI in BP
+	HUD->Execute_TogglePlacementWindow(HUD);
 }
 
 // Building Mode Handlers
@@ -275,7 +275,7 @@ void ASurvPlayerController::TogglePlacementMode()
 
 void ASurvPlayerController::OnHudCreated()
 {
-	PlayerCharacter->CreateInventory();
+	PlayerCharacter->InitializeComponents();
 }
 
 

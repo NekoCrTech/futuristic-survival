@@ -5,28 +5,27 @@
 
 #include "BuildingSystem/PlaceableActor.h"
 #include "BuildingSystem/BuildablePreview.h"
+#include "BuildingSystem/SurvPlaceablesMenu.h"
 #include "BuildingSystem/Placeables/SurvPlaceableBase.h"
-#include "Character/SurvPlayerCharacter.h"
+#include "GameFramework/HUD.h"
+#include "UserInterface/HudInterface.h"
 
 UBuildingComponent::UBuildingComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UBuildingComponent::BeginPlay()
+void UBuildingComponent::InitializeBuildingComponent()
 {
-	Super::BeginPlay();
-	ASurvPlayerCharacter* tOwner = Cast<ASurvPlayerCharacter>(GetOwner());
-	if (tOwner)
+	if (APlayerController* PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
-		Owner = tOwner;
+		AHUD* HUD = PC->GetHUD();
+		if (HUD && HUD->GetClass()->ImplementsInterface(UHudInterface::StaticClass()))
+		{
+			PlaceablesMenuWidget = IHudInterface::Execute_GetPlaceablesMenu(HUD);
+			PlaceablesMenuWidget->UpdatePanels(UnlockedPlaceables);
+		}
 	}
-	PlayerController = GetWorld()->GetFirstPlayerController();
-}
-
-void UBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
 bool UBuildingComponent::SelectPlaceable(TSubclassOf<USurvPlaceableBase> PlaceableClass)
@@ -69,7 +68,7 @@ void UBuildingComponent::RotatePlacement(const bool& bRotateRight)
 void UBuildingComponent::SpawnPreview(const TSubclassOf<USurvPlaceableBase> PlaceableClass)
 {
 	FHitResult HitResult;
-	PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
+	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 
 	if (HitResult.bBlockingHit)
 	{
@@ -92,5 +91,7 @@ void UBuildingComponent::AddToUnlockedPlaceables(TArray<TSubclassOf<USurvPlaceab
 		UnlockedPlaceables.AddUnique(PlaceableToUnlock);
 	}
 }
+
+
 
 

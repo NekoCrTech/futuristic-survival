@@ -60,8 +60,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), Category="Components")
 	UUniformGridPanel* MiscPanel;
-	
-	
 #pragma endregion
 	
 	UFUNCTION(BlueprintCallable)

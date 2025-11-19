@@ -134,6 +134,4 @@ private:
 	void OnPlaceBuilding();
 	void OnCancelPlacement();
 
-protected:
-	
 };

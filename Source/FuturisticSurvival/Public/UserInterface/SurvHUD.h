@@ -24,7 +24,9 @@ public:
 	void InitializeHUD();
 
 	virtual void ToggleCharacterWindow_Implementation(bool bUseOtherInventory = false) override;
+	virtual void TogglePlacementWindow_Implementation() override;
 	virtual UInventoryWidget* CreateInventoryWidget_Implementation(AActor* InOwner, const FInventoryData& InventoryData) override;
+	virtual USurvPlaceablesMenu* GetPlaceablesMenu_Implementation() override;
 
 	FOnHudCreated OnHudCreated;
 	
@@ -36,7 +38,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Survival|HUD")
 	TSubclassOf<UPlayerHud> PlayerWidgetClass;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, meta=(AllowPrivateAccess="true"), Category="Survival|References") //TODO: convert to ReadOnly
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Survival|References")
 	UPlayerHud* PlayerWidget;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Survival|References")

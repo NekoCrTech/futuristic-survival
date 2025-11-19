@@ -6,6 +6,7 @@
 #include "UserInterface/SurvUserWidget.h"
 #include "PlayerHud.generated.h"
 
+class USurvPlaceablesMenu;
 class UInventoryWidget;
 class UOverlay;
 class UBarXP;
@@ -26,6 +27,9 @@ public:
 	UBarXP* BarXP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), Category="Components")
 	UInventoryWidget* PlayerInventoryWidget;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), Category="Components")
+	USurvPlaceablesMenu* PlaceablesMenu;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget), Category="Components")
 	UOverlay* CharacterMenuOverlay;

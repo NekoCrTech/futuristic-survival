@@ -53,7 +53,7 @@ public:
 	void HandleRotateBuilding(const bool& bRotateRight);
 	void HandlePlaceBuilding();
 	void HandleCancelPlacement();
-	void CreateInventory();
+	void InitializeComponents();
 	
 protected:
 	

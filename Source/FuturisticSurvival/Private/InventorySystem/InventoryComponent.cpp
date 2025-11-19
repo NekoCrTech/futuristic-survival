@@ -206,7 +206,6 @@ void UInventoryComponent::TransferSlots(const FIntPoint& SourceLocation, UInvent
         SourceInventory->InventoryWidget->UpdateContents();
 }
 
-
 TMap<FIntPoint, FInventorySlotData> UInventoryComponent::GetInventoryContents_Implementation() const
 {
 	return Contents;

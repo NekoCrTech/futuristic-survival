@@ -8,6 +8,7 @@
 #include "BuildingComponent.generated.h"
 
 
+class USurvPlaceablesMenu;
 class USurvPlaceableBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -17,8 +18,6 @@ class FUTURISTICSURVIVAL_API UBuildingComponent : public UActorComponent
 
 public:	
 	UBuildingComponent();
-	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
 	bool SelectPlaceable(TSubclassOf<USurvPlaceableBase> PlaceableClass);
@@ -32,14 +31,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddToUnlockedPlaceables(TArray<TSubclassOf<USurvPlaceableBase>> PlaceablesToUnlock);
 	
-protected:
-	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable)
+	void InitializeBuildingComponent();
 
 private:
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category = "References")
-	APlayerController* PlayerController;
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category = "References")
-	class ASurvPlayerCharacter* Owner;
+	
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category = "References")
 	class ABuildablePreview* CurrentPreview;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category = "References")
@@ -53,6 +49,9 @@ private:
 
 	UPROPERTY()
 	TSubclassOf<USurvPlaceableBase> CurrentPreviewClass;
+	
+	UPROPERTY()
+	USurvPlaceablesMenu* PlaceablesMenuWidget;
 
 	void SpawnPreview(TSubclassOf<USurvPlaceableBase> PlaceableClass);
 	

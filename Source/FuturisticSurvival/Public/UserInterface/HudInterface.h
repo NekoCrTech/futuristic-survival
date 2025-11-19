@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "HudInterface.generated.h"
 
+class USurvPlaceablesMenu;
 class UInventoryWidget;
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -29,4 +30,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	UInventoryWidget* CreateInventoryWidget(AActor* InOwner, const FInventoryData& InventoryData);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	USurvPlaceablesMenu* GetPlaceablesMenu();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void TogglePlacementWindow();
 };

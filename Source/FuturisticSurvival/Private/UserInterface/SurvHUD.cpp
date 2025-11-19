@@ -4,6 +4,7 @@
 #include "Public/UserInterface/SurvHUD.h"
 #include "InventorySystem/UserInterface/InventoryWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "BuildingSystem/SurvPlaceablesMenu.h"
 #include "InventorySystem/InventoryComponent.h"
 #include "Player/SurvPlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -30,6 +31,7 @@ void ASurvHUD::InitializeHUD()
 
 void ASurvHUD::ToggleCharacterWindow_Implementation(bool bUseOtherInventory)
 {
+	//TODO: Remove Player Controller reference from HUD 
 	ASurvPlayerController* MyPC = Cast<ASurvPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	
 	switch (PlayerWidget->ToggleCharacterWindow())
@@ -78,6 +80,26 @@ void ASurvHUD::ToggleCharacterWindow_Implementation(bool bUseOtherInventory)
 	}
 }
 
+void ASurvHUD::TogglePlacementWindow_Implementation()
+{
+	switch(PlayerWidget->PlaceablesMenu->GetVisibility()) {
+	case ESlateVisibility::Visible:
+		PlayerWidget->PlaceablesMenu->SetVisibility(ESlateVisibility::Collapsed);
+		break;
+	case ESlateVisibility::Collapsed:
+		PlayerWidget->PlaceablesMenu->SetVisibility(ESlateVisibility::Visible);
+		break;
+	case ESlateVisibility::Hidden:
+		break;
+	case ESlateVisibility::HitTestInvisible:
+		break;
+	case ESlateVisibility::SelfHitTestInvisible:
+		break;
+	}
+
+}
+
+
 UInventoryWidget* ASurvHUD::CreateInventoryWidget_Implementation(AActor* InOwner, const FInventoryData& InventoryData)
 {
 	if (GetOwningPlayerController()->GetPawn() == InOwner)
@@ -87,5 +109,10 @@ UInventoryWidget* ASurvHUD::CreateInventoryWidget_Implementation(AActor* InOwner
 	UInventoryWidget* InventoryWidget = CreateWidget<UInventoryWidget>(GetOwningPlayerController(), InventoryData.InventoryWidget);
 	OtherInventoryWidget = InventoryWidget;
 	return InventoryWidget;
+}
+
+USurvPlaceablesMenu* ASurvHUD::GetPlaceablesMenu_Implementation()
+{
+	return PlayerWidget->PlaceablesMenu;
 }
 
