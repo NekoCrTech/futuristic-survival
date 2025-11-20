@@ -33,6 +33,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SetIsSelected(bool bIsSelected);
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsSelected() {return bSelected;}
 	
 	UFUNCTION(BlueprintCallable)
 	void SetIndex(const int32 InIndex) {Index = InIndex;};

@@ -44,6 +44,7 @@ void USurvPlaceablesMenu::NativeConstruct()
 			Btn->OnButtonClicked.AddDynamic(this, &USurvPlaceablesMenu::HandleIndexButtonClicked);
 		}
 	}
+	Buttons[0]->SetIsSelected(true);
 }
 
 void USurvPlaceablesMenu::HandleIndexButtonClicked(int32 InIndex)
