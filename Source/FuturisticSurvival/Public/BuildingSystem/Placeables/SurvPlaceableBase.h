@@ -15,7 +15,7 @@ UCLASS(Blueprintable)
 class FUTURISTICSURVIVAL_API USurvPlaceableBase : public UObject
 {
 	GENERATED_BODY()
-private:
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "UI Data")
 	FText Name;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "UI Data")
