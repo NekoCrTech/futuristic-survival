@@ -79,6 +79,7 @@ public:
 #pragma endregion
 	
 protected:
+	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* aPawn) override;
 	
 private:
@@ -109,6 +110,7 @@ private:
 	/** Utilities */
 	void HandleTogglePlayerWindow(bool bUseOtherInventory = false);
 	void TogglePlacementMode();
+	void UpdateInputMode(const bool& bGameOnly = true, const TSharedPtr<SWidget>& WidgetToFocus = nullptr);
 	UFUNCTION()
 	void OnHudCreated();
 	
@@ -133,5 +135,8 @@ private:
 	void OnRotateBuilding(const FInputActionValue& Value);
 	void OnPlaceBuilding();
 	void OnCancelPlacement();
+	
+	
+	
 
 };

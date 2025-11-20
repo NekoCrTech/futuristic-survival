@@ -100,5 +100,5 @@ private:
 
 	void TraceForInteraction();
 	void ActivateAbility(const FGameplayTag& AbilityTag) const;
-	
+		
 };

@@ -23,12 +23,15 @@ public:
 
 	void InitializeHUD();
 
-	virtual void ToggleCharacterWindow_Implementation(bool bUseOtherInventory = false) override;
-	virtual void TogglePlacementWindow_Implementation() override;
+	virtual ESlateVisibility ToggleCharacterWindow_Implementation(bool bUseOtherInventory = false) override;
+	virtual ESlateVisibility TogglePlacementWindow_Implementation() override;
 	virtual UInventoryWidget* CreateInventoryWidget_Implementation(AActor* InOwner, const FInventoryData& InventoryData) override;
 	virtual USurvPlaceablesMenu* GetPlaceablesMenu_Implementation() override;
 
 	FOnHudCreated OnHudCreated;
+	
+	TSharedPtr<SWidget> GetCachedPlayerWidget() const;
+	TSharedPtr<SWidget> GetCachedPlacementWidget() const;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -43,5 +46,5 @@ private:
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, meta=(AllowPrivateAccess="true"), Category="Survival|References")
 	UInventoryWidget* OtherInventoryWidget;
-
+	
 };

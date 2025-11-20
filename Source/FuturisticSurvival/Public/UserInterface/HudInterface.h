@@ -26,7 +26,10 @@ class FUTURISTICSURVIVAL_API IHudInterface
 public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void ToggleCharacterWindow(bool bUseOtherInventory = false);
+	ESlateVisibility ToggleCharacterWindow(bool bUseOtherInventory = false);
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	ESlateVisibility TogglePlacementWindow();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	UInventoryWidget* CreateInventoryWidget(AActor* InOwner, const FInventoryData& InventoryData);
@@ -34,6 +37,4 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	USurvPlaceablesMenu* GetPlaceablesMenu();
 	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void TogglePlacementWindow();
 };

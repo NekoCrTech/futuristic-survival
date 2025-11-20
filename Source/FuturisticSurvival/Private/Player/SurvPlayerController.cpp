@@ -4,6 +4,7 @@
 #include "Public/Player/SurvPlayerController.h"
 
 #include <EnhancedInputComponent.h>
+#include <Components/SlateWrapperTypes.h>
 #include <GameFramework/PawnMovementComponent.h>
 
 #include "EnhancedInputSubsystems.h"
@@ -11,6 +12,10 @@
 #include "UserInterface/SurvHUD.h"
 
 
+void ASurvPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+}
 
 void ASurvPlayerController::OnPossess(APawn* aPawn)
 {
@@ -83,7 +88,7 @@ void ASurvPlayerController::SetupInputComponent()
 	}
 }
 
-void ASurvPlayerController::SetMovementMappingContextEnabled(bool bEnabled)
+void ASurvPlayerController::SetMovementMappingContextEnabled(const bool bEnabled)
 {
 	if (IsLocalPlayerController())
 	{
@@ -106,7 +111,7 @@ void ASurvPlayerController::SetMovementMappingContextEnabled(bool bEnabled)
 	}
 }
 
-void ASurvPlayerController::SetBuildingMappingContextEnabled(bool bEnabled)
+void ASurvPlayerController::SetBuildingMappingContextEnabled(const bool bEnabled)
 {if (IsLocalPlayerController())
 {
 	// Add Input Mapping Contexts
@@ -216,14 +221,19 @@ void ASurvPlayerController::TogglePlayerWindow()
 }
 
 void ASurvPlayerController::TogglePlacementWindow()
-{
+{	
 	if(bInventoryIsShown)
 	{
 		TogglePlayerWindow();
 	}
 	bInBuildingModeUI = !bInBuildingModeUI;
 	SetMovementMappingContextEnabled(!bInBuildingModeUI);
-	HUD->Execute_TogglePlacementWindow(HUD);
+	if(HUD->Execute_TogglePlacementWindow(HUD) == ESlateVisibility::Visible)
+	{
+		UpdateInputMode(false,HUD->GetCachedPlacementWidget());
+		return;
+	}
+	UpdateInputMode();
 }
 
 // Building Mode Handlers
@@ -249,15 +259,19 @@ void ASurvPlayerController::OnCancelPlacement()
 /**								Utilities							**/
 //---------------------------------------------------------------------
 
-void ASurvPlayerController::HandleTogglePlayerWindow(bool bUseOtherInventory)
+void ASurvPlayerController::HandleTogglePlayerWindow(const bool bUseOtherInventory)
 {
 	if(bInBuildingModeUI)
 	{
 		TogglePlacementWindow();
 	}
 	bInventoryIsShown = !bInventoryIsShown;
-	
-	HUD->Execute_ToggleCharacterWindow(HUD, bUseOtherInventory);
+	if (HUD->Execute_ToggleCharacterWindow(HUD, bUseOtherInventory) == ESlateVisibility::Visible)
+	{
+		UpdateInputMode(false,HUD->GetCachedPlayerWidget());
+		return;
+	}
+	UpdateInputMode();
 }
 
 void ASurvPlayerController::TogglePlacementMode()
@@ -271,6 +285,25 @@ void ASurvPlayerController::TogglePlacementMode()
 	}
 	bInBuildingModePlacement = false;
 	SetBuildingMappingContextEnabled(false);
+}
+
+void ASurvPlayerController::UpdateInputMode(const bool& bGameOnly, const TSharedPtr<SWidget>& WidgetToFocus)
+{
+	if (bGameOnly == true)
+	{
+		FInputModeGameOnly InputGameOnlyMode;
+		SetInputMode(InputGameOnlyMode);
+		SetMovementMappingContextEnabled(true);
+		SetShowMouseCursor(false);
+		return;
+	}
+	FInputModeGameAndUI InputGameAndUIMode;
+	InputGameAndUIMode.SetHideCursorDuringCapture(false);
+	InputGameAndUIMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
+	InputGameAndUIMode.SetWidgetToFocus(WidgetToFocus);
+	SetInputMode(InputGameAndUIMode);
+	SetMovementMappingContextEnabled(false);
+	SetShowMouseCursor(true);
 }
 
 void ASurvPlayerController::OnHudCreated()

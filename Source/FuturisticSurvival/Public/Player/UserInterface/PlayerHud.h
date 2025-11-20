@@ -17,6 +17,8 @@ UCLASS()
 class FUTURISTICSURVIVAL_API UPlayerHud : public USurvUserWidget
 {
 	GENERATED_BODY()
+	
+	
 
 public:
 	
