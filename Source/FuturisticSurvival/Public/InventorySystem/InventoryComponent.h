@@ -31,7 +31,7 @@ public:
 	
 	bool AddItemToInventory(TSubclassOf<UItemBase> Item);
 
-	bool HasEnoughItems(const TArray<FInventorySlotData>& Items) const;
+	bool HasEnoughItems(const TMap<TSubclassOf<UItemBase>, int32>& Items) const;
 	bool RemoveItems(const TArray<FInventorySlotData>& ItemsToRemove);
 	bool RemoveSingleItem(const TSubclassOf<UItemBase>& ItemToRemove);
 

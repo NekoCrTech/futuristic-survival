@@ -8,6 +8,7 @@
 #include "SurvPlaceableBase.generated.h"
 
 
+class APlaceablePreview;
 class APlaceableActor;
 class UItemBase;
 
@@ -32,6 +33,8 @@ protected:
 	EPlaceableCategory Category;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "World Data")
 	TSubclassOf<APlaceableActor> Buildable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "World Data")
+	TSubclassOf<APlaceablePreview> PreviewClass;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -44,9 +47,15 @@ public:
 	TSubclassOf<APlaceableActor> GetPlaceableClass() {return Buildable; }
 	
 	UFUNCTION(BlueprintCallable)
+	TSubclassOf<APlaceablePreview> GetPreviewClass() {return PreviewClass; }
+	
+	UFUNCTION(BlueprintCallable)
 	EPlaceableCategory GetCategory() const {return Category; }
 	
 	UFUNCTION(BlueprintCallable)
 	UTexture2D* GetIcon() const {return Icon; }
+	
+	UFUNCTION(BlueprintCallable)
+	TMap<TSubclassOf<UItemBase>, int32> GetCost() {return Cost; }
 	
 };

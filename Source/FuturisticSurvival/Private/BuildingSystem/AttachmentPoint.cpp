@@ -3,7 +3,7 @@
 
 #include "BuildingSystem/AttachmentPoint.h"
 
-#include "BuildingSystem/BuildablePreview.h"
+#include "BuildingSystem/PlaceablePreview.h"
 #include "Components/SphereComponent.h"
 
 AAttachmentPoint::AAttachmentPoint()
@@ -24,7 +24,7 @@ void AAttachmentPoint::OnInteractionTriggerOverlapBegin(UPrimitiveComponent* Ove
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!bAttachmentIsActive) return;
-	ABuildablePreview* BuildablePreview = Cast<ABuildablePreview>(OtherActor);
+	APlaceablePreview* BuildablePreview = Cast<APlaceablePreview>(OtherActor);
 	if (!IsValid(BuildablePreview)) return;
 	if (!AcceptedToSnapParts.Contains(BuildablePreview->GetPartType())) return;
 	BuildablePreview->SnapPreviewToLocation(GetActorLocation());

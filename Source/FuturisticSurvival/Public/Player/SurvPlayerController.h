@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BuildingSystem/PlacementControlInterface.h"
 #include "GameFramework/PlayerController.h"
 #include "SurvPlayerController.generated.h"
 
@@ -14,7 +15,7 @@ class UInputMappingContext;
  * 
  */
 UCLASS()
-class FUTURISTICSURVIVAL_API ASurvPlayerController : public APlayerController
+class FUTURISTICSURVIVAL_API ASurvPlayerController : public APlayerController, public IPlacementControlInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +24,8 @@ public:
 	
 	void SetMovementMappingContextEnabled(bool bEnabled);
 	void SetBuildingMappingContextEnabled(bool bEnabled);
+	
+	virtual void  TogglePlacementMode_Implementation() override;
 	
 #pragma region Input
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="Survival|Input|Character", meta=(AllowPrivateAccess="true"))
@@ -109,7 +112,6 @@ private:
 	
 	/** Utilities */
 	void HandleTogglePlayerWindow(bool bUseOtherInventory = false);
-	void TogglePlacementMode();
 	void UpdateInputMode(const bool& bGameOnly = true, const TSharedPtr<SWidget>& WidgetToFocus = nullptr);
 	UFUNCTION()
 	void OnHudCreated();
@@ -135,8 +137,4 @@ private:
 	void OnRotateBuilding(const FInputActionValue& Value);
 	void OnPlaceBuilding();
 	void OnCancelPlacement();
-	
-	
-	
-
 };

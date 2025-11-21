@@ -45,18 +45,21 @@ bool UInventoryComponent::AddItemToInventory(TSubclassOf<UItemBase> Item)
 	return true;
 }
 
-bool UInventoryComponent::HasEnoughItems(const TArray<FInventorySlotData>& Items) const
+bool UInventoryComponent::HasEnoughItems(const TMap<TSubclassOf<UItemBase>, int32>& Items) const
 {
-	for (const FInventorySlotData& Item : Items)
+	for (const TPair<TSubclassOf<UItemBase>, int32>& Pair : Items)
 	{
-		if (GetQuantityOfItem(Item.ItemClass) < Item.Quantity) return false;
+		TSubclassOf<UItemBase> ItemClass = Pair.Key;
+		int32 Quantity = Pair.Value;
+
+		if (GetQuantityOfItem(ItemClass) < Quantity) return false;
 	}
 	return true;
 }
 
 bool UInventoryComponent::RemoveItems(const TArray<FInventorySlotData>& ItemsToRemove)
 {
-	if (!HasEnoughItems(ItemsToRemove))	return false;
+	//if (!HasEnoughItems(ItemsToRemove))	return false;
 
 	for (const FInventorySlotData& ToRemove : ItemsToRemove)
 	{

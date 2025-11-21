@@ -310,6 +310,6 @@ void ASurvPlayerCharacter::HandleCancelPlacement()
 void ASurvPlayerCharacter::InitializeComponents()
 {
 	Inventory->CreateInventoryWidget();
-	BuildingComponent->InitializeBuildingComponent();
+	BuildingComponent->InitializeBuildingComponent(Inventory);
 }
 

@@ -4,7 +4,6 @@
 #include "BuildingSystem/PlaceableActor.h"
 
 #include "BuildingSystem/AttachmentPoint.h"
-#include "BuildingSystem/BuildableBaseDataAsset.h"
 
 APlaceableActor::APlaceableActor()
 {

@@ -5,14 +5,14 @@
 #include "CoreMinimal.h"
 #include "Enums/BuildingPartType.h"
 #include "GameFramework/Actor.h"
-#include "BuildablePreview.generated.h"
+#include "PlaceablePreview.generated.h"
 
 class USurvPlaceableBase;
 class USphereComponent;
 class UBuildableBaseDataAsset;
 
 UCLASS()
-class FUTURISTICSURVIVAL_API ABuildablePreview : public AActor
+class FUTURISTICSURVIVAL_API APlaceablePreview : public AActor
 {
 	GENERATED_BODY()
 	
@@ -41,9 +41,10 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	ABuildablePreview();
+	APlaceablePreview();
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
 	void SetPreview(TSubclassOf<USurvPlaceableBase> PlaceableClass);
 	void SnapPreviewToLocation(const FVector& TargetLocation);
 

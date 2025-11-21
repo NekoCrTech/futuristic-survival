@@ -1,14 +1,14 @@
 // developed by Neko
 
 
-#include "BuildingSystem/BuildablePreview.h"
+#include "BuildingSystem/PlaceablePreview.h"
 #include "BuildingSystem/AttachmentPoint.h"
 #include "Structs/AttachmentPointData.h"
-#include "BuildingSystem/BuildableBaseDataAsset.h"
+#include "BuildingSystem/Placeables/SurvPlaceableBase.h"
 
 class USurvPlaceableBase;
 // Sets default values
-ABuildablePreview::ABuildablePreview()
+APlaceablePreview::APlaceablePreview()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	Root=CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
@@ -19,19 +19,19 @@ ABuildablePreview::ABuildablePreview()
 	PreviewMesh->SetGenerateOverlapEvents(true);
 }
 
-void ABuildablePreview::UpdateMaterial()
+void APlaceablePreview::UpdateMaterial()
 {
 }
 
 // Called when the game starts or when spawned
-void ABuildablePreview::BeginPlay()
+void APlaceablePreview::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void ABuildablePreview::Tick(float DeltaTime)
+void APlaceablePreview::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -52,16 +52,15 @@ void ABuildablePreview::Tick(float DeltaTime)
 	
 }
 
-void ABuildablePreview::SetPreview(TSubclassOf<USurvPlaceableBase> PlaceableClass)
+void APlaceablePreview::SetPreview(TSubclassOf<USurvPlaceableBase> PlaceableClass)
 {
-	// if (!PreviewMesh || !Data) return;
-	//
-	// PreviewMesh->SetStaticMesh(Data->GetBuildingMesh());
-	// PreviewMesh->SetMaterial(0, GoodMaterial);
-	// SetPartType(Data->GetType());
+	
+	PreviewMesh->SetStaticMesh(PlaceableClass.GetDefaultObject()->GetPlaceableMesh());
+	PreviewMesh->SetMaterial(0, GoodMaterial);
+	//SetPartType(Data->GetType());
 }
 
-void ABuildablePreview::SnapPreviewToLocation(const FVector& TargetLocation)
+void APlaceablePreview::SnapPreviewToLocation(const FVector& TargetLocation)
 {
 	bSnapped=true;
 	SetActorLocation(TargetLocation);

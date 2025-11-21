@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BuildingSystem/BuildableBaseDataAsset.h"
 #include "BuildingComponent.generated.h"
 
 
+class UInventoryComponent;
 class USurvPlaceablesMenu;
 class USurvPlaceableBase;
 
@@ -20,7 +20,7 @@ public:
 	UBuildingComponent();
 
 	UFUNCTION(BlueprintCallable)
-	bool SelectPlaceable(TSubclassOf<USurvPlaceableBase> PlaceableClass);
+	void SelectPlaceable(TSubclassOf<USurvPlaceableBase> PlaceableClass);
 	UFUNCTION(BlueprintCallable)
 	void Place();
 	UFUNCTION(BlueprintCallable)
@@ -32,14 +32,12 @@ public:
 	void AddToUnlockedPlaceables(TArray<TSubclassOf<USurvPlaceableBase>> PlaceablesToUnlock);
 	
 	UFUNCTION(BlueprintCallable)
-	void InitializeBuildingComponent();
+	void InitializeBuildingComponent(UInventoryComponent* InventoryComponent);
 
 private:
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category = "References")
-	class ABuildablePreview* CurrentPreview;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category = "References")
-	TSubclassOf<ABuildablePreview> PreviewClass;
+	class APlaceablePreview* CurrentPreview;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category = "State")
 	bool bInPlacementMode = false;
@@ -52,9 +50,9 @@ private:
 	
 	UPROPERTY()
 	USurvPlaceablesMenu* PlaceablesMenuWidget;
+	
+	UPROPERTY()
+	UInventoryComponent* Inventory;
 
 	void SpawnPreview(TSubclassOf<USurvPlaceableBase> PlaceableClass);
-	
-	
-	
 };

@@ -128,6 +128,16 @@ void ASurvPlayerController::SetBuildingMappingContextEnabled(const bool bEnabled
 }
 
 //---------------------------------------------------------------------
+/**					 Placement Control Interface 	    			**/
+//---------------------------------------------------------------------
+
+void ASurvPlayerController::TogglePlacementMode_Implementation()
+{
+	bInBuildingModePlacement = bInBuildingModeUI;
+	TogglePlacementWindow();
+}
+
+//---------------------------------------------------------------------
 /**							Input handlers							**/
 //---------------------------------------------------------------------
 
@@ -272,19 +282,6 @@ void ASurvPlayerController::HandleTogglePlayerWindow(const bool bUseOtherInvento
 		return;
 	}
 	UpdateInputMode();
-}
-
-void ASurvPlayerController::TogglePlacementMode()
-{
-	if(bInBuildingModeUI)
-	{
-		TogglePlacementWindow();
-		bInBuildingModePlacement = true;
-		SetBuildingMappingContextEnabled(true);
-		return;
-	}
-	bInBuildingModePlacement = false;
-	SetBuildingMappingContextEnabled(false);
 }
 
 void ASurvPlayerController::UpdateInputMode(const bool& bGameOnly, const TSharedPtr<SWidget>& WidgetToFocus)
